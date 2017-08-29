@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" style="overflow: hidden">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile Page</title>
+
+    <link rel="stylesheet" type="text/css" href="CSS/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="CSS/editProfileStyle.css"/>
+    <script type="text/javascript" src="Scripts/jquery-3.1.1.js"></script>
+    <script type="text/javascript" src="Scripts/editProfilePage.js"></script>
+
+    <script src="Scripts/utils.js"></script>
+    <script src="Scripts/currentUser.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
+    <script src="Scripts/notifier.js"></script>
+
+
+</head>
+<body>
+<div class="profilePage row">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header navbar-left">
+                <a class="navbar-brand" href="#">Dailies</a>
+            </div>
+            <ul class="nav navbar-nav navbar-left">
+                <li class="dropdown">
+                    <a id="userButton" class="dropdown-toggle" aria-expanded="false" href="#" data-toggle="dropdown">User<span
+                            class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="profilePage.html">Profile Page</a></li>
+                        <li><a href="editProfilePage.html">Edit Profile</a></li>
+                        <li id="manageBusinesses"><a href="#">My Businesses</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Work Search</a></li>
+                <li><a href="#">Find Workers</a></li>
+                <li><a href="#">Page 3</a></li>
+                <li><a href="#">Page 4</a></li>
+                <li id="msgNotifier" class="col-md-2">
+                    <div class="container">
+                        <button class="btn btn-default btn-lg btn-link" style="font-size:26px;">
+                            <i class="glyphicon glyphicon-comment custom"></i>
+                        </button>
+                        <span class="badge badge-notify">3</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+<div>
+    <div class="editProfile height:120px;width:120px;border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;">
+        <h2>Edit Profile Page</h2>
+        <div>
+            <input type="hidden" name="request_type" value="updateUserFiles">
+            <div class="row" style="margin-bottom: 10px">
+                <div class="col-md-5">
+                    <label class="texts">Profile Picture:</label>
+                    <input id='profilePic' type='file' style="width: 200px" name="profilePic" class="texts"
+                           onchange="readUrlWithOurHiddenPicture(this);"/>
+                </div>
+                <div class="col-md-7">
+                    <img id="profilePicDisplay" width="100" height="100"
+                         src="http://res.cloudinary.com/ronerez/image/upload/v1502455157/empty_profile_it5elf.png"
+                         alt="your image"/>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-5">
+                    <label for="fname" class="texts">First Name:</label>
+                </div>
+                <div class="col-md-7">
+                    <input id="fname" type="text" name="fname" placeholder="First Name" value="ron" required/>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-5">
+                    <label for="lname" class="texts">Last Name:</label>
+                </div>
+                <div class="col-md-7">
+                    <input id="lname" type="text" name="lname" placeholder="Last Name: " value="erez" required/>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-5">
+                    <label for="email" class="texts">Email:</label>
+                </div>
+                <div class="col-md-7">
+                    <input id="email" type="email" name="email" placeholder="Email" value="ron@gmail.com" required/>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-5">
+                    <label for="password" class="texts">Password:</label>
+                </div>
+                <div class="col-md-7">
+                    <input id="password" type="password" name="password" placeholder="Password" value="1" required/>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-5">
+                    <label for="address" class="texts">Address:</label>
+                </div>
+                <div class="col-md-7">
+                    <input id="address" type="address" name="address" placeholder="address" value="tarmav"
+                           required/>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-5">
+                    <label for="password" class="texts">Skills:</label>
+                </div>
+                <textarea id="skills" class="form-control" rows="2" type="skills" name="skills" placeholder="skills"
+                          value="cool and shit"></textarea>
+            </div>
+
+            <div class="row">
+                <div class="col-md-5">
+                    <label for="about" class="texts">About:</label>
+                </div>
+                <textarea class="form-control" rows="5" id="about" type="about" name="about" placeholder="about"
+                          value="about"></textarea>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-5">
+                    <label for="cv" class="texts">CV:</label>
+                    <input type="file" name="cv" class="texts" id="cv"><br>
+                </div>
+
+            </div>
+            <button onclick="registerUpdates()" class="btn btn-primary btn-block btn-large">Submit</button>
+            <div id="res"></div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+html,body{
+    background-color: transparent;
+    /*width: 280px;*/
+    height: auto;
+    margin-left: 5px;
+}
+.title{
+    color: white;
+}
+
+#delete {
+    cursor: pointer;
+}
+
+.EnableBox {
+    width: 25px;
+    margin: 20px 100px;
+    position: relative;
+    background:none;
+    width: auto;
+    height:auto;
+    padding: 0px;
+}

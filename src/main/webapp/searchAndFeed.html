@@ -1,0 +1,120 @@
+<html class=" -ms-">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search and wall</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" type="text/css" href="CSS/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="CSS/bootstrap-chosen.css"/>
+    <link rel="stylesheet" type="text/css" href="CSS/style.css"/>
+    <link rel="stylesheet" type="text/css" href="CSS/search.css"/>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+    <script src="Scripts/jquery-3.1.1.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
+    <script src="http://harvesthq.github.io/chosen/chosen.jquery.js"></script>
+    <script src="Scripts/feed.js"></script>
+    <script src="Scripts/utils.js"></script>
+    <script src="Scripts/currentUser.js"></script>
+    <script src="Scripts/notifier.js"></script>
+
+
+</head>
+<body style="width: auto">
+<div class="profilePage row">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header navbar-left">
+                <a class="navbar-brand" href="#">Dailies</a>
+            </div>
+            <ul class="nav navbar-nav navbar-left">
+                <li class="dropdown">
+                    <a id="userButton" class="dropdown-toggle" aria-expanded="false" href="#" data-toggle="dropdown">User<span
+                            class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="profilePage.html">Profile Page</a></li>
+                        <li><a href="editProfilePage.html">Edit Profile</a></li>
+                        <li id="manageBusinesses"><a href="#">My Businesses</a></li>
+                    </ul>
+                </li>
+                <li><a href="searchAndFeed.html">Work Search</a></li>
+                <li><a href="#">Find Workers</a></li>
+                <li><a href="#">Page 3</a></li>
+                <li><a href="#">Page 4</a></li>
+                <li id="msgNotifier" class="col-md-2">
+                    <div class="container">
+                        <button class="btn btn-default btn-lg btn-link" style="font-size:26px;">
+                            <i class="glyphicon glyphicon-comment custom"></i>
+                        </button>
+                        <span class="badge badge-notify">3</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div id="filterJobPanelHead" class="panel-heading">Filter Jobs</div>
+            <div id="filterJobPanelBody" class="panel-body">
+                <div class="row ">
+                    <input class="col-sm-1 EnableBox" type="checkbox" value="1" id="EnableStartDate" name="check"
+                           onchange="checkBoxChange(this)" checked/>
+                    <label class="col-sm-2 control-label" for="startDate">From:</label>
+                    <input class="col-sm-4" name="startDate" id="startDate" required="" type="date"  style="background-color: white;color: black">
+                    <!--<label class="col-sm-2 control-label" for="startTime">To:</label>
+                    <div class="col-sm-4">
+                        <input name="startTime" id="startTime" required="" type="time" value="10:00">
+                    </div>-->
+                </div>
+                <div class="row ">
+                    <input class="col-sm-1 EnableBox" type="checkbox" value="1" id="EnableEndDate" name="check"
+                           onchange="checkBoxChange(this)" checked/>
+                    <label class="col-sm-2 control-label" for="endDate">To:</label>
+
+                    <input class="col-sm-4" name="endDate" id="endDate" required="" type="date" style="background-color: white; color: black">
+
+                    <!--<label class="col-sm-2 control-label" for="endTime">Time:</label>
+                    <!--<div class="col-sm-4">
+                        <input name="endTime" id="endTime" required="" type="time" value="21:00">
+                    </div>-->
+                </div>
+                <div class="row">
+                    <input class="col-sm-1 EnableBox" type="checkbox" value="1" id="EnableLocation" name="check"
+                           checked onchange="checkBoxChange(this)"/>
+                    <label class="col-sm-2 control-label" for="jobLocation">Location:</label>
+
+                    <input class="col-sm-10" name="jobLocation" class="form-control" id="jobLocation" required=""
+                           type="text" placeholder="Job Location" style="background-color: white;color: black">
+
+                </div>
+                <div class="row">
+                    <div class="row1">
+                        <div class="col-md-10">
+                            <input class="col-sm-1 EnableBox" type="checkbox" value="1" id="EnableSkills" name="check"
+                                   checked onchange="checkBoxChange(this)"/>
+                            <label class="col-sm-3 control-label" for="jobsSelect">Type of job:</label>
+                            <select id="jobsSelect" data-placeholder="Click To Select Your Skills" multiple
+                                    class="chosen-select chosen-ltr">
+                                <option id="option0"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" id="buttonFilter" class="btn btn-default" style="width: auto;float: right">Get
+                    Jobs
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8" style="float: right;border-left: solid white;height: 100%;overflow-y: scroll">
+        <div id="insert"></div>
+    </div>
+</div>
+</body>
+</html>

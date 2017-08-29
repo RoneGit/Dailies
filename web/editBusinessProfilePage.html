@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+
+    <link rel="stylesheet" type="text/css" href="CSS/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="CSS/editProfileStyle.css"/>
+    <link rel="stylesheet" type="text/css" href="CSS/businessProfilePage.css"/>
+
+
+
+    <script src="Scripts/jquery-3.1.1.js"></script>
+    <!--
+        <script src="Scripts/editJobsPage.js"></script>
+    -->
+    <script src="Scripts/editBusinessProfilePage.js"></script>
+    <script src="Scripts/utils.js"></script>
+    <script src="Scripts/currentUser.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
+    <script src="Scripts/notifier.js"></script>
+
+</head>
+<body>
+<div class="profilePage row ">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header navbar-left">
+                <a class="navbar-brand" href="#">Dailies</a>
+            </div>
+            <ul class="nav navbar-nav navbar-left">
+                <li class="dropdown">
+                    <a id="userButton" class="dropdown-toggle" aria-expanded="false" href="#" data-toggle="dropdown">User<span
+                            class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="profilePage.html">Profile Page</a></li>
+                        <li><a href="editProfilePage.html">Edit Profile</a></li>
+                        <!--added-->
+                        <li id="manageBusinesses"><a href="#">My Businesses</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Work Search</a></li>
+                <li><a href="#">Find Workers</a></li>
+                <li><a href="#">Page 3</a></li>
+                <li><a href="#">Page 4</a></li>
+                <li id="msgNotifier" class="col-md-2">
+                    <div class="container">
+                        <button class="btn btn-default btn-lg btn-link" style="font-size:26px;">
+                            <i class="glyphicon glyphicon-comment custom"></i>
+                        </button>
+                        <span class="badge badge-notify">3</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+
+<div>
+
+    <div class="row">
+        <div align="center" class="col-lg-3">
+
+            <input id='profilePic' style="display: none;" type='file' name="profilePic" onchange="readURL(this);"/>
+            <label for="profilePicBtn" class="texts">Profile Picture:</label>
+            <button id="profilePicBtn" class="btn btn-primary" name="profilePicBtn" onclick="profilePic.click()">Choose
+                Picture
+            </button>
+
+            <img id="profilePicDisplay" src="" class="img-rounded"
+                 onerror="this.onerror=null;this.src='Resources/empty_profile.jpg';">
+
+        </div>
+        <div class="editProfile col-lg-7">
+            <h2>Edit Business Page</h2>
+
+            <div>
+                <input type="hidden" name="request_type" value="updateUserFiles">
+
+                <div class="row">
+
+                    <!--<div class="col-md-5">
+                        <label class="texts">Profile Picture:</label>
+                        <input id='profilePic' type='file' name="profilePic" onchange="readURL(this);"/>
+                    </div>-->
+
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5">
+                        <label for="name" class="texts">Business Name:</label>
+                    </div>
+                    <div class="col-md-7">
+                        <input id="name" type="text" name="name" placeholder="Business Name" required/>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5">
+                        <label for="city" class="texts">City:</label>
+                    </div>
+                    <div class="col-md-7">
+                        <input id="city" type="text" name="city" placeholder="City"/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5">
+                        <label for="street" class="texts">Street:</label>
+                    </div>
+                    <div class="col-md-7">
+                        <input id="street" type="text" name="street" placeholder="Street"/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5">
+                        <label for="number" class="texts">Number:</label>
+                    </div>
+                    <div class="col-md-7">
+                        <input id="number" type="text" name="number" placeholder="Number"/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5">
+                        <label for="email" class="texts">Email:</label>
+                    </div>
+                    <div class="col-md-7">
+                        <input id="email" type="email" name="email" placeholder="Email" required/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5">
+                        <label for="phone" class="texts">Phone:</label>
+                    </div>
+                    <div class="col-md-7">
+                        <input id="phone" type="text" name="phone" placeholder="Phone"/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5">
+                        <label for="about" class="texts">About:</label>
+                    </div>
+                    <textarea class="form-control" rows="5" id="about" type="about" name="about"
+                              placeholder="About"></textarea>
+                </div>
+
+
+                <button id="submitBtn" onclick="registerBusinessUpdates()" class="btn btn-primary btn-block btn-large">
+                    Submit
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>
