@@ -30,10 +30,8 @@ public class Apply {
         Statement stmt = null;
         ResultSet rs = null;
         try {
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
             String jobId = id.toString();
 
             stmt = con.createStatement();
@@ -57,8 +55,6 @@ public class Apply {
 
             }
             return applies;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {

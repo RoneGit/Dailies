@@ -44,10 +44,8 @@ public class Bussiness {
         Statement stmt = null;
         ResultSet rs = null;
         try {
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
             stmt = con.createStatement();
             String SELECT = " SELECT *"
                     + " FROM businesses"
@@ -72,8 +70,6 @@ public class Bussiness {
         } catch (SQLException e) {
             System.out.println("couldent connect db");
             System.out.println(e.getErrorCode());
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             try { rs.close(); } catch (Exception e) {  e.printStackTrace(); }
@@ -102,10 +98,8 @@ public class Bussiness {
         List<Bussiness> userBusinesses = null;
         List<Integer> businessesId = null;
         try {
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
             stmt = con.createStatement();
 
             String SELECT = " SELECT id, name"
@@ -119,8 +113,6 @@ public class Bussiness {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
         finally {

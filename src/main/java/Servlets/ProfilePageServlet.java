@@ -390,7 +390,7 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
 
             String SELECT = " SELECT *"
                     + " FROM apply"
-                    + " WHERE app_id ='" + userId + "' AND is_finished='" + is_finished + "' AND is_hired='" + is_hired +"'";
+                    + " WHERE applicant_id ='" + userId + "' AND is_finished='" + is_finished + "' AND is_hired='" + is_hired +"'";
 
             rs = stmt.executeQuery(SELECT);
             jobOffersIdList = new ArrayList<Integer>();

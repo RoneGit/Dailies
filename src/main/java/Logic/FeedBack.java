@@ -30,10 +30,8 @@ public class FeedBack {
         Statement stmt = null;
         ResultSet rs = null;
         try {
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
             String businessId = id.toString();
 
             stmt = con.createStatement();

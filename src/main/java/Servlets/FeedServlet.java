@@ -55,10 +55,8 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
     private void getLatestJobs(HttpServletRequest request, HttpServletResponse response) {
 
         try {
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            Connection con = DriverManager.getConnection(url);
+            Connection con = ServletUtils.getConnection();
 
             String d = GetCurentDate();
             Statement stmt = con.createStatement();
@@ -87,9 +85,6 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
                 }
             }
             ServletUtils.returnJson(request, response, jobOffers);
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -99,10 +94,8 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
     private void getJobsByFilter(HttpServletRequest request, HttpServletResponse response) {
 
         try {
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            Connection con = DriverManager.getConnection(url);
+            Connection con = ServletUtils.getConnection();
 
             String[] jobFilters = request.getParameterValues("token_list[]");
             String startDate = request.getParameter("start_date");
@@ -142,11 +135,6 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
 
             ServletUtils.returnJson(request, response, jobOffers);
         } catch (
-                ClassNotFoundException e)
-
-        {
-            e.printStackTrace();
-        } catch (
                 SQLException e)
 
         {
@@ -184,11 +172,8 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
     //can be util
     private void getJobTitlesList(HttpServletRequest request, HttpServletResponse response) {
         try {
-            Class.forName("org.sqlite.JDBC");
-
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            Connection con = DriverManager.getConnection(url);
+            Connection con = ServletUtils.getConnection();
 
             Statement stmt = con.createStatement();
             String quary = " SELECT *"
@@ -204,9 +189,6 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
             }
 
             ServletUtils.returnJson(request, response, jobsTypes);
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -239,10 +221,8 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
         DateFormat dateFormat = new SimpleDateFormat("HH:mm");
         String postTime = dateFormat.format(postDate);
         try {
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
 
             jobId = request.getParameter("jobId");
             apliedUserId = request.getParameter("userId");
@@ -252,11 +232,6 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
 
             pstmt = con.prepareStatement(sql);
             pstmt.executeUpdate();
-        } catch (
-                ClassNotFoundException e)
-
-        {
-            e.printStackTrace();
         } catch (
                 SQLException e)
 

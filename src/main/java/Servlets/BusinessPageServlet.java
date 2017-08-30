@@ -95,9 +95,8 @@ public class BusinessPageServlet extends javax.servlet.http.HttpServlet {
         Connection con = null;
         Statement stmt = null;
         try {
-            Class.forName("org.sqlite.JDBC");
-            String dbPath = ServletUtils.getDbPath();
-            con = DriverManager.getConnection(dbPath);
+            // create a connection to the database
+            con = ServletUtils.getConnection();
             stmt = con.createStatement();
             String sql = "INSERT INTO business_feedbacks (business_id ,feedback, uploader_id, upload_date, upload_time, title) " +
                     "VALUES('" + businessId + "' , '" + feedback + "' , '" + user.getId() + "' , '" + postDate.getTime() + "' ,'" + postTime + "','" +
@@ -106,8 +105,6 @@ public class BusinessPageServlet extends javax.servlet.http.HttpServlet {
             stmt.executeUpdate(sql);
             response.sendRedirect("/businessProfilePage.html?business_id=" + businessId);
 
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -155,13 +152,11 @@ public class BusinessPageServlet extends javax.servlet.http.HttpServlet {
         Statement stmt = null;
         ResultSet rs = null;
         try {
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
+            con = ServletUtils.getConnection();
             UserManager userManager = ServletUtils.getUserManager(getServletContext());
             String userEmail = userManager.getUserEmailFromSession(ServletUtils.getSessionId(request));
             UserData user = UserData.getUserDataByEmail(userEmail);
-            con = DriverManager.getConnection(url);
             stmt = con.createStatement();
 
             String SELECT = " SELECT id, name"
@@ -175,8 +170,6 @@ public class BusinessPageServlet extends javax.servlet.http.HttpServlet {
             }
             returnJson(request, response, userBusinesses);
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             try {

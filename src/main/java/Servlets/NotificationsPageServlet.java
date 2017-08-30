@@ -45,9 +45,8 @@ public class NotificationsPageServlet  extends javax.servlet.http.HttpServlet {
         ResultSet rs = null;
         try{
 
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
-            con = DriverManager.getConnection(url);
+            // create a connection to the database
+            con = ServletUtils.getConnection();
             stmt = con.createStatement();
 
             String SELECT = " SELECT id, name"
@@ -58,8 +57,6 @@ public class NotificationsPageServlet  extends javax.servlet.http.HttpServlet {
 
 
         }catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             try {

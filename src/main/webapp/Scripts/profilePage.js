@@ -131,8 +131,8 @@ function printJobOffers(jobOffersPairs)
     for (i = 0; i <= jobOffersPairs.length; i++) {
 
         var pair = jobOffersPairs[i];
-        var business = pair.first;
-        var jobOffer = pair.second;
+        var business = pair.left;
+        var jobOffer = pair.right;
         var linkToBusiness = getLinkWithStyle(i + "Form", "businessPage", business.name, "float: left", [["request_type", "loadBusinessPage"], ["business_id", business.id]]);
         var currText = "<span>Business Name: </span>" + linkToBusiness + "<span style ='float: left; margin-left: 10px'> Job Title: " + jobOffer.name + "</span><span style ='float: left ; margin-left: 10px'> Job Details: " + jobOffer.details + "</span>";
         $('#userInfoPanelBody').append('<div><p style ="float: left">' + currText + '</p></div><br>');

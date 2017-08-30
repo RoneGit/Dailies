@@ -159,8 +159,9 @@ public class ServletUtils {
         urls = new HashMap<String, String>();
         for (Part part : parts) {
             if (part.getName() != null) {
+                String content = part.getContentType();
                 File file = saveFile(part);
-                urls.put(part.getName(), uploadFileToCloudinary(file, isPicture(file)));
+                urls.put(part.getName(), uploadFileToCloudinary(file, isPicture(content)));
             }
         }
 
@@ -186,10 +187,10 @@ public class ServletUtils {
         return null;
     }
 
-    static private Boolean isPicture(File file) {
-        String mimetype = new MimetypesFileTypeMap().getContentType(file);
-        String type = mimetype.split("/")[0];
-        if (type.equals("image")) {
+    static private Boolean isPicture(String type) {
+        //String mimetype = new MimetypesFileTypeMap().getContentType(file);
+        //String type = mimetype.split("/")[0];
+        if (type.contains("image")) {
             return true;
         }
         return false;
@@ -223,17 +224,12 @@ public class ServletUtils {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         try {
-
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
             String sql = "INSERT INTO notifications(user_Id,type,is_read, msg , business_id) " +
                     "VALUES('" + userId + "','" + typeOfNot + "' , '" + 0 + "' ,'" + messege + "' ,'" + busId + "')";
             pstmt = con.prepareStatement(sql);
             pstmt.executeUpdate();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         }

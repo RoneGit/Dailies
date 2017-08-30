@@ -144,10 +144,8 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         try {
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
 
             String sql = "INSERT INTO job_offers(business_id ,name,location, start_date,start_time,/*end_date,*/end_time,details,requirements,post_date,post_time) " +
                     "VALUES('" + busId + "','" + name + "' , '" + location + "' ,'" + startDate + "' ,'" + startTime + "' ,'" + /*endDate + "' ,'" + */endTime + "' ,'" + details + "' ,'" + requirements +
@@ -169,8 +167,6 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -199,10 +195,8 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
 
         try {
             String id = request.getParameter("job_id");
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
             stmt = con.createStatement();
 
             String DELETE = " DELETE "
@@ -212,8 +206,6 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
             int flag = stmt.executeUpdate(DELETE);
             returnJson(request, response, flag);
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             try {
@@ -297,9 +289,8 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
         Connection con = null;
         Statement stmt = null;
         try {
-            Class.forName("org.sqlite.JDBC");
-            String dbPath = ServletUtils.getDbPath();
-            con = DriverManager.getConnection(dbPath);
+            // create a connection to the database
+            con = ServletUtils.getConnection();
 
             String name = request.getParameter("name");
             String city = request.getParameter("city");
@@ -336,8 +327,6 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
 
             }
             stmt.executeUpdate(sql);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -375,10 +364,8 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
 
         try {
             String id = request.getParameter("business_id");
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
             stmt = con.createStatement();
 
             String DELETE = " DELETE "
@@ -389,8 +376,6 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
             //con.close();//close
             returnJson(request, response, flag);
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             /*try { rs.close(); } catch (Exception e) {  e.printStackTrace(); }*/

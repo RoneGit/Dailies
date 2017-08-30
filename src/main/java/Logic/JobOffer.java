@@ -45,10 +45,8 @@ public class JobOffer {
         Statement stmt = null;
         ResultSet rs = null;
         try {
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
             String businessId = id.toString();
 
             stmt = con.createStatement();
@@ -76,8 +74,6 @@ public class JobOffer {
                                 rs.getString("post_time")));
             }
             return jobOffers;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -106,10 +102,8 @@ public class JobOffer {
         ResultSet rs = null;
         JobOffer jobOffer = null;
         try {
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
             String jobId = _jobId.toString();
 
             stmt = con.createStatement();
@@ -133,8 +127,6 @@ public class JobOffer {
                         rs.getDate("post_date"),
                         rs.getString("post_time"));
             }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -162,10 +154,8 @@ public class JobOffer {
         Statement stmt = null;
 
         try {
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
 
             stmt = con.createStatement();
             String UPDATE = " UPDATE job_offers" +
@@ -187,9 +177,6 @@ public class JobOffer {
 
             int res = stmt.executeUpdate(UPDATE);
 
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
