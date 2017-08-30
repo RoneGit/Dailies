@@ -23,10 +23,7 @@ public class SignInServlet extends javax.servlet.http.HttpServlet {
         Statement stmt = null;
         ResultSet rs = null;
         try {
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
-            // create a connection to the database
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
             String fname = request.getParameter("fname");
             String lname = request.getParameter("lname");
             String email = request.getParameter("email");
@@ -52,8 +49,6 @@ public class SignInServlet extends javax.servlet.http.HttpServlet {
         } catch (SQLException e) {
             System.out.println("couldent connect db");
             System.out.println(e.getErrorCode());
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             try {

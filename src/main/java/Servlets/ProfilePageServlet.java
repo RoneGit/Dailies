@@ -2,7 +2,7 @@ package Servlets;
 
 import Logic.*;
 import Utils.ServletUtils;
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -104,9 +104,7 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
         Statement stmt = null;
         try {
             Map<String, String> urls = null;
-            Class.forName("org.sqlite.JDBC");
-            String dbPath = ServletUtils.getDbPath();
-            con = DriverManager.getConnection(dbPath);
+            con = ServletUtils.getConnection();
             UserManager userManager = ServletUtils.getUserManager(getServletContext());
             String userEmail = userManager.getUserEmailFromSession(ServletUtils.getSessionId(request));
             Part filePart = request.getPart("cv");
@@ -136,9 +134,6 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
             sql += " WHERE email='" + userEmail + "' ";
 
             stmt.executeUpdate(sql);
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -171,9 +166,7 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
         Connection con = null;
         Statement stmt = null;
         try {
-            Class.forName("org.sqlite.JDBC");
-            String dbPath = ServletUtils.getDbPath();
-            con = DriverManager.getConnection(dbPath);
+            con = ServletUtils.getConnection();
             String fname = request.getParameter("fname");
             String lname = request.getParameter("lname");
             String email = request.getParameter("email");
@@ -217,8 +210,6 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
                 ServletUtils.returnJson(request, response, "error");
             }*/
             //-----------------------------------------------------------------------------
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -240,9 +231,7 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
         PreparedStatement stmt = null;
         try {
             Map<String, String> urls = null;
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
             String fname = request.getParameter("fname");
             String lname = request.getParameter("lname");
             String email = request.getParameter("email");
@@ -260,8 +249,6 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
 
             stmt = con.prepareStatement(sql);
             stmt.executeUpdate();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -295,10 +282,8 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
         Statement stmt = null;
         ResultSet rs = null;
         try {
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
             stmt = con.createStatement();
             String SELECT = " SELECT *"
                     + " FROM UserData"
@@ -307,8 +292,6 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
             while (rs.next()) {
                 emailInUserData = true;
             }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -336,14 +319,12 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
         Statement stmt = null;
         ResultSet rs = null;
         try {
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
             UserManager userManager = ServletUtils.getUserManager(getServletContext());
             String userEmail = userManager.getUserEmailFromSession(ServletUtils.getSessionId(request));
             UserData user = UserData.getUserDataByEmail(userEmail);
 
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
             stmt = con.createStatement();
 
             String SELECT = " SELECT COUNT(id)"
@@ -357,8 +338,6 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
                 res = rs.getInt(1) != 0;
             }
             ServletUtils.returnJson(request, response, res);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -392,7 +371,8 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
             for (Integer jobId : jobIdList) {
                 JobOffer currJob = JobOffer.getJobOfferByIdFromDB(jobId);
                 Bussiness currBusiness = Bussiness.getBusinessInfoById(currJob.getBusinessId().toString());
-                JobOffersWithBusiness.add(new Pair<Bussiness, JobOffer>(currBusiness, currJob));
+                //JobOffersWithBusiness.add(new Pair<Bussiness, JobOffer>(currBusiness, currJob));
+                JobOffersWithBusiness.add(Pair.of(currBusiness,currJob));
             }
         }
         ServletUtils.returnJson(request, response, JobOffersWithBusiness);
@@ -404,10 +384,8 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
         ResultSet rs = null;
         List<Integer> jobOffersIdList = null;
         try {
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
             stmt = con.createStatement();
 
             String SELECT = " SELECT *"
@@ -421,8 +399,6 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             try {
@@ -460,17 +436,12 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
         String recWriterName = request.getParameter("currentUserLogedInName");
         String rec = request.getParameter("recommendation");
         try {
-
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
             String sql = "INSERT INTO UserRecommendations(userId,recommendation,userInputedName, userInputedId ) " +
                     "VALUES('" + currentUserShownId + "','" + rec + "' , '" + recWriterName + "' ,'" + recWriterId + "')";
             pstmt = con.prepareStatement(sql);
             pstmt.executeUpdate();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         }

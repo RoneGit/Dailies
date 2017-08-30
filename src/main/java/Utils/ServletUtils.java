@@ -76,14 +76,14 @@ public class ServletUtils {
         }
         StringBuilder sb = new StringBuilder(path);
         sb.delete(0, 1);
-        for (int i = 0; i <= 4; i++) {
+        for (int i = 0; i <= 2; i++) {
             int start = sb.lastIndexOf("/");
             int end = sb.length();
             sb = sb.delete(start, end);
         }
 
         path = sb.toString();
-        path += "/users.db";
+        path += "/Resources/users.db";
         DbPath = "jdbc:sqlite:" + path;
     }
     public static void setDbPath3()
@@ -109,6 +109,25 @@ public class ServletUtils {
 
     public static String getDbPath() {
         return DbPath;
+    }
+
+    public static Connection getConnection()
+    {
+        String url = "jdbc:mysql://us-cdbr-iron-east-05.cleardb.net:3306/heroku_59a97387cdeff44";
+        String user = "b69801b3aa126a";
+        String password = "c3a33c70";
+        Connection con = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection(url, user, password);
+        } catch (SQLException e) {
+            System.out.println("couldent connect db");
+            System.out.println(e.getErrorCode());
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return con;
     }
 
     public static String getSessionId(HttpServletRequest request) {
@@ -139,7 +158,7 @@ public class ServletUtils {
         Map<String, String> urls = null;
         urls = new HashMap<String, String>();
         for (Part part : parts) {
-            if (part.getSubmittedFileName() != null) {
+            if (part.getName() != null) {
                 File file = saveFile(part);
                 urls.put(part.getName(), uploadFileToCloudinary(file, isPicture(file)));
             }
@@ -151,7 +170,7 @@ public class ServletUtils {
     static public File saveFile(Part part) {
         try {
             final Part filePart = part;
-            String fileName = filePart.getSubmittedFileName();
+            String fileName = filePart.getName();
             final File tempFile = new File(fileName);
             tempFile.deleteOnExit();
             InputStream in = filePart.getInputStream();

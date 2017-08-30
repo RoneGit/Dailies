@@ -11,7 +11,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
-import java.sql.*;
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import static com.sun.org.apache.xml.internal.serialize.LineSeparator.Web;
 
@@ -38,28 +44,26 @@ public class LoginServlet extends javax.servlet.http.HttpServlet {
                 ServletUtils.setDbPath();
                 break;
             case "Login":
-                login(request, response);
+                login(request,response);
                 break;
         }
     }
 
     private void login(HttpServletRequest request, HttpServletResponse response) {
         Connection con = null;
-        Statement stmt = null;
+        Statement st = null;
         ResultSet rs = null;
         try {
-            response.setContentType("text/html;charset=UTF-8");
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
-            // create a connection to the database
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
+            st = con.createStatement();
+            // note that i'm leaving "date_created" out of this insert statement
             String userEmailFromParameter = request.getParameter(Constants.USERNAME);
             String userPassFromParameter = request.getParameter(Constants.USERPASS);
-            stmt = con.createStatement();
             String SELECT = " SELECT *"
                     + " FROM UserData"
                     + " WHERE email='" + userEmailFromParameter + "' AND password='" + userPassFromParameter + "'";
-            rs = stmt.executeQuery(SELECT);
+
+            rs = st.executeQuery(SELECT);
             int flag = 0;
             while (rs.next()) {
                 flag = 1;
@@ -72,12 +76,9 @@ public class LoginServlet extends javax.servlet.http.HttpServlet {
             System.out.println("couldent connect db");
             System.out.println(e.getErrorCode());
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        finally {
+        } finally {
             try { rs.close(); } catch (Exception e) {  e.printStackTrace(); }
-            try { stmt.close(); } catch (Exception e) {  e.printStackTrace(); }
+            try { st.close(); } catch (Exception e) {  e.printStackTrace(); }
             try { con.close(); } catch (Exception e) {  e.printStackTrace(); }
         }
     }

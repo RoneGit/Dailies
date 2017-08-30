@@ -29,10 +29,8 @@ public class UserRecommendation {
         List<UserRecommendation> userRecList = null;
         try {
             userRecList = new ArrayList<UserRecommendation>();
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
             stmt = con.createStatement();
             String SELECT = " SELECT *"
                     + " FROM UserRecommendations"
@@ -41,8 +39,6 @@ public class UserRecommendation {
             while (rs.next()) {
                 userRecList.add(new UserRecommendation(rs.getInt("userId"), rs.getString("recommendation"), rs.getString("userInputedName"), rs.getInt("userInputedId")));
             }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -62,10 +58,8 @@ public class UserRecommendation {
         List<UserRecommendation> userRecList = null;
         try {
             userRecList = new ArrayList<UserRecommendation>();
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
             stmt = con.createStatement();
             String SELECT = " SELECT *"
                     + " FROM UserRecommendations"
@@ -74,8 +68,6 @@ public class UserRecommendation {
             while (rs.next()) {
                 userRecList.add(new UserRecommendation(rs.getInt("userId"), rs.getString("recommendation"), rs.getString("userInputedName"), rs.getInt("userInputedId")));
             }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         }

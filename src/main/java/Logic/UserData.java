@@ -46,10 +46,8 @@ public class UserData {
         ResultSet rs = null;
         UserData userData = null;
         try {
-            Class.forName("org.sqlite.JDBC");
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
             stmt = con.createStatement();
             String SELECT = " SELECT *"
                     + " FROM UserData"
@@ -58,8 +56,6 @@ public class UserData {
             while (rs.next()) {
                 userData = createUserFromResultSet(rs);
             }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -78,11 +74,8 @@ public class UserData {
         ResultSet rs = null;
         UserData userData = null;
         try {
-            Class.forName("org.sqlite.JDBC");
-
-            String url = ServletUtils.getDbPath();
             // create a connection to the database
-            con = DriverManager.getConnection(url);
+            con = ServletUtils.getConnection();
             stmt = con.createStatement();
             String SELECT = " SELECT *"
                     + " FROM UserData"
@@ -92,8 +85,6 @@ public class UserData {
                 userData = createUserFromResultSet(rs);
             }
 
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         }
