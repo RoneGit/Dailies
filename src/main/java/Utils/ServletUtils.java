@@ -28,10 +28,7 @@ import java.util.Map;
 public class ServletUtils {
     private static final String USER_MANAGER_ATTRIBUTE_NAME = "userManager";
     private static final String USER_MANAGER = "usermanager";
-
-    //private static final String DbPath= "jdbc:sqlite:C:/Users/Ron/IdeaProjects/Dailies/users.db";
     private static String DbPath = "";
-    //private static  String DbPath2= "jdbc:sqlite:C:/Users/OferMe/IdeaProjects/sadna/Dailies 10.8/Dailies/users.db";
 
     public enum NotificationType {
         jobRegistration(0);
@@ -53,19 +50,6 @@ public class ServletUtils {
         return (UserManager) servletContext.getAttribute(USER_MANAGER);
     }
 
-    public static void setDbPath2()
-    {
-        String path = null;
-        try {
-            path = ServletUtils.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-
-        path += "Resources/users.db";
-        DbPath = "jdbc:sqlite:" + path;
-    }
-
     public static void setDbPath()
     {
         String path = null;
@@ -84,26 +68,6 @@ public class ServletUtils {
 
         path = sb.toString();
         path += "/Resources/users.db";
-        DbPath = "jdbc:sqlite:" + path;
-    }
-    public static void setDbPath3()
-    {
-        String path = null;
-        try {
-            path = ServletUtils.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-        StringBuilder sb = new StringBuilder(path);
-        sb.delete(0, 1);
-        for (int i = 0; i <= 3; i++) {
-            int start = sb.lastIndexOf("/");
-            int end = sb.length();
-            sb = sb.delete(start, end);
-        }
-
-        path = sb.toString();
-        path += "/users.db";
         DbPath = "jdbc:sqlite:" + path;
     }
 
