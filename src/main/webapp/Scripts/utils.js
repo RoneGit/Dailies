@@ -113,6 +113,7 @@ function showUserProfile(btn) {
     var id =$(btn).attr("data-id");
     window.location.replace("/profilePage.html?user_id=" + id)
 }
+
 function showBusinessProfile(btn) {
     var id =$(btn).attr("data-id");
     window.location.replace("/businessProfilePage.html?business_id=" + id)
