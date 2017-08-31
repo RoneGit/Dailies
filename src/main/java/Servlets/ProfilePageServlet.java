@@ -63,6 +63,12 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
                         case "registerRecommendation":
                             registerRecommendation(request,response);
                             break;
+                        case "addFriend":
+                            addFriend(request,response);
+                            break;
+                        case "getFriends":
+                            getFriends(request,response);
+                            break;
                     }
                 }
 
@@ -454,6 +460,69 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
         ServletUtils.returnJson(request,response,recommendationList);
     }
 
+    private void addFriend(HttpServletRequest request, HttpServletResponse response) {
+        Connection con = null;
+        Statement stmt = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        int flag = 0;
+        try {
+            String currentUserShownId = request.getParameter("currentUserShownId");
+            String currentLogedInId = request.getParameter("currentUserLogedInId");
+            con = ServletUtils.getConnection();
+            stmt = con.createStatement();
+            String SELECT = " SELECT *"
+                    + " FROM friends"
+                    + " WHERE firstUserId ='" + currentLogedInId + "' AND secondUserId='" + currentUserShownId + "'";
+
+            rs = stmt.executeQuery(SELECT);
+            while (rs.next()) {
+                flag = 1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            try { rs.close(); } catch (Exception e) {  e.printStackTrace(); }
+            try { stmt.close(); } catch (Exception e) {  e.printStackTrace(); }
+            try { con.close(); } catch (Exception e) {  e.printStackTrace(); }
+            try { pstmt.close(); } catch (Exception e) {  e.printStackTrace(); }
+        }
+        ServletUtils.returnJson(request,response,flag);
+    }
+
+    private void getFriends(HttpServletRequest request, HttpServletResponse response) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        List<Pair<UserData, Integer>> friendListWithLogedInData = null;
+        int flag = 0;
+        try {
+            String currentUserShownId = request.getParameter("currentUserShownId");
+            String currentLogedInId = request.getParameter("currentUserLogedInId");
+            con = ServletUtils.getConnection();
+            stmt = con.createStatement();
+            String SELECT = " SELECT *"
+                    + " FROM friends"
+                    + " WHERE firstUserId ='" + currentLogedInId + "'";
+
+            rs = stmt.executeQuery(SELECT);
+            friendListWithLogedInData = new ArrayList<Pair<UserData, Integer>>();
+            while (rs.next()) {
+                UserData currUser = UserData.getUserInfoFromDbById(Integer.toString(rs.getInt("secondUserId")));
+                Integer isLogedIn = ServletUtils.getUserManager(getServletContext()).isUserLogedIn(currUser.email);
+                friendListWithLogedInData.add(Pair.of(currUser, isLogedIn));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            try { rs.close(); } catch (Exception e) {  e.printStackTrace(); }
+            try { stmt.close(); } catch (Exception e) {  e.printStackTrace(); }
+            try { con.close(); } catch (Exception e) {  e.printStackTrace(); }
+        }
+        ServletUtils.returnJson(request,response,friendListWithLogedInData);
+    }
 
     @Override
     protected void doPost(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
