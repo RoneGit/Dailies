@@ -158,8 +158,8 @@ public class ServletUtils {
         Map<String, String> urls = null;
         urls = new HashMap<String, String>();
         for (Part part : parts) {
-            if (part.getName() != null) {
-                String content = part.getContentType();
+            String content = part.getContentType();
+            if (content != null && content != "") {
                 File file = saveFile(part);
                 urls.put(part.getName(), uploadFileToCloudinary(file, isPicture(content)));
             }
