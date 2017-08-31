@@ -1,6 +1,5 @@
 html,body{
     background-color: transparent;
-    /*width: 280px;*/
     height: auto;
     margin-left: 5px;
 }
@@ -20,4 +19,12 @@ html,body{
     width: auto;
     height:auto;
     padding: 0px;
+}
+
+#chosen_select{
+    width: auto;
+}
+
+#locationSelect_chosen {
+    padding-bottom: 5px;
 }
