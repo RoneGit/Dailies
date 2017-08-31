@@ -2,21 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Notifications</title>
+    <title>Search Results Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
     <link rel="stylesheet" type="text/css" href="CSS/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="CSS/style.css"/>
-    <link rel="stylesheet" type="text/css" href="CSS/notificationsPage.css"/>
     <link rel="stylesheet" type="text/css" href="CSS/businessProfilePage.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
 
     <script src="Scripts/jquery-3.1.1.js"></script>
-    <script src="Scripts/notificationPage.js"></script>
     <script src="Scripts/utils.js"></script>
-    <script src="Scripts/notifier.js"></script>
     <script src="Scripts/currentUser.js"></script>
     <script src="Scripts/bootstrap.min.js"></script>
+    <script src="Scripts/notifier.js"></script>
+    <script src="Scripts/searchResultsPage.js"></script>
 </head>
 <body>
-
 <div class="profilePage row">
     <nav class="navbar navbar-default">
         <div class="container-fluid">
@@ -63,30 +63,15 @@
     </nav>
 </div>
 
+
 <div class="col-lg-7 col-lg-offset-3">
-    <!--<h2 id="editPageTitle">Edit Business Page</h2>-->
     <div class="panel panel-default">
-        <div id="businessInfoPanelHeader" class="panel-heading">
+        <div id="resultsPanelHeader" class="panel-heading">
             <div class="row">
-                <div id="businessInfoPanelHeaderTextDiv" class="linkForm"><h4>My Notifications</h4></div>
-                <div align="right">
-                    <button class="btn btn-default btn-md" onclick="">Refresh</button>
-                </div>
+                <div id="resultsPanelHeaderTextDiv" class="linkForm"><h4>Search Results</h4></div>
             </div>
         </div>
-        <div id="businessInfoPanelBody" class="panel-body">
-
-            <div id="userNotificationsDiv">
-            </div>
-
-            <div id="businessNotificationsDiv">
-                <div id="pendingNotifications"></div>
-                <hr>
-                <div id="notPendingNotifications"></div>
-            </div>
-
-        </div>
-
+        <div id="resultsPanelBody" class="panel-body"></div>
     </div>
 </div>
 </body>
