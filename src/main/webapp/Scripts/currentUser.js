@@ -12,15 +12,15 @@ $(function () {
         data: {request_type: "getUserDataByEmailFromSession"},
         success: function (user) {
             if (user != null) {
+                console.log("currentUserLoggedIn");
                 currentUserLoggedIn = user;
                 document.getElementById('userButton').innerHTML = capitalizeFirstLetter(user.fname);
-            }
-            else {
-                window.location.replace("index.html");
+                if (userData.profilePic != null && userData.profilePic != "")
+                    document.getElementById('smallProfilePic').src = userData.profilePic;
             }
         }
     });
-    showOrHideMyBusinessesInMainNavBar();
+
 });
 
 //added
@@ -51,6 +51,24 @@ function doesUserOwnBusinesses(handleResult) {
         }
     });
 
+}
+
+function logOut() {
+    $.ajax({
+        url: "login",
+        type: 'POST',
+        data: {
+            request_type: "logOut"
+        },
+        success: function (res) {
+            if(res){
+                setCookie("id",currentUserLoggedIn.id,0);
+                currentUserLoggedIn=null;
+                window.location.replace("index.html");
+            }
+
+        }
+    });
 }
 
 

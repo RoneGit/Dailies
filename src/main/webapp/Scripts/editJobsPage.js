@@ -80,7 +80,7 @@ function printJob3(job) {
     var div = $('#job' + job.jobId);
     // language=HTML
     div.append(
-        '<a href="#collapse'+job.jobId+'" data-toggle="collapse">'+job.name+'</a><span style="position: absolute;right:0;" class="col-md-5">Posted On: <small>'+job.postDate+' on '+job.postTime+'</small></span>\n' +
+        '<a href="#collapse'+job.jobId+'" data-toggle="collapse">'+job.name+'</a><span style="float:right;" class="col-md-5">Posted On: <small>'+job.postDate+' on '+job.postTime+'</small></span>\n' +
 
         '<div id="collapse'+job.jobId+'" class="collapse">\n' +
         '    <form  method="POST"  action="/editBusinessServlet">\n' +

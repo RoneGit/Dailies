@@ -138,7 +138,7 @@ function printFeedback(feedback) {
     // language=HTML
     div.append(
         '<a href="#collapse' + feedback.id + '" data-toggle="collapse">' + feedback.title + '</a>' +
-        '<span style="position: absolute;right:0;" class="col-md-6"><span class="col-md-4">Posted By: </span> <small>' + userLink + ' ' + feedback.uploadDate + ' on ' + feedback.uploadTime + '</small></span>\n' +
+        '<span style="float:right;" class="col-md-6"><span class="col-md-4">Posted By: </span> <small>' + userLink + ' ' + feedback.uploadDate + ' on ' + feedback.uploadTime + '</small></span>\n' +
         '<div id="collapse' + feedback.id + '" class="collapse">\n' +
         '<div>' + feedback.feedback + '</div>' +
 
@@ -197,13 +197,14 @@ function printJobOffer(job) {
             job_id: job.jobId
         },
         success: function (applicantList) {
+            console.log("been heeeeeeeereeeeee!!!!");
             $("#businessInfoPanelBody").append('<div id="job' + job.jobId + '"></div>');
             var div = $("#job" + job.jobId);
 
             // language=HTML
             div.append(
                 '<a href="#collapse' + job.jobId + '" data-toggle="collapse">' + job.name + '</a>' +
-                '<span style="position: absolute;right:0;" class="col-md-5">Posted On: <small>' + job.postDate + ' on ' + job.postTime + '</small></span>\n' +
+                '<span style="float:right;" class="col-md-5">Posted On: <small>' + job.postDate + ' on ' + job.postTime + '</small></span>\n' +
                 '<div id="collapse' + job.jobId + '" class="collapse">\n' +
                 '<div class="row"><label class="control-label col-sm-2">Location: </label>' + job.jobLocation + '</div>' +
                 '<div class="row"><label class="control-label col-sm-2">From: </label>' + job.startDate + '  ' + job.startTime + '</div>' +
@@ -213,7 +214,7 @@ function printJobOffer(job) {
                 '<div class="row"><label class="control-label col-sm-2">Applicants: </label>' + '<div id="applicantsListDiv"></div>' + '</div>' +
                 '</div>');
             div.append('<hr class="hr-soften">');
-            console.log("Job: "+job.jobId);
+            console.log(job);
             applicantList.forEach(function (applicant) {
 
                 if(applicant!=null) {

@@ -70,11 +70,12 @@ function removePost(post) {
 function deleteWall() {
     var siblingToDel = $("#insert").siblings();
 
-    while (siblingToDel){
+    while (siblingToDel) {
         siblingToDel.remove();
     }
 
 }
+
 $(document).on('click', '#buttonFilter', function () {
     //takes care of skills
     var titlesToFilter = 0;
@@ -84,15 +85,23 @@ $(document).on('click', '#buttonFilter', function () {
 
     //deleteWall();
 
-    if ($("#EnableStartDate")[0].checked) {startDate = $("#startDate").val();}
-    if ($("#EnableEndDate")[0].checked) {endDate = $("#endDate").val();}
-    if ($("#EnableLocation")[0].checked) {location = $("#jobLocation").val();}
-    if ($("#EnableSkills")[0].checked) {titlesToFilter = $(".chosen-select").val();}
+    if ($("#EnableStartDate")[0].checked) {
+        startDate = $("#startDate").val();
+    }
+    if ($("#EnableEndDate")[0].checked) {
+        endDate = $("#endDate").val();
+    }
+    if ($("#EnableLocation")[0].checked) {
+        location = $("#jobLocation").val();
+    }
+    if ($("#EnableSkills")[0].checked) {
+        titlesToFilter = $(".chosen-select").val();
+    }
 
-    if(startDate!=0 && startDate<currentDateYYYYMMDD()){
+    if (startDate != 0 && startDate < currentDateYYYYMMDD()) {
         alert("Can't work in the past");
     }
-    if(endDate!=0 && endDate<startDate){
+    if (endDate != 0 && endDate < startDate) {
         alert("Can't work to the past");
     }
     $.ajax({
@@ -167,8 +176,8 @@ function printJobOffer(job) {
       <div><b>' + job.details + '</b></div>\
       <div class="text-muted" > <small>posted on </small><small>' + job.postDate + '</small></div>\
       </div>\
-      <input type="hidden" id="jobId" value="'+ job.jobId +'">\
-	    <button onclick="applyToJob()" class="btn btn-outline btn-primary btn-large">Apply To Job</button>\
+      <input type="hidden" id="jobId" value="' + job.jobId + '">\
+	    <button class="btn btn-primary btn-xs" id="applybtn"  data-business-id="' + job.business_id + '" data-job-id="' + job.jobId + '" onclick="applyJobClick(this)">apply</button>\
       </div></div>').insertAfter("#insert").hide().slideDown();
 }
 
@@ -186,35 +195,22 @@ function getCurrentDateAndTIme() {
     return res;
 }
 
-function applyToJob() {
-    var jobId =  $('#jobId').val();
+function applyJobClick(btn) {
     $.ajax({
-        url: "FeedServlet",
+        url: 'FeedServlet',
         type: 'POST',
         data: {
             request_type: "applyToJob",
-            userId: currentUserLoggedIn.id,
-            jobId: jobId
+            job_id: $(btn).attr("data-job-id"),
+            business_id: $(btn).attr("data-business-id"),
+            owner_id: $(btn).attr("data-owner-id")
         },
-        success: function (listOfJobs) {
-
+        success: function (data) {
+            if (data) {
+                alert("Applied");
+            }
         }
-    })
+    });
+
 }
-/*
- $(document).on('click', '#bt', function () {
- var data = {
- resource_id: 'd4901968-dad3-4845-a9b0-a57d027f11ab', // the resource id
- limit: 5, // get 5 results
- q:'RAMAT'  // query for 'RAMAT'
- };
- $.ajax({
- url: 'https://data.gov.il/api/action/datastore_search',
- data: data,
- dataType: 'jsonp',
- success: function (data) {
- alert('Total results found: ' + data.result.total)
- }
- });
- });
- */
+

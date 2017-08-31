@@ -100,7 +100,7 @@ function registerUpdates() {
                     window.location.replace("profilePage.html");
             },
             error: function () {
-                console.log("second ajax error ");
+                window.location.replace("profilePage.html");
 
             }
         });

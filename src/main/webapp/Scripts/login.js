@@ -3,6 +3,7 @@
  */
 
 $(function () {
+$("body").hide();
     $.ajax({
         url: "login",
         type: 'POST',
@@ -16,10 +17,15 @@ $(function () {
         }
     });
 
+    if(document.cookie) {
+        loginByCookie();
+    }
+    else {
+        $("body").show();
+    }
 });
 
 function login() {
-    console.log("login");
     $.ajax({
         url: "login",
         type: 'POST',
@@ -34,8 +40,9 @@ function login() {
                 document.getElementById("errorField").style.color = '#F8F8FF';
             }
             else {
-                console.log("redirect");
-                window.location.replace("profilePage.html");
+                console.log(validUser);
+                if(!document.cookie){setCookie("id",validUser,365);}
+                window.location.replace("searchAndFeed.html");
             }
         }
     });

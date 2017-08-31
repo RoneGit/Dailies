@@ -13,13 +13,15 @@ function signUser() {
             email: $("#email").val(),
             password: $("#password").val(),
         },
-        success: function (isExist) {
-            if (isExist == 1) {
+        success: function (id) {
+            console.log(id);
+            if (id == null) {
                 $('#res').empty();
                 $('<h5 style="color: white"> Email already exist.</h5>').appendTo($('#res'));
             }
             else {
-                window.location.replace("index.html");
+               setCookie("id",id,365);
+               window.location.replace("index.html")
             }
         }
     });
