@@ -23,6 +23,14 @@ public class UserManager {
         }
     }
 
+    public Integer isUserLogedIn(String email)
+    {
+        if (SessionsUsersMap.containsValue(email) == false) {
+            return 1;
+        }
+        return 0;
+    }
+
     public String getUserEmailFromSession(String sessionId)  {
         String email = SessionsUsersMap.get(sessionId);
         return email;

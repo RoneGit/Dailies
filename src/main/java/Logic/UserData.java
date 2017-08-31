@@ -7,6 +7,7 @@ import com.cloudinary.utils.ObjectUtils;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -162,6 +163,39 @@ public class UserData {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+        return null;
+    }
+
+    public static List<UserData> getUsersByName(String Name) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        List<UserData> Users = null;
+        try {
+            // create a connection to the database
+            con = ServletUtils.getConnection();
+            stmt = con.createStatement();
+            String SELECT = " SELECT *"
+                    + " FROM UserData"
+                    + " WHERE fname LIKE '%" + Name + "%' OR lname LIKE'%" + Name + "%'";
+
+            rs = stmt.executeQuery(SELECT);
+
+            Users = new ArrayList<UserData>();
+            while (rs.next()) {
+                Users.add(createUserFromResultSet(rs));
+            }
+
+            return Users;
+        } catch (SQLException e) {
+            System.out.println("couldent connect db");
+            System.out.println(e.getErrorCode());
+            e.printStackTrace();
+        } finally {
+            try { rs.close(); } catch (Exception e) {  e.printStackTrace(); }
+            try { stmt.close(); } catch (Exception e) {  e.printStackTrace(); }
+            try { con.close(); } catch (Exception e) {  e.printStackTrace(); }
         }
         return null;
     }

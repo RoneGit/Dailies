@@ -93,6 +93,47 @@ public class Bussiness {
         return null;
     }
 
+    public static List<Bussiness> getBusinessesByName(String businessName) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        List<Bussiness> Busnisses = null;
+        try {
+            // create a connection to the database
+            con = ServletUtils.getConnection();
+            stmt = con.createStatement();
+            String SELECT = " SELECT *"
+                    + " FROM businesses"
+                    + " WHERE name LIKE '%" + businessName + "%'";
+            rs = stmt.executeQuery(SELECT);
+
+            Busnisses = new ArrayList<Bussiness>();
+            while (rs.next()) {
+                Busnisses.add(new Bussiness(rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("city"),
+                        rs.getString("street"),
+                        rs.getInt("number"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getString("aout"),
+                        rs.getInt("owner_id"),
+                        rs.getString("profilePic")));
+            }
+
+            return Busnisses;
+        } catch (SQLException e) {
+            System.out.println("couldent connect db");
+            System.out.println(e.getErrorCode());
+            e.printStackTrace();
+        } finally {
+            try { rs.close(); } catch (Exception e) {  e.printStackTrace(); }
+            try { stmt.close(); } catch (Exception e) {  e.printStackTrace(); }
+            try { con.close(); } catch (Exception e) {  e.printStackTrace(); }
+        }
+        return null;
+    }
+
     public static Bussiness getBusinessInfo(HttpServletRequest request, HttpServletResponse response) {
 
         String businessId = request.getParameter("business_id");
