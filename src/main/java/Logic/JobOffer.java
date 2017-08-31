@@ -4,6 +4,7 @@ import Utils.ServletUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class JobOffer {
@@ -34,6 +35,23 @@ public class JobOffer {
         requirements = _requirements;
         postDate = _postDate;
         postTime = _postTime;
+    }
+
+    public JobOffer(List<Object> row) {
+
+        business_id = (Integer) row.get(0);
+        details = (String) row.get(1);
+        startDate = new Date((Long)row.get(2));
+        endDate = new Date((Long)row.get(3));
+        jobLocation = (String) row.get(4);
+        startTime = (String) row.get(5);
+        endTime = (String) row.get(6);
+        requirements = (String) row.get(7);
+        name = (String) row.get(8);
+        postDate = new Date((Long)row.get(9));
+        postTime = (String) row.get(10);
+        jobId = (Integer) row.get(11);
+
     }
 
     public Integer getBusinessId() {

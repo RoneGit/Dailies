@@ -46,12 +46,12 @@ public class Apply {
                 applies.add(
                         new Apply(
                                 rs.getInt("id"),
-                                rs.getInt("app_id"),
+                                rs.getInt("applicant_id"),
                                 rs.getInt("job_id"),
-                                rs.getBoolean("is_finished"),
+                                rs.getInt("is_finished")==1,
                                 rs.getDate("app_date"),
                                 rs.getString("app_time"),
-                                rs.getBoolean("is_hired")));
+                                rs.getInt("is_hired")==1));
 
             }
             return applies;

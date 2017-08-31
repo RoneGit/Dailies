@@ -38,6 +38,20 @@ public class Bussiness {
         profilePicUrl=_profilePicUrl;
         owner = UserData.getUserInfoFromDbById(_owner_id.toString());
     }
+    public Bussiness(List<Object> row) {
+
+        name= (String) row.get(0);
+        city= (String)      row.get(1);
+        street= (String)    row.get(2);
+        phone= (String)     row.get(3);
+        owner_id= (Integer) row.get(4);
+        about= (String)     row.get(5);
+        number= (Integer)   row.get(6);
+        email= (String)     row.get(7);
+        id= (Integer)       row.get(8);
+        profilePicUrl= (String) row.get(9);
+        owner = UserData.getUserInfoFromDbById(owner_id.toString());
+    }
 
     public static Bussiness getBusinessInfoById(String businessId) {
         Connection con = null;

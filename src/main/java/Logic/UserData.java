@@ -7,6 +7,7 @@ import com.cloudinary.utils.ObjectUtils;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,6 +34,18 @@ public class UserData {
         about = _about;
         CV = _CV;
         profilePic = _profilePic;
+    }
+
+    public UserData(List<Object> row) {
+        id = (Integer) row.get(0);
+        fname = (String) row.get(1);
+        lname = (String) row.get(2);
+        email = (String) row.get(3);
+        address = (String) row.get(5);
+        skills = (String) row.get(6);
+        about = (String) row.get(7);
+        CV = (String) row.get(8);
+        profilePic = (String) row.get(9);
     }
 
     //added
@@ -116,25 +129,40 @@ public class UserData {
         return userData;
     }
 
-    public static String uploadFileToCloudinary(File file, boolean picOrDoc) {
-        String url = null;
-        try {
-            String Type;
-            if (picOrDoc == true) Type = "image";
-            else Type = "raw";
-            Map map = ObjectUtils.asMap(
-                    "cloud_name", "dailies",
-                    "api_key", "385538641818241",
-                    "api_secret", "_vtuycYvadSdGkpHAa3hSIgWoOg");
-            Cloudinary cloudinary = new Cloudinary(map);
-            Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.asMap(
-                    "resource_type", Type));
-            url = uploadResult.get("url").toString();
-        } catch (IOException e) {
+    public static String getUserEmailById(String userId) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try{
+            con = ServletUtils.getConnection();
+            stmt = con.createStatement();
+
+            String SELECT = " SELECT email"
+                    + " FROM UserData"
+                    + " WHERE id='" + userId + "'";
+            rs = stmt.executeQuery(SELECT);
+            if (rs.next()) {
+                return rs.getString("email");
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+        }finally {
+            try {
+                rs.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                stmt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        return url;
+        return null;
     }
 }

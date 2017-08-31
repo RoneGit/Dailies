@@ -14,7 +14,7 @@ public class UserManager {
     private Map<String, String> SessionsUsersMap;
 
     public UserManager() {
-        SessionsUsersMap = new HashMap<String, String>();
+        SessionsUsersMap = new HashMap<>();
     }
 
     public void addNewUserSession(String userNameFromSession, String sessionId) {
@@ -26,5 +26,11 @@ public class UserManager {
     public String getUserEmailFromSession(String sessionId)  {
         String email = SessionsUsersMap.get(sessionId);
         return email;
+    }
+    public Boolean isSessionExist(String sessionId){
+        return SessionsUsersMap.containsKey(sessionId);
+    }
+    public void removeNewUserSession(String sessionID){
+        SessionsUsersMap.remove(sessionID);
     }
 }
