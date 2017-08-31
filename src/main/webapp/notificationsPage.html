@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Notifications Page</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <title>Notifications</title>
     <link rel="stylesheet" type="text/css" href="CSS/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="CSS/style.css"/>
+    <link rel="stylesheet" type="text/css" href="CSS/notificationsPage.css"/>
     <link rel="stylesheet" type="text/css" href="CSS/businessProfilePage.css"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
 
     <script src="Scripts/jquery-3.1.1.js"></script>
-    <!--<script src="Scripts/editJobsPage.js"></script>-->
+    <script src="Scripts/notificationPage.js"></script>
     <script src="Scripts/utils.js"></script>
+    <script src="Scripts/notifier.js"></script>
     <script src="Scripts/currentUser.js"></script>
     <script src="Scripts/bootstrap.min.js"></script>
 </head>
@@ -30,13 +30,28 @@
                     <ul class="dropdown-menu">
                         <li><a href="profilePage.html">Profile Page</a></li>
                         <li><a href="editProfilePage.html">Edit Profile</a></li>
-                        <li id="manageBusinesses"><a href="#">My Businesses</a></li>
+                        <li id="manageBusinesses"><a href="manageBusinessesPage.html">My Businesses</a></li>
                     </ul>
                 </li>
-                <li><a href="#">Work Search</a></li>
+                <li><a href="searchAndFeed.html">Work Search</a></li>
                 <li><a href="#">Find Workers</a></li>
                 <li><a href="notificationsPage.html">Notifications</a></li>
                 <li><a href="#">Page 4</a></li>
+                <li id="msgNotifier" class="col-md-2">
+                    <div class="container">
+                        <button class="btn btn-default btn-lg btn-link" onclick="notifierClick()" style="font-size:26px;">
+                            <i class="glyphicon glyphicon-comment custom"></i>
+                        </button>
+                        <span class="badge badge-notify"></span>
+                    </div>
+                </li>
+                <li id="logOut" class="col-md-1">
+                    <div class="container">
+                        <button class="btn btn-default btn-link" onclick="logOut()" >
+                            Log Out
+                        </button>
+                    </div>
+                </li>
             </ul>
         </div>
     </nav>
@@ -54,8 +69,15 @@
             </div>
         </div>
         <div id="businessInfoPanelBody" class="panel-body">
-            <div id="userNotificationsDiv"></div>
-            <div id="businessNotificationsDiv"></div>
+
+            <div id="userNotificationsDiv">
+            </div>
+
+            <div id="businessNotificationsDiv">
+                <div id="pendingNotifications"></div>
+                <hr>
+                <div id="notPendingNotifications"></div>
+            </div>
 
         </div>
 

@@ -1,4 +1,5 @@
-<html class=" -ms-">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -16,11 +17,11 @@
     <script src="Scripts/jquery-3.1.1.js"></script>
     <script src="Scripts/bootstrap.min.js"></script>
     <script src="http://harvesthq.github.io/chosen/chosen.jquery.js"></script>
-    <script src="Scripts/feed.js"></script>
+    <script src="Scripts/searchAndFeed.js"></script>
     <script src="Scripts/utils.js"></script>
-    <script src="Scripts/currentUser.js"></script>
     <script src="Scripts/notifier.js"></script>
-
+    <script src="Scripts/currentUser.js"></script>
+    <script src="Scripts/cookies.js"></script>
 
 </head>
 <body style="width: auto">
@@ -37,7 +38,7 @@
                     <ul class="dropdown-menu">
                         <li><a href="profilePage.html">Profile Page</a></li>
                         <li><a href="editProfilePage.html">Edit Profile</a></li>
-                        <li id="manageBusinesses"><a href="#">My Businesses</a></li>
+                        <li id="manageBusinesses"><a href="manageBusinessesPage.html">My Businesses</a></li>
                     </ul>
                 </li>
                 <li><a href="searchAndFeed.html">Work Search</a></li>
@@ -46,10 +47,17 @@
                 <li><a href="#">Page 4</a></li>
                 <li id="msgNotifier" class="col-md-2">
                     <div class="container">
-                        <button class="btn btn-default btn-lg btn-link" style="font-size:26px;">
+                        <button class="btn btn-default btn-lg btn-link" onclick="notifierClick()" style="font-size:26px;">
                             <i class="glyphicon glyphicon-comment custom"></i>
                         </button>
-                        <span class="badge badge-notify">3</span>
+                        <span class="badge badge-notify"></span>
+                    </div>
+                </li>
+                <li id="logOut" class="col-md-1">
+                    <div class="container">
+                        <button class="btn btn-default btn-link" onclick="logOut()" >
+                            Log Out
+                        </button>
                     </div>
                 </li>
             </ul>
@@ -63,42 +71,33 @@
             <div id="filterJobPanelHead" class="panel-heading">Filter Jobs</div>
             <div id="filterJobPanelBody" class="panel-body">
                 <div class="row ">
-                    <input class="col-sm-1 EnableBox" type="checkbox" value="1" id="EnableStartDate" name="check"
-                           onchange="checkBoxChange(this)" checked/>
                     <label class="col-sm-2 control-label" for="startDate">From:</label>
                     <input class="col-sm-4" name="startDate" id="startDate" required="" type="date"  style="background-color: white;color: black">
-                    <!--<label class="col-sm-2 control-label" for="startTime">To:</label>
-                    <div class="col-sm-4">
-                        <input name="startTime" id="startTime" required="" type="time" value="10:00">
-                    </div>-->
+                    <button type="button" id="ClearDate" class="col-sm-5 btn btn-default" style="width: auto;margin-left: 10px" onclick="ClearDates()">Clear Dates</button>
                 </div>
                 <div class="row ">
-                    <input class="col-sm-1 EnableBox" type="checkbox" value="1" id="EnableEndDate" name="check"
-                           onchange="checkBoxChange(this)" checked/>
                     <label class="col-sm-2 control-label" for="endDate">To:</label>
-
                     <input class="col-sm-4" name="endDate" id="endDate" required="" type="date" style="background-color: white; color: black">
-
-                    <!--<label class="col-sm-2 control-label" for="endTime">Time:</label>
-                    <!--<div class="col-sm-4">
-                        <input name="endTime" id="endTime" required="" type="time" value="21:00">
-                    </div>-->
                 </div>
                 <div class="row">
-                    <input class="col-sm-1 EnableBox" type="checkbox" value="1" id="EnableLocation" name="check"
-                           checked onchange="checkBoxChange(this)"/>
-                    <label class="col-sm-2 control-label" for="jobLocation">Location:</label>
-
+                    <!--<label class="col-sm-2 control-label" for="jobLocation">Location:</label>
                     <input class="col-sm-10" name="jobLocation" class="form-control" id="jobLocation" required=""
-                           type="text" placeholder="Job Location" style="background-color: white;color: black">
+                           type="text" placeholder="Job Location" style="background-color: white;color: black">-->
+                    <div class="row1">
+                        <div class="col-md-10">
+                            <label class="col-sm-3 control-label" for="locationSelect">location:</label>
+                            <select id="locationSelect" data-placeholder="Click To Select Location" multiple
+                                    class="chosen-select chosen-ltr">
+                                <option id="optionL0"></option>
+                            </select>
+                        </div>
+                    </div>
 
                 </div>
                 <div class="row">
                     <div class="row1">
                         <div class="col-md-10">
-                            <input class="col-sm-1 EnableBox" type="checkbox" value="1" id="EnableSkills" name="check"
-                                   checked onchange="checkBoxChange(this)"/>
-                            <label class="col-sm-3 control-label" for="jobsSelect">Type of job:</label>
+                            <label class="col-sm-4 control-label" for="jobsSelect" style="padding-top: 5px">Type of job:</label>
                             <select id="jobsSelect" data-placeholder="Click To Select Your Skills" multiple
                                     class="chosen-select chosen-ltr">
                                 <option id="option0"></option>
@@ -106,9 +105,8 @@
                         </div>
                     </div>
                 </div>
-                <button type="button" id="buttonFilter" class="btn btn-default" style="width: auto;float: right">Get
-                    Jobs
-                </button>
+                <button type="button" id="buttonFilter" class="btn btn-default" style="width: auto;float: right">Get Jobs</button>
+                <button type="button" id="LoadMore" class="btn btn-default" style="width: auto;float: right">Lode more</button>
             </div>
         </div>
     </div>

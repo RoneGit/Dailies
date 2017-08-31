@@ -10,9 +10,10 @@
     <script src="Scripts/jquery-3.1.1.js"></script>
     <script src="Scripts/profilePage.js"></script>
     <script src="Scripts/utils.js"></script>
+    <script src="Scripts/notifier.js"></script>
+
     <script src="Scripts/currentUser.js"></script>
     <script src="Scripts/bootstrap.min.js"></script>
-    <script src="Scripts/notifier.js"></script>
 
 </head>
 <body>
@@ -24,12 +25,16 @@
             </div>
             <ul class="nav navbar-nav navbar-left">
                 <li class="dropdown">
-                    <a id="userButton" class="dropdown-toggle" aria-expanded="false" href="#" data-toggle="dropdown">User<span
-                            class="caret"></span></a>
+                    <a id="userButton" class="dropdown-toggle" aria-expanded="false" href="#" data-toggle="dropdown">
+                        <img id="smallProfilePic"
+                             src="http://res.cloudinary.com/ronerez/image/upload/v1502455157/empty_profile_it5elf.png"
+                             class="img-rounded" alt="Cinque Terre" width="20" height="20">
+                        User<span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="profilePage.html">Profile Page</a></li>
                         <li><a href="editProfilePage.html">Edit Profile</a></li>
-                        <li id="manageBusinesses"><a href="#">My Businesses</a></li>
+                        <li id="manageBusinesses"><a href="manageBusinessesPage.html">My Businesses</a></li>
+                        <li><a onclick="logOut()">Logout</a></li>
                     </ul>
                 </li>
                 <li><a href="searchAndFeed.html">Work Search</a></li>
@@ -41,7 +46,14 @@
                         <button class="btn btn-default btn-lg btn-link" onclick="notifierClick()" style="font-size:26px;">
                             <i class="glyphicon glyphicon-comment custom"></i>
                         </button>
-                        <span class="badge badge-notify">3</span>
+                        <span class="badge badge-notify"></span>
+                    </div>
+                </li>
+                <li id="logOut" class="col-md-1">
+                    <div class="container">
+                        <button class="btn btn-default btn-link" onclick="logOut()" >
+                            Log Out
+                        </button>
                     </div>
                 </li>
             </ul>
