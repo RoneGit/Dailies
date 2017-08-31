@@ -23,6 +23,7 @@ public class SignInServlet extends javax.servlet.http.HttpServlet {
         Statement stmt = null;
         ResultSet rs = null;
         try {
+            // create a connection to the database
             con = ServletUtils.getConnection();
             String fname = request.getParameter("fname");
             String lname = request.getParameter("lname");
@@ -33,22 +34,26 @@ public class SignInServlet extends javax.servlet.http.HttpServlet {
                     + " FROM UserData"
                     + " WHERE email='" + email + "'";
             rs = stmt.executeQuery(SELECT);
-            int flag = 0;
             while (rs.next()) {
                 //user exists
-                flag = 1;
-                ServletUtils.returnJson(request, response, flag);
+                ServletUtils.returnJson(request, response, null);
             }
-            try (PrintWriter out = response.getWriter()) {
-                String sql = "INSERT INTO UserData(fname,lname,email, password ) " +
-                        "VALUES('" + fname + "','" + lname + "' , '" + email + "' ,'" + password + "')";
-                PreparedStatement pstmt = con.prepareStatement(sql);
-                pstmt.executeUpdate();
-                ServletUtils.returnJson(request, response, flag);
+
+            String sql = "INSERT INTO UserData(fname,lname,email, password ) " +
+                    "VALUES('" + fname + "','" + lname + "' , '" + email + "' ,'" + password + "')";
+            stmt.executeUpdate(sql);
+
+            sql=" SELECT id" +
+                    " From UserData " +
+                    "WHERE fname='"+fname+"' AND lname='"+lname+"' AND email='"+email+"' AND password='"+password+"'";
+
+            rs=stmt.executeQuery(sql);
+            if(rs.next()){
+                ServletUtils.returnJson(request, response, rs.getInt(1));
             }
+
+
         } catch (SQLException e) {
-            System.out.println("couldent connect db");
-            System.out.println(e.getErrorCode());
             e.printStackTrace();
         } finally {
             try {

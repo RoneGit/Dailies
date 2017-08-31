@@ -41,9 +41,6 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
                 case "redirectToEditBusinessById":
                     redirectToEditBusinessById(request, response);
                     break;
-                /*case "registerBusinessTexts":
-                    registerBusinessTexts(request, response, urls.get("profilePic"));
-                    break;*/
                 case "updateJob":
                     updateJobOffer(request, response);
                     break;
@@ -53,9 +50,6 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
                 case "addJobOffer":
                     addJobOffer(request, response);
                     break;
-                /*case "addNewBusiness":
-                    addNewBusiness(request, response);
-                    break;*/
             }
 
         }

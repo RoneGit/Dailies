@@ -1,9 +1,6 @@
 package Servlets;
 
-import Logic.Bussiness;
-import Logic.JobOffer;
-import Logic.UserData;
-import Logic.UserManager;
+import Logic.*;
 import Utils.ServletUtils;
 
 import javax.servlet.ServletException;
@@ -12,51 +9,60 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Map;
 
 /**
  * Created by Ron on 27-Aug-17.
  */
 
 @WebServlet(name = "notificationsPageServlet", urlPatterns = {"/notificationsPageServlet"})
-public class NotificationsPageServlet  extends javax.servlet.http.HttpServlet {
+public class NotificationsPageServlet extends javax.servlet.http.HttpServlet {
 
-    protected void processRequest(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException
-    {
+    protected void processRequest(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
         String requestType = request.getParameter("request_type");
         switch (requestType) {
             case "getUserNotifications":
-                getUserNotifications(request,response);
+                getUserNotifications(request, response);
+                break;
+            /*case "handleHireRequest":
+                handleHireRequest(request, response);
+                break;
+            case "handleRejectRequest":
+                handleRejectRequest(request, response);
+                break;*/
+            case "handleHireRejectRequest":
+                handleHireRejectRequest(request, response);
+                break;
+            case "getUnreadNotifications":
+                getUnreadNotifications(request, response);
                 break;
         }
     }
 
-    private void getUserNotifications(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException
-    {
+    private void getUnreadNotifications(HttpServletRequest request, HttpServletResponse response) {
         UserManager userManager = ServletUtils.getUserManager(getServletContext());
         String userEmail = userManager.getUserEmailFromSession(ServletUtils.getSessionId(request));
-        UserData user = UserData.getUserDataByEmail(userEmail);
+        UserData reciver = UserData.getUserDataByEmail(userEmail);
+
         Connection con = null;
         Statement stmt = null;
         ResultSet rs = null;
-        try{
-
-            // create a connection to the database
+        try {
             con = ServletUtils.getConnection();
             stmt = con.createStatement();
+            String SELECT = "SELECT COUNT(id) " +
+                    " FROM notifications " +
+                    " WHERE reciver_id=" + reciver.id +
+                    " And is_read=0 " +
+                    " GROUP BY reciver_id";
 
-            String SELECT = " SELECT id, name"
-                    + " FROM businesses"
-                    + " WHERE owner_id='" + user.getId() + "' ";
             rs = stmt.executeQuery(SELECT);
+            Integer res = null;
+            if (rs.next()) {
+                res = rs.getInt(1);
+            }
 
-
-
-        }catch (SQLException e) {
+            ServletUtils.returnJson(request, response, res);
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {
@@ -75,6 +81,167 @@ public class NotificationsPageServlet  extends javax.servlet.http.HttpServlet {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void handleHireRejectRequest(HttpServletRequest request, HttpServletResponse response) {
+
+        String notId = request.getParameter("not_id");
+        String applyId = request.getParameter("apply_id");
+        String isHire = request.getParameter("is_hire").equals("true") ? "1" : "0";
+
+        Connection con = null;
+        Statement stmt = null;
+        try {
+            con = ServletUtils.getConnection();
+            stmt = con.createStatement();
+
+            String UPDATE = "UPDATE apply SET" +
+                    " is_hired =" + isHire + ", isPending=0" +
+                    " WHERE id = " + Integer.parseInt(applyId) + ";";
+            stmt.executeUpdate(UPDATE);
+
+            UPDATE = "UPDATE notifications SET" +
+                    " is_approved= " + isHire + ", is_pending=0" +
+                    " WHERE id = " + Integer.parseInt(notId) + ";";
+            stmt.executeUpdate(UPDATE);
+
+            sendNotificationBackToSender(stmt, notId);
+            ServletUtils.returnJson(request, response, true);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                stmt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void sendNotificationBackToSender(Statement stmt, String notId) {
+        ResultSet rs = null;
+        try {
+            String SELECT = "SELECT * " +
+                    " FROM notifications " +
+                    " WHERE id=" + notId;
+
+            rs = stmt.executeQuery(SELECT);
+            NotificationBusiness n;
+            if (rs != null) {
+                n = new NotificationBusiness(rs);
+                rs.close();
+                String INSERT = "INSERT INTO notifications (type, business_id,is_read, is_approved, job_id, apply_id, is_pending, reciver_id, sender_id) " +
+                        "VALUES('" + Constants.NOTIFICATION_TYPE_RESPOSE_TO_USER + "','" + n.business_id + "' , '" + 0 + "' ,'" + 0 + "' ,'" + n.job_id + "' ,'" + n.apply_id + "' ,'" + n.isPending + "' ,'" +  n.sender_id + "' ,'" + n.reciver_id + "')";
+                stmt.executeUpdate(INSERT);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /*private void handleRejectRequest(HttpServletRequest request, HttpServletResponse response) {
+
+        String notId = request.getParameter("not_id");
+        String applyId = request.getParameter("apply_id");
+        Connection con = null;
+        Statement stmt = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            String url = ServletUtils.getDbPath();
+            con = DriverManager.getConnection(url);
+            stmt = con.createStatement();
+
+            String UPDATE = "UPDATE apply SET" +
+                    " is_hired = 0" +
+                    " WHERE id = " + Integer.parseInt(applyId) + ";";
+            stmt.executeUpdate(UPDATE);
+
+            UPDATE = "UPDATE notifications SET" +
+                    " is_approved= 0, is_pending=1" +
+                    " WHERE id = " + Integer.parseInt(notId) + ";";
+            stmt.executeUpdate(UPDATE);
+
+            ServletUtils.returnJson(request, response, true);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                stmt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
+    }
+
+    private void handleHireRequest(HttpServletRequest request, HttpServletResponse response) {
+
+        String notId = request.getParameter("not_id");
+        String applyId = request.getParameter("apply_id");
+        Connection con = null;
+        Statement stmt = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            String url = ServletUtils.getDbPath();
+            con = DriverManager.getConnection(url);
+            stmt = con.createStatement();
+
+            String UPDATE = "UPDATE apply SET" +
+                    " is_hired = 1" +
+                    " WHERE id = " + Integer.parseInt(applyId) + ";";
+            stmt.executeUpdate(UPDATE);
+
+            UPDATE = "UPDATE notifications SET" +
+                    " is_approved= 1, is_pending=1" +
+                    " WHERE id = " + Integer.parseInt(notId) + ";";
+            stmt.executeUpdate(UPDATE);
+
+            ServletUtils.returnJson(request, response, true);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                stmt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
+    }*/
+
+    private void getUserNotifications(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
+        UserManager userManager = ServletUtils.getUserManager(getServletContext());
+        String userEmail = userManager.getUserEmailFromSession(ServletUtils.getSessionId(request));
+        UserData user = UserData.getUserDataByEmail(userEmail);
+        ServletUtils.returnJson(request, response, NotificationBusiness.getUserNotificationsByUserIdFromDb(user.id));
     }
 
 

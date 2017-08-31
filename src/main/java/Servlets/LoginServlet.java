@@ -1,5 +1,6 @@
 package Servlets;
 
+import Logic.UserData;
 import Logic.UserManager;
 import Utils.ServletUtils;
 
@@ -44,41 +45,67 @@ public class LoginServlet extends javax.servlet.http.HttpServlet {
                 ServletUtils.setDbPath();
                 break;
             case "Login":
-                login(request,response);
+                login(request, response);
                 break;
+            case "loginByCookie":
+                loginByCookie(request, response);
+                break;
+            case "logOut":
+                logOut(request, response);
+                break;
+        }
+    }
+
+    private void logOut(HttpServletRequest request, HttpServletResponse response) {
+        ServletContext servletContext = getServletContext();
+        UserManager UserManager = ServletUtils.getUserManager(servletContext);
+        UserManager.removeNewUserSession(ServletUtils.getSessionId(request));
+        ServletUtils.returnJson(request,response,true);
+    }
+
+    private void loginByCookie(HttpServletRequest request, HttpServletResponse response) {
+
+        String id = request.getParameter("user_id");
+        String email= UserData.getUserEmailById(id);
+
+        ServletContext servletContext = getServletContext();
+        UserManager UserManager = ServletUtils.getUserManager(servletContext);
+        if(!UserManager.isSessionExist(ServletUtils.getSessionId(request))) {
+            UserManager.addNewUserSession(email, ServletUtils.getSessionId(request));
+            ServletUtils.returnJson(request, response, true);
         }
     }
 
     private void login(HttpServletRequest request, HttpServletResponse response) {
         Connection con = null;
-        Statement st = null;
+        Statement stmt = null;
         ResultSet rs = null;
         try {
+            response.setContentType("text/html;charset=UTF-8");
+            // create a connection to the database
             con = ServletUtils.getConnection();
-            st = con.createStatement();
-            // note that i'm leaving "date_created" out of this insert statement
             String userEmailFromParameter = request.getParameter(Constants.USERNAME);
             String userPassFromParameter = request.getParameter(Constants.USERPASS);
+            stmt = con.createStatement();
             String SELECT = " SELECT *"
                     + " FROM UserData"
                     + " WHERE email='" + userEmailFromParameter + "' AND password='" + userPassFromParameter + "'";
-
-            rs = st.executeQuery(SELECT);
-            int flag = 0;
+            rs = stmt.executeQuery(SELECT);
             while (rs.next()) {
-                flag = 1;
                 ServletContext servletContext = getServletContext();
                 UserManager UserManager = ServletUtils.getUserManager(servletContext);
                 UserManager.addNewUserSession(rs.getString("email"), ServletUtils.getSessionId(request));
+                ServletUtils.returnJson(request, response, rs.getInt("id"));
             }
-            ServletUtils.returnJson(request, response, flag);
+            ServletUtils.returnJson(request, response, 0);
         } catch (SQLException e) {
             System.out.println("couldent connect db");
             System.out.println(e.getErrorCode());
             e.printStackTrace();
-        } finally {
+        }
+        finally {
             try { rs.close(); } catch (Exception e) {  e.printStackTrace(); }
-            try { st.close(); } catch (Exception e) {  e.printStackTrace(); }
+            try { stmt.close(); } catch (Exception e) {  e.printStackTrace(); }
             try { con.close(); } catch (Exception e) {  e.printStackTrace(); }
         }
     }
@@ -108,3 +135,4 @@ public class LoginServlet extends javax.servlet.http.HttpServlet {
     }
 
 }
+

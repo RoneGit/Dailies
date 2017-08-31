@@ -11,6 +11,8 @@ public class Constants {
 
     public static final String BUSIENESSINFOTYPE = "InfoType";
     public static final String BUSIENESSNAME = "BusinessName";
+    public static final int NOTIFICATION_TYPE_APPLY = 0;
+    public static final int NOTIFICATION_TYPE_RESPOSE_TO_USER = 1;
 
 
 }

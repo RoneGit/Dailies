@@ -3,7 +3,10 @@ package Servlets;
 import Logic.Bussiness;
 import Logic.JobOffer;
 import Logic.UserData;
+import Logic.UserManager;
 import Utils.ServletUtils;
+//import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -27,9 +30,7 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
         Map<String, String[]> map = request.getParameterMap();
         String requestType = request.getParameter("request_type");
         switch (requestType) {
-            case "getLatestJobs":
-                getLatestJobs(request, response);
-                break;
+
             case "getJobsByFilter":
                 getJobsByFilter(request, response);
                 break;
@@ -37,10 +38,197 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
                 getJobTitlesList(request, response);
                 break;
             case "applyToJob":
-                applyToJob(request,response);
+                applyToJob(request, response);
                 break;
 
         }
+    }
+
+    private void applyToJob(HttpServletRequest request, HttpServletResponse response) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        UserManager userManager = ServletUtils.getUserManager(getServletContext());
+        String userEmail = userManager.getUserEmailFromSession(ServletUtils.getSessionId(request));
+        UserData user = UserData.getUserDataByEmail(userEmail);
+        try {
+            // create a connection to the database
+            con = ServletUtils.getConnection();
+
+            String applicantId = user.id.toString();
+            String jobId = request.getParameter("job_id");
+            String businessId = request.getParameter("business_id");
+            String ownerId = Bussiness.getBusinessInfoById(businessId).owner_id.toString();
+            Date appDate = Date.valueOf(GetCurentDate());
+            String appTime = GetCurrentTime();
+            boolean flag = true;
+
+            String sql = "INSERT INTO apply (applicant_id, job_id, app_date, app_time, is_hired, business_id, isPending, is_finished) " +
+                    "VALUES('" + applicantId + "','" + jobId + "' , '" + appDate.getTime() + "' ,'" + appTime + "' ,'" + 0 + "' ,'" + businessId + "' ,'" + 0 + "' ,'"  + 0 + "')";
+
+            pstmt = con.prepareStatement(sql);
+            pstmt.executeUpdate();
+            //-------getting the apply id of the apply you just insert
+            //-------to send to UpdateNotifications
+            sql = "SELECT id " +
+                    " FROM apply" +
+                    " WHERE applicant_id=" + applicantId +
+                    " AND job_id=" + jobId +
+                    " AND app_date=" + appDate.getTime() +
+                    " AND app_time='" + appTime +"'"+
+                    " AND business_id=" + businessId;
+
+            Statement s = con.createStatement();
+            rs = s.executeQuery(sql);
+            String applyId = rs.getString(1);
+            //------------------------------------------------
+            UpdateNotifications(con, applicantId, ownerId, jobId, businessId, 0, 0, applyId, Constants.NOTIFICATION_TYPE_APPLY);
+
+            ServletUtils.returnJson(request, response, flag);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                rs.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                pstmt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void UpdateNotifications(Connection con, String senderID, String reciverID, String jobId, String businessId, int isRead, int isApproved, String applyId, int type) throws SQLException {
+        PreparedStatement pstmt = null;
+
+        String sql = "INSERT INTO notifications (type, business_id,is_read, is_approved, job_id, sender_id, reciver_id, apply_id,is_pending) " +
+                "VALUES('" + type + "','" + businessId + "' , '" + isRead + "' ,'" + isApproved + "' ,'" + jobId + "' ,'" + senderID + "' ,'" + reciverID + "' ,'" + applyId + "' ,'" + 0 + "')";
+
+        pstmt = con.prepareStatement(sql);
+        pstmt.executeUpdate();
+    }
+
+    private String GetCurrentTime() {
+        Date postDate = new Date(Calendar.getInstance().getTimeInMillis());
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+        String postTime = dateFormat.format(postDate);
+        return postTime;
+    }
+
+
+    private void getJobsByFilter(HttpServletRequest request, HttpServletResponse response) {
+        Connection con = null;
+        Statement stmt = null;
+        Statement lastIdStm = null;
+        try {
+            // create a connection to the database
+            con = ServletUtils.getConnection();
+
+            String[] jobFilters = request.getParameterValues("token_list[]");
+            String[] jobLocation = request.getParameterValues("job_location[]");
+            String startDate = request.getParameter("start_date");
+            String endDate = request.getParameter("end_date");
+            String quearyLine;
+            Date lastPostDate = null;
+            String lastPostTime = null;
+            Date start = null;
+            Date end = null;
+            boolean isAllNull = (request.getParameter("flag").equals("true"));
+            boolean isContinue = (request.getParameter("flagContinue").equals("true"));
+
+            if (isContinue) {
+                //LastPostDate = Date.valueOf(request.getParameter("lastPostDate"));
+                String lastPostID = request.getParameter("lastPostId");
+                String lastDateQuary = " SELECT *"
+                        + " FROM job_offers" +
+                        " WHERE id='" + lastPostID + "'";
+                lastIdStm = con.createStatement();
+                ResultSet lastIdRs = lastIdStm.executeQuery(lastDateQuary);
+                lastPostDate = lastIdRs.getDate("post_date");
+                lastPostTime = request.getParameter("lastPostTime");
+            }
+
+            if (!startDate.equals("0")) {
+                start = Date.valueOf(startDate);
+            }
+            if (!endDate.equals("0")) {
+                end = Date.valueOf(endDate);
+            }
+            if (!isContinue)
+                quearyLine = getStringOfListVals(jobFilters, start, end, jobLocation, isAllNull);
+            else
+                quearyLine = getRestOfStringOfListVals(jobFilters, start, end, jobLocation, isAllNull, lastPostDate, lastPostTime);
+
+
+            stmt = con.createStatement();
+
+            String quary = " SELECT *, job_offers.id AS offer_id, businesses.name AS business_name"
+                    + " FROM job_offers" +
+                    " JOIN businesses" +
+                    " ON job_offers.business_id = businesses.id"
+                    + quearyLine;
+            ResultSet rs = stmt.executeQuery(quary);
+
+            ArrayList<Pair<JobOffer, Bussiness>> jobOffers = new ArrayList<>();
+            int counter = 0;
+            while (rs.next()) {
+                jobOffers.add(Pair.of(
+                        new JobOffer(
+                                rs.getInt("offer_id"),
+                                rs.getInt("business_id"),
+                                rs.getString("name"),
+                                rs.getString("details"),
+                                rs.getDate("start_date"),
+                                rs.getString("start_time"),
+                                rs.getDate("end_date"),
+                                rs.getString("end_time"),
+                                rs.getString("location"),
+                                rs.getString("requirements"),
+                                rs.getDate(("post_date")),
+                                rs.getString("post_time")),
+                        new Bussiness(
+                                rs.getInt("business_id"),
+                                rs.getString("business_name"),
+                                rs.getString("city"),
+                                rs.getString("street"),
+                                rs.getInt("number"),
+                                rs.getString("email"),
+                                rs.getString("phone"),
+                                rs.getString("aout"),
+                                rs.getInt("owner_id"),
+                                rs.getString("profilePic")
+                        )));
+                if (++counter == 5)
+                    break;
+            }
+            java.util.Collections.reverse(jobOffers);
+            ServletUtils.returnJson(request, response, jobOffers);
+        } catch (
+                SQLException e)
+
+        {
+            e.printStackTrace();
+        } finally {
+            try {
+                stmt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -52,120 +240,90 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
         processRequest(request, response);
     }
 
-    private void getLatestJobs(HttpServletRequest request, HttpServletResponse response) {
 
-        try {
-            // create a connection to the database
-            Connection con = ServletUtils.getConnection();
-
-            String d = GetCurentDate();
-            Statement stmt = con.createStatement();
-            String quary = " SELECT *"
-                    + " FROM job_offers";
-            ResultSet rs = stmt.executeQuery(quary);
-
-            ArrayList<JobOffer> jobOffers = new ArrayList<>();
-            while (rs.next()) {
-                String res = rs.getDate("start_date").toString();
-                if (res.equals(d)) {
-                    jobOffers.add(
-                            new JobOffer(
-                                    rs.getInt("id"),
-                                    rs.getInt("business_id"),
-                                    rs.getString("name"),
-                                    rs.getString("details"),
-                                    rs.getDate("start_date"),
-                                    rs.getString("start_time"),
-                                    rs.getDate("end_date"),
-                                    rs.getString("end_time"),
-                                    rs.getString("location"),
-                                    rs.getString("requirements"),
-                                    rs.getDate(("post_date")),
-                                    rs.getString("post_time")));
+    private String getStringOfListVals(String[] jobFilters, Date startDate, Date endDate, String[] jobLocation, boolean allNull) {
+        String result;
+        if (!allNull) {
+            result = new String(" WHERE (");
+            if (jobFilters != null) {
+                int size = jobFilters.length;
+                result += "(";
+                for (int i = 0; i < size - 1; i++) {
+                    result += "job_offers.name='" + jobFilters[i] + "'" + " OR ";
                 }
+                result += "job_offers.name='" + jobFilters[size - 1] + "')";
             }
-            ServletUtils.returnJson(request, response, jobOffers);
-        } catch (SQLException e) {
-            e.printStackTrace();
+            if (startDate != null) {
+                if (jobFilters != null) {
+                    result += " AND ";
+                }
+                result += "(start_date >= '" + startDate.getTime() /*+ "' AND start_date <='" + endDate.getTime()*/ + "')";
+            }
+            if (endDate != null) {
+                if (startDate != null || jobFilters != null) {
+                    result += " AND ";
+                }
+                result += "(end_date <='" + endDate.getTime() + "')";
+            }
+            if (jobLocation != null) {
+                if (endDate != null || startDate != null || jobFilters != null) {
+                    result += " AND ";
+                }
+                int size = jobLocation.length;
+                result += "(";
+                for (int i = 0; i < size - 1; i++) {
+                    result += "location='" + jobLocation[i] + "'" + " OR ";
+                }
+                result += "location='" + jobLocation[size - 1] + "')";
+            }
+            result += ") ORDER BY post_date DESC, post_time DESC";
+        } else {
+            result = " ORDER BY post_date DESC, post_time ASC";
         }
-
+        return result;
     }
 
-    private void getJobsByFilter(HttpServletRequest request, HttpServletResponse response) {
-
-        try {
-            // create a connection to the database
-            Connection con = ServletUtils.getConnection();
-
-            String[] jobFilters = request.getParameterValues("token_list[]");
-            String startDate = request.getParameter("start_date");
-            String endDate = request.getParameter("end_date");
-            String jobLocation = request.getParameter("job_location");
-
-            Date start = Date.valueOf(startDate);
-            Date end = Date.valueOf(endDate);
-
-
-            String quearyLine = getStringOfListVals(jobFilters, start, end, jobLocation);
-
-            Statement stmt = con.createStatement();
-
-            String quary = " SELECT *"
-                    + " FROM job_offers"
-                    + " WHERE " + quearyLine;
-            ResultSet rs = stmt.executeQuery(quary);
-
-            ArrayList<JobOffer> jobOffers = new ArrayList<>();
-            while (rs.next()) {
-                jobOffers.add(
-                        new JobOffer(
-                                rs.getInt("id"),
-                                rs.getInt("business_id"),
-                                rs.getString("name"),
-                                rs.getString("details"),
-                                rs.getDate("start_date"),
-                                rs.getString("start_time"),
-                                rs.getDate("end_date"),
-                                rs.getString("end_time"),
-                                rs.getString("location"),
-                                rs.getString("requirements"),
-                                rs.getDate(("post_date")),
-                                rs.getString("post_time")));
+    private String getRestOfStringOfListVals(String[] jobFilters, Date startDate, Date endDate, String[] jobLocation, boolean allNull, Date lastPostDate, String lastPostTime) {
+        String result;
+        if (!allNull) {
+            result = new String(" WHERE (");
+            if (jobFilters != null) {
+                int size = jobFilters.length;
+                result += "(";
+                for (int i = 0; i < size - 1; i++) {
+                    result += "job_offers.name='" + jobFilters[i] + "'" + " OR ";
+                }
+                result += "job_offers.name='" + jobFilters[size - 1] + "')";
             }
-
-            ServletUtils.returnJson(request, response, jobOffers);
-        } catch (
-                SQLException e)
-
-        {
-            e.printStackTrace();
-        }
-
-    }
-
-    private String getStringOfListVals(String[] jobFilters, Date startDate, Date endDate, String jobLocation) {
-        String result = new String("(");
-        if(jobFilters!=null) {
-            int size = jobFilters.length;
-            result+="(";
-            for (int i = 0; i < size - 1; i++) {
-                result += "name='" + jobFilters[i] + "'" + " OR ";
+            if (startDate != null) {
+                if (jobFilters != null) {
+                    result += " AND ";
+                }
+                result += "(start_date >= '" + startDate.getTime() /*+ "' AND start_date <='" + endDate.getTime()*/ + "')";
             }
-            result += "name='" + jobFilters[size-1] + "')";
+            if (endDate != null) {
+                if (startDate != null || jobFilters != null) {
+                    result += " AND ";
+                }
+                result += "(end_date <='" + endDate.getTime() + "')";
+            }
+            if (jobLocation != null) {
+                if (endDate != null || startDate != null || jobFilters != null) {
+                    result += " AND ";
+                }
+                int size = jobLocation.length;
+                result += "(";
+                for (int i = 0; i < size - 1; i++) {
+                    result += "location='" + jobLocation[i] + "'" + " OR ";
+                }
+                result += "location='" + jobLocation[size - 1] + "')";
+            }
+            result += " AND ((post_date<'" + lastPostDate.getTime() +
+                    "') OR (post_date='" + lastPostDate.getTime() + "' AND post_time<'" + lastPostTime + "'))) ORDER BY post_date DESC, post_time ASC";
+        } else {
+            result = " WHERE ((post_date<'" + lastPostDate.getTime() +
+                    "') OR (post_date='" + lastPostDate.getTime() + "' AND post_time<'" + lastPostTime + "')) ORDER BY post_date DESC, post_time ASC";
         }
-        if(!startDate.equals("0")){
-            if(jobFilters!=null) {result += " AND ";}
-            result+="(start_date >= '" + startDate.getTime() + "' AND start_date <='" + endDate.getTime() + "')";
-        }
-        if(!endDate.equals("0")) {
-            if(!startDate.equals("0") || jobFilters!=null){result += " AND ";}
-            result += "(end_date >= '" + startDate.getTime() + "' AND end_date <='" + endDate.getTime() + "')";
-        }
-        if(!jobLocation.equals("0")) {
-            if(!endDate.equals("0") || !startDate.equals("0") || jobFilters!=null){result += " AND ";}
-            result += "(location= '" + jobLocation + "')";
-        }
-        result+=") ORDER BY post_date";
         return result;
     }
 
@@ -178,7 +336,7 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
             Statement stmt = con.createStatement();
             String quary = " SELECT *"
                     + " FROM jobTitles"
-                    +" ORDER BY jobTitle";
+                    + " ORDER BY jobTitle";
 
             ResultSet rs = stmt.executeQuery(quary);
 
@@ -194,17 +352,6 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
         }
     }
 
-    public String getRowAsString(ResultSet rs) throws SQLException {
-        StringBuilder sb = new StringBuilder();
-        sb.append(rs.getString("details") + " ");
-        sb.append(rs.getDate("start_date") + " ");
-        sb.append(rs.getDate("end_date") + " ");
-        sb.append(rs.getString("location") + " ");
-        sb.append(rs.getString("requirements"));
-
-        return sb.toString();
-
-    }
 
     public String GetCurentDate() {
         java.util.Date date = Calendar.getInstance().getTime();
@@ -212,45 +359,5 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
         return sdf.format(date);
     }
 
-    private void applyToJob(HttpServletRequest request, HttpServletResponse response) {
-        Connection con = null;
-        PreparedStatement pstmt = null;
-        String jobId = "";
-        String apliedUserId = "";
-        Date postDate = new Date(Calendar.getInstance().getTimeInMillis());
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm");
-        String postTime = dateFormat.format(postDate);
-        try {
-            // create a connection to the database
-            con = ServletUtils.getConnection();
 
-            jobId = request.getParameter("jobId");
-            apliedUserId = request.getParameter("userId");
-
-            String sql = "INSERT INTO apply(app_id, job_id , is_finished, app_date, app_time, is_hired) " +
-                    "VALUES('" + apliedUserId + "','" + jobId + "','" + 0 + "','" + postDate.getTime() + "','" + postTime + "','" + 0 +"')";
-
-            pstmt = con.prepareStatement(sql);
-            pstmt.executeUpdate();
-        } catch (
-                SQLException e)
-
-        {
-            e.printStackTrace();
-        }
-        finally {
-            try { pstmt.close(); } catch (Exception e) {  e.printStackTrace(); }
-            try { con.close(); } catch (Exception e) {  e.printStackTrace(); }
-        }
-        addJobApliedNotification(jobId, apliedUserId);
-    }
-
-    private void addJobApliedNotification(String jobId, String apliedUserId)
-    {
-        JobOffer jobOffer = JobOffer.getJobOfferByIdFromDB(Integer.parseInt(jobId));
-        Bussiness bussiness = Bussiness.getBusinessInfoById(Integer.toString(jobOffer.getBusinessId()));
-        UserData apliedUserData = UserData.getUserInfoFromDbById(apliedUserId);
-        String messege = "User " + apliedUserData.fname +" " + apliedUserData.lname + " has registered to job number " +jobOffer.jobId;
-        ServletUtils.addNotification(bussiness.owner_id, bussiness.id ,ServletUtils.NotificationType.jobRegistration.getValue() , messege );
-    }
 }
