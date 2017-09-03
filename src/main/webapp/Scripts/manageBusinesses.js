@@ -4,7 +4,6 @@ $(function () {
         type: 'POST',
         data: {request_type: "getOwnerBusinessesList"},
         success: function (businesses) {
-
             var mapstr;
             var map = new Map();
             mapstr = JSON.stringify(businesses);
@@ -18,6 +17,7 @@ $(function () {
             }
         }
     });
+    loadLogedInUserFriends();
 });
 
 

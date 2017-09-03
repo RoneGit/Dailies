@@ -1,15 +1,13 @@
 package Logic;
 
 import Utils.ServletUtils;
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Ron on 06-Aug-17.

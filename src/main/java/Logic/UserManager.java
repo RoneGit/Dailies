@@ -25,7 +25,7 @@ public class UserManager {
 
     public Integer isUserLogedIn(String email)
     {
-        if (SessionsUsersMap.containsValue(email) == false) {
+        if (SessionsUsersMap.containsValue(email) == true) {
             return 1;
         }
         return 0;

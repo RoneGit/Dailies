@@ -20,9 +20,13 @@ public class JobOffer {
     public String requirements;
     public Date postDate;
     public String postTime;
+    public Integer salary;
+    public Integer workers_num;
+    public Integer max_workers_num;
 
     public JobOffer(int _jobId, int _businessId, String _name, String _details, Date _startDate, String _startTime, Date _endDate,
-                    String _endTime, String _jobLocation, String _requirements, Date _postDate, String _postTime) {
+                    String _endTime, String _jobLocation, String _requirements, Date _postDate, String _postTime, Integer _salary,
+                    Integer _workers_num, Integer _max_workers_num) {
         jobId = _jobId;
         business_id = _businessId;
         name = _name;
@@ -35,6 +39,9 @@ public class JobOffer {
         requirements = _requirements;
         postDate = _postDate;
         postTime = _postTime;
+        salary = _salary;
+        workers_num = _workers_num;
+        max_workers_num = _max_workers_num;
     }
 
     public JobOffer(List<Object> row) {
@@ -70,7 +77,8 @@ public class JobOffer {
             stmt = con.createStatement();
             String SELECT = " SELECT *"
                     + " FROM job_offers"
-                    + " WHERE business_id='" + businessId + "'";
+                    + " WHERE business_id='" + businessId + "'" +
+                    " ORDER By post_date DESC , post_time DESC ";
             rs = stmt.executeQuery(SELECT);
 
             ArrayList<JobOffer> jobOffers = new ArrayList<JobOffer>();
@@ -89,7 +97,10 @@ public class JobOffer {
                                 rs.getString("location"),
                                 rs.getString("requirements"),
                                 rs.getDate("post_date"),
-                                rs.getString("post_time")));
+                                rs.getString("post_time"),
+                                rs.getInt("salary"),
+                                rs.getInt("workers_num"),
+                                rs.getInt("max_workers_num")));
             }
             return jobOffers;
         } catch (SQLException e) {
@@ -143,7 +154,10 @@ public class JobOffer {
                         rs.getString("location"),
                         rs.getString("requirements"),
                         rs.getDate("post_date"),
-                        rs.getString("post_time"));
+                        rs.getString("post_time"),
+                        rs.getInt("salary"),
+                        rs.getInt("workers_num"),
+                        rs.getInt("max_workers_num"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -174,24 +188,54 @@ public class JobOffer {
         try {
             // create a connection to the database
             con = ServletUtils.getConnection();
-
             stmt = con.createStatement();
             String UPDATE = " UPDATE job_offers" +
                     " SET " +
                     "id='" + job.jobId.toString() + "', " +
                     "business_id='" + job.business_id.toString() + "', " +
                     "details='" + job.details + "', " +
-                    "start_date='" + job.startDate.getTime()    + "', " +
-                    "end_date='" + job.endDate.getTime()       + "', " +
+                    "start_date='" + job.startDate    + "', " +
+                    "end_date='" + job.endDate       + "', " +
                     "location='" + job.jobLocation + "', " +
                     "start_time='" + job.startTime + "', " +
                     "end_time='" + job.endTime + "', " +
                     "requirements='" + job.requirements + "', " +
                     "name='" + job.name + "', " +
-                    "post_date='" + job.postDate.getTime()      + "', " +
-                    "post_time='" + job.postTime + "' " +
+                    "post_date='" + job.postDate      + "', " +
+                    "post_time='" + job.postTime + "', " +
+                    "salary='" + job.salary + "', " +
+                    "max_workers_num='" + job.max_workers_num + "' " +
                     "WHERE id='" + job.jobId.toString() + "' ";
 
+
+            int res = stmt.executeUpdate(UPDATE);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                stmt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void updateNumberOfWorkersInJob(String jobId) {
+        Connection con = null;
+        Statement stmt = null;
+        try {
+            // create a connection to the database
+            con = ServletUtils.getConnection();
+            stmt = con.createStatement();
+            String UPDATE = " UPDATE job_offers " +
+                    "SET workers_num = workers_num + 1 " +
+                    "WHERE id='" + jobId + "'";
 
             int res = stmt.executeUpdate(UPDATE);
 

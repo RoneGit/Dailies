@@ -2,23 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>My Businesses</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <title>Job</title>
     <link rel="stylesheet" type="text/css" href="CSS/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="CSS/bootstrap-chosen.css"/>
     <link rel="stylesheet" type="text/css" href="CSS/style.css"/>
-    <link rel="stylesheet" type="text/css" href="CSS/businessProfilePage.css"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="CSS/jobPage.css"/>
 
     <script src="Scripts/jquery-3.1.1.js"></script>
-    <script src="Scripts/manageBusinesses.js"></script>
+    <script src="Scripts/jobPage.js"></script>
     <script src="Scripts/utils.js"></script>
     <script src="Scripts/currentUser.js"></script>
     <script src="Scripts/bootstrap.min.js"></script>
+    <script src="http://harvesthq.github.io/chosen/chosen.jquery.js"></script>
     <script src="Scripts/notifier.js"></script>
-
 </head>
 <body>
-
 <div class="profilePage row" style="width: 101%;">
     <nav class="navbar navbar-default">
         <div class="container-fluid">
@@ -77,20 +75,27 @@
 
 <div>
     <div class="col-md-3">
-
+        <div align="center" class="">
+            <img id="profilePicImg" src="" class="img-rounded big_profile_pic"
+                 onerror="this.onerror=null;this.src='Resources/empty_profile.jpg';"
+                 style="max-width: 100%; height: auto">
+        </div>
     </div>
 
     <div class="col-md-6">
+
         <div class="panel panel-default">
-            <div id="businessInfoPanelHeader" class="panel-heading">
+            <div id="jobInfoPanelHeader" class="panel-heading">
                 <div class="row">
-                    <div id="businessInfoPanelHeaderTextDiv" class="linkForm"><h4>My Businesses</h4></div>
-                    <div align="right">
-                        <button class="btn btn-default btn-md" onclick="addBusiness()">Add Business</button>
+                    <div id="jobInfoPanelHeaderTextDiv" class="linkForm"></div>
+                    <div id="jobInfoPanelHeaderButtonDiv" >
+                        <div style="float: right;"><button value="Save" type="button" class="btn btn-default btn-md" onclick="saveNewJob()">Save</button></div>
                     </div>
                 </div>
             </div>
-            <div id="businessInfoPanelBody" class="panel-body"></div>
+            <div id="jobInfoPanelBody" class="panel-body"
+                 style="min-height: 500px; max-height: 500px;overflow-y: scroll;">
+            </div>
         </div>
     </div>
 
@@ -106,6 +111,5 @@
         </div>
     </div>
 </div>
-
 </body>
 </html>

@@ -19,10 +19,12 @@
     width: 304px;
     height: auto;
 }
+
 .small_profile_pic{
     height: 35px;
     width: auto;
 }
+
 .panel-body{
     overflow-y: scroll;
     max-height: 430px;

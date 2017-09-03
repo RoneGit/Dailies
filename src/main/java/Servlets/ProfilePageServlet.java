@@ -69,6 +69,18 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
                         case "getFriends":
                             getFriends(request,response);
                             break;
+                        case "getCurrentUserShownFriends":
+                            getCurrentUserShownFriends(request,response);
+                            break;
+                        case "removeFriend":
+                            removeFriend(request,response);
+                            break;
+                        case "checkIfPendingRequest":
+                            checkIfPendingRequest(request,response);
+                            break;
+                        case "checkIfMyProfile":
+                            checkIfMyProfile(request,response);
+                            break;
                     }
                 }
 
@@ -78,6 +90,57 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void checkIfMyProfile(HttpServletRequest request, HttpServletResponse response) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        int flag=0;
+        UserManager userManager = ServletUtils.getUserManager(getServletContext());
+        String userEmail = userManager.getUserEmailFromSession(ServletUtils.getSessionId(request));
+        UserData userDate = UserData.getUserDataByEmail(userEmail);
+        int profileIdToCheck = Integer.parseInt(request.getParameter("profile_id"));
+
+        if(userDate.id == profileIdToCheck)
+            flag = 1;
+
+        ServletUtils.returnJson(request,response,flag);
+    }
+
+    private void checkIfPendingRequest(HttpServletRequest request, HttpServletResponse response) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        int flag = 0;
+        try {
+            UserManager userManager = ServletUtils.getUserManager(getServletContext());
+            String userEmail = userManager.getUserEmailFromSession(ServletUtils.getSessionId(request));
+            UserData userDate = UserData.getUserDataByEmail(userEmail);
+            String userIdToCheck = request.getParameter("user_Tocheck");
+            con = ServletUtils.getConnection();
+            stmt = con.createStatement();
+
+            String SELECT = " SELECT *"
+                    + " FROM notifications"
+                    + " WHERE sender_id ='" + userDate.id + "'"
+                    + " AND reciver_id ='"+ userIdToCheck + "'"
+                    + " AND type=''" + Constants.PANDING_FRIEND_REQUEST + "'";
+
+            rs = stmt.executeQuery(SELECT);
+
+            if (rs.next()) {
+                flag = rs.getInt("is_pending");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            try { rs.close(); } catch (Exception e) {  e.printStackTrace(); }
+            try { stmt.close(); } catch (Exception e) {  e.printStackTrace(); }
+            try { con.close(); } catch (Exception e) {  e.printStackTrace(); }
+        }
+        ServletUtils.returnJson(request,response,flag);
     }
     /*private void getUserName(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException, ClassNotFoundException {
         UserManager userManager = ServletUtils.getUserManager(getServletContext());
@@ -471,14 +534,15 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
             String currentLogedInId = request.getParameter("currentUserLogedInId");
             con = ServletUtils.getConnection();
             stmt = con.createStatement();
-            String SELECT = " SELECT *"
-                    + " FROM friends"
-                    + " WHERE firstUserId ='" + currentLogedInId + "' AND secondUserId='" + currentUserShownId + "'";
 
-            rs = stmt.executeQuery(SELECT);
-            while (rs.next()) {
-                flag = 1;
-            }
+            String FriendPandingNotification = " INSERT INTO notifications (type, business_id,is_read, is_approved, job_id, apply_id, is_pending, reciver_id, sender_id, not_date, not_time) " +
+                    "VALUES('" + Constants.PANDING_FRIEND_REQUEST + "','" +-1+ "' , '" + 0 + "' ,'" + 0 + "' ,'" + -1 + "' ,'" + -1 + "' ,'" + 1 + "' ,'" + currentUserShownId+ "' ,'" + currentLogedInId  + "' ,'" +ServletUtils.GetCurentDate() + "' ,'" + ServletUtils.GetCurrentTime() +  "')";
+
+            stmt = con.prepareStatement(FriendPandingNotification);
+            stmt.executeUpdate(FriendPandingNotification);
+
+            flag = 1;
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -498,13 +562,14 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
         List<Pair<UserData, Integer>> friendListWithLogedInData = null;
         int flag = 0;
         try {
-            String currentUserShownId = request.getParameter("currentUserShownId");
-            String currentLogedInId = request.getParameter("currentUserLogedInId");
+            UserManager userManager = ServletUtils.getUserManager(getServletContext());
+            String userEmail = userManager.getUserEmailFromSession(ServletUtils.getSessionId(request));
+            UserData userDate = UserData.getUserDataByEmail(userEmail);
             con = ServletUtils.getConnection();
             stmt = con.createStatement();
             String SELECT = " SELECT *"
                     + " FROM friends"
-                    + " WHERE firstUserId ='" + currentLogedInId + "'";
+                    + " WHERE firstUserId ='" + userDate.id + "'";
 
             rs = stmt.executeQuery(SELECT);
             friendListWithLogedInData = new ArrayList<Pair<UserData, Integer>>();
@@ -523,6 +588,69 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
         }
         ServletUtils.returnJson(request,response,friendListWithLogedInData);
     }
+
+    private void getCurrentUserShownFriends(HttpServletRequest request, HttpServletResponse response) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        List<UserData> friendList = null;
+        try {
+            String currentUserShownId = request.getParameter("currentUserShownId");
+            con = ServletUtils.getConnection();
+            stmt = con.createStatement();
+            String SELECT = " SELECT *"
+                    + " FROM friends"
+                    + " WHERE firstUserId ='" + currentUserShownId + "'";
+
+            rs = stmt.executeQuery(SELECT);
+            friendList = new ArrayList<UserData>();
+            while (rs.next()) {
+                UserData currUser = UserData.getUserInfoFromDbById(Integer.toString(rs.getInt("secondUserId")));
+                friendList.add(currUser);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            try { rs.close(); } catch (Exception e) {  e.printStackTrace(); }
+            try { stmt.close(); } catch (Exception e) {  e.printStackTrace(); }
+            try { con.close(); } catch (Exception e) {  e.printStackTrace(); }
+        }
+        ServletUtils.returnJson(request,response,friendList);
+    }
+
+    private void removeFriend(HttpServletRequest request, HttpServletResponse response) {
+            Connection con = null;
+            Statement stmt = null;
+            PreparedStatement pstmt = null;
+            ResultSet rs = null;
+            int flag = 0;
+            try {
+                String currentUserShownId = request.getParameter("currentUserShownId");
+                String currentLogedInId = request.getParameter("currentUserLogedInId");
+                con = ServletUtils.getConnection();
+                stmt = con.createStatement();
+                String sql = " DELETE "
+                        + " FROM friends"
+                        + " WHERE firstUserId ='" + currentLogedInId + "' AND secondUserId='" + currentUserShownId + "'";
+
+                stmt = con.prepareStatement(sql);
+                stmt.executeUpdate(sql);
+
+                flag = 1;
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            finally {
+                try { rs.close(); } catch (Exception e) {  e.printStackTrace(); }
+                try { stmt.close(); } catch (Exception e) {  e.printStackTrace(); }
+                try { con.close(); } catch (Exception e) {  e.printStackTrace(); }
+                try { pstmt.close(); } catch (Exception e) {  e.printStackTrace(); }
+            }
+            ServletUtils.returnJson(request,response,flag);
+        }
+
 
     @Override
     protected void doPost(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {

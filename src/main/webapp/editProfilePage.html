@@ -6,9 +6,10 @@
 
     <link rel="stylesheet" type="text/css" href="CSS/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="CSS/editProfileStyle.css"/>
+    <link rel="stylesheet" type="text/css" href="CSS/style.css"/>
+
     <script type="text/javascript" src="Scripts/jquery-3.1.1.js"></script>
     <script type="text/javascript" src="Scripts/editProfilePage.js"></script>
-
     <script src="Scripts/utils.js"></script>
     <script src="Scripts/currentUser.js"></script>
     <script src="Scripts/bootstrap.min.js"></script>
@@ -17,7 +18,7 @@
 
 </head>
 <body>
-<div class="profilePage row">
+<div class="profilePage row" style="width: 101%;">
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header navbar-default">
@@ -26,7 +27,7 @@
             <ul class="nav navbar-nav">
                 <li id="userSearch">
                     <div style="margin-top: 5px">
-                        <input type="text" style = "width:250px" id="searchText" list="searchResults" placeholder="Search">
+                        <input type="" class="navbar-search" style = "width:250px" id="searchText" list="searchResults" placeholder="Search">
                         <datalist id="searchResults"></datalist>
                     </div>
                 </li>
@@ -35,8 +36,10 @@
                             style="margin-left: 10px ;margin-top: 10px">Search
                     </button>
                 </li>
-                <li id="msgNotifier">
-                    <div class="container">
+            </ul>
+            <ul class="nav navbar-right" align="right">
+                <li id="msgNotifier" >
+                    <div class="container" style="width: auto;">
                         <button class="btn btn-default btn-lg btn-link" onclick="notifierClick()"
                                 style="font-size:26px;">
                             <i class="glyphicon glyphicon-comment custom"></i>
@@ -44,11 +47,19 @@
                         <span class="badge badge-notify"></span>
                     </div>
                 </li>
+                <li id="workSearch" >
+                    <div class="container" style="width: auto;">
+                        <button class="btn btn-default btn-lg btn-link" onclick="window.location.replace('searchAndFeed.html');"
+                                style="font-size:26px;">
+                            <i class="glyphicon glyphicon-search custom"></i>
+                        </button>
+                    </div>
+                </li>
                 <li class="dropdown" style="margin-right:10px; position: absolute;right:0;">
                     <a id="userButton" class="dropdown-toggle" aria-expanded="false" href="#" data-toggle="dropdown">
                         <img id="smallProfilePic"
                              src="http://res.cloudinary.com/ronerez/image/upload/v1502455157/empty_profile_it5elf.png"
-                             class="img-rounded" alt="Cinque Terre" width="20" height="20">User
+                             class="img-rounded" alt="" width="20" height="20">User
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu dropdown-menu-right">
                         <li><a href="profilePage.html">Profile Page</a></li>
@@ -63,30 +74,31 @@
     </nav>
 </div>
 
-<div>
-    <div class="editProfile height:120px;width:120px;border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;">
+<div class="row">
+    <div align="center" class="col-lg-3">
+        <div>
+            <label class="texts">Profile Picture:</label>
+            <input id='profilePic' type='file' style="display: none; width: 200px" name="profilePic" class="texts"
+                   onchange="readUrlWithOurHiddenPicture(this);"/>
+            <button id="profilePicBtn" class="btn btn-primary" name="profilePicBtn" onclick="profilePic.click()">Choose
+                Picture
+            </button>
+            <img id="profilePicDisplay" class="img-rounded big_profile_pic"
+                 src="http://res.cloudinary.com/ronerez/image/upload/v1502455157/empty_profile_it5elf.png"
+                 alt="your image"/>
+        </div>
+    </div>
+    <div class="editProfile col-lg-7 height:120px;width:120px;border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;">
         <h2>Edit Profile Page</h2>
         <div>
             <input type="hidden" name="request_type" value="updateUserFiles">
-            <div class="row" style="margin-bottom: 10px">
-                <div class="col-md-5">
-                    <label class="texts">Profile Picture:</label>
-                    <input id='profilePic' type='file' style="width: 200px" name="profilePic" class="texts"
-                           onchange="readUrlWithOurHiddenPicture(this);"/>
-                </div>
-                <div class="col-md-7">
-                    <img id="profilePicDisplay" width="100" height="100"
-                         src="http://res.cloudinary.com/ronerez/image/upload/v1502455157/empty_profile_it5elf.png"
-                         alt="your image"/>
-                </div>
-            </div>
 
             <div class="row">
                 <div class="col-md-5">
                     <label for="fname" class="texts">First Name:</label>
                 </div>
                 <div class="col-md-7">
-                    <input id="fname" type="text" name="fname" placeholder="First Name" value="ron" required/>
+                    <input id="fname" type="text" class="textInput" name="fname" placeholder="First Name" required/>
                 </div>
 
             </div>
@@ -96,7 +108,7 @@
                     <label for="lname" class="texts">Last Name:</label>
                 </div>
                 <div class="col-md-7">
-                    <input id="lname" type="text" name="lname" placeholder="Last Name: " value="erez" required/>
+                    <input id="lname" type="text" class="textInput" name="lname" placeholder="Last Name" required/>
                 </div>
             </div>
 
@@ -105,7 +117,7 @@
                     <label for="email" class="texts">Email:</label>
                 </div>
                 <div class="col-md-7">
-                    <input id="email" type="email" name="email" placeholder="Email" value="ron@gmail.com" required/>
+                    <input id="email" type="email" class="textInput" name="email" placeholder="Email" required/>
                 </div>
             </div>
 
@@ -114,7 +126,7 @@
                     <label for="password" class="texts">Password:</label>
                 </div>
                 <div class="col-md-7">
-                    <input id="password" type="password" name="password" placeholder="Password" value="1" required/>
+                    <input id="password" type="password" class="textInput" name="password" placeholder="Password" required/>
                 </div>
             </div>
 
@@ -123,7 +135,7 @@
                     <label for="address" class="texts">Address:</label>
                 </div>
                 <div class="col-md-7">
-                    <input id="address" type="address" name="address" placeholder="address" value="tarmav"
+                    <input id="address" type="address" class="textInput" name="address" placeholder="address"
                            required/>
                 </div>
             </div>
@@ -133,7 +145,7 @@
                     <label for="password" class="texts">Skills:</label>
                 </div>
                 <textarea id="skills" class="form-control" rows="2" type="skills" name="skills" placeholder="skills"
-                          value="cool and shit"></textarea>
+                          ></textarea>
             </div>
 
             <div class="row">
@@ -148,11 +160,14 @@
             <div class="row">
                 <div class="col-md-5">
                     <label for="cv" class="texts">CV:</label>
-                    <input type="file" name="cv" class="texts" id="cv"><br>
+                    <input id="cv" type="file" style="display: none" name="cv" class="texts"><br>
+                    <button id="cvBtn" class="btn btn-primary" name="cvBtn" onclick="cv.click()">Choose
+                        CV
+                    </button>
                 </div>
 
             </div>
-            <button onclick="registerUpdates()" class="btn btn-primary btn-block btn-large">Submit</button>
+            <button onclick="registerUpdates()" style="margin-top: 10px" class="btn btn-primary btn-block btn-large">Submit</button>
             <div id="res"></div>
 
         </div>

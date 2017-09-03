@@ -1,23 +1,21 @@
 package Utils;
 
-import Logic.UserData;
 import Logic.UserManager;
-import Servlets.LoginServlet;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 
-import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -75,6 +73,25 @@ public class ServletUtils {
         return DbPath;
     }
 
+    public static Connection getConnectionLocal()
+    {
+        String url = "jdbc:mysql://us-cdbr-iron-east-05.cleardb.net:3306/heroku_59a97387cdeff44";
+        String user = "b69801b3aa126a";
+        String password = "c3a33c70";
+        Connection con = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            //?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Jerusalem
+            con = DriverManager.getConnection("jdbc:mysql://localhost/Dailies", "root", "aA12345");
+        } catch (SQLException e) {
+            System.out.println("couldent connect db");
+            System.out.println(e.getErrorCode());
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return con;
+    }
     public static Connection getConnection()
     {
         String url = "jdbc:mysql://us-cdbr-iron-east-05.cleardb.net:3306/heroku_59a97387cdeff44";
@@ -202,5 +219,18 @@ public class ServletUtils {
             try { pstmt.close(); } catch (Exception e) {  e.printStackTrace(); }
             try { con.close(); } catch (Exception e) {  e.printStackTrace(); }
         }
+    }
+
+    static public String GetCurentDate() {
+        java.util.Date date = Calendar.getInstance().getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(date);
+    }
+
+    static public String GetCurrentTime() {
+        Date postDate = new Date(Calendar.getInstance().getTimeInMillis());
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+        String postTime = dateFormat.format(postDate);
+        return postTime;
     }
 }

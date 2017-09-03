@@ -6,7 +6,31 @@ $(function () {
      business_name = getUrlParameter("business_name");
     getJobOffers(printJobsList, business_id, business_name);
     loadProfilePic(business_id);
+    loadLogedInUserFriends();
+    getFriendsList(addFriendsToMultiSelectionDropDown);
+
+
 });
+
+function addFriendsToMultiSelectionDropDown(item) {
+    var friend = item.left;
+    console.log("friends:");
+    console.log(friend);
+    var option = "<option id=" + friend.id + ">" + friend.fname + " " + friend.lname + "</option>"
+    $("#friendsSelect").append(option);
+    $("#friendsSelect").trigger("chosen:updated");
+}
+
+function getFriendsList(handleData) {
+    $.ajax({
+        url: "profilePageServlet",
+        type: 'POST',
+        data: {request_type: "getFriends"},
+        success: function (friendListWithLogedInData) {
+            friendListWithLogedInData.forEach(handleData);
+        }
+    });
+}
 
 function loadProfilePic(business_id) {
 
@@ -26,7 +50,7 @@ function loadProfilePic(business_id) {
 
 function getJobOffers(handleObj, id, name) {
 
-    $("#jobsPanelHeaderTitle").text(name + " Jobs:");
+    $("#editJobPanelHeaderTitle").text(name + " Jobs:");
     $("#jobsPanelBody").empty();
     $.ajax({
         url: "businessPage",
@@ -44,7 +68,7 @@ function getJobOffers(handleObj, id, name) {
 
 
 function printJobsList(jobs) {
-    jobs.forEach(printJob3);
+    jobs.forEach(printJob2);
 }
 
 
@@ -69,12 +93,55 @@ function deleteJobById(id) {
 }
 
 function deleteJob(id) {
+    id = id == null ? $("#jobsPanelBody").find(".selectedOfer").attr('id').substring(3) : id;
     if (confirm("Are You Sure You Want To Delete?") == true) {
         deleteJobById(id);
     } else {
         console.log("You pressed Cancel!");
     }
 }
+
+function selectThis(elem) {
+    $(elem).addClass(" selectedOfer");
+    $(elem).siblings().removeClass("selectedOfer");
+    $("#editJobItem").removeClass("disabled");
+    $("#deleteJobItem").removeClass("disabled");
+    $("#sendEmploymentReqItem").removeClass("disabled");
+
+
+}
+
+function printJob2(job) {
+    $("#jobsPanelBody").append('<div id="job' + job.jobId + '" onclick="selectThis(this)"></div>');
+    var div = $("#job" + job.jobId);
+
+    // language=HTML
+    div.append(
+        '<a href="#collapse' + job.jobId + '" data-toggle="collapse">' + job.name + '</a>' +
+        '<span style="float:right;" class="col-md-5">Posted On: <small>' + job.postDate + ' on ' + job.postTime + '</small></span>\n' +
+        '<div id="collapse' + job.jobId + '" class="collapse">\n' +
+        '<div class="row"><label class="control-label col-sm-2">Location: </label>' + job.jobLocation + '</div>' +
+        '<div class="row"><label class="control-label col-sm-2">From: </label>' + job.startDate + '  ' + job.startTime + '</div>' +
+        '<div class="row"><label class="control-label col-sm-2">To: </label>' + job.endDate + ' ' + job.endTime + '</div>' +
+        '<div class="row"><label class="control-label col-sm-2">Salary: </label>' + job.salary + '</div>' +
+        '<div class="row"><label class="control-label col-sm-2">Workers: </label>' + job.workers_num +'/'+job.max_workers_num+ '</div>' +
+        '<div class="row"><label class="control-label col-sm-2">Details: </label>' + job.details + '</div>' +
+        '<div class="row"><label class="control-label col-sm-2">Requirements: </label>' + job.requirements + '</div>' +
+        '<div class="row"><label class="control-label col-sm-2">Applicants: </label>' + '<div id="applicantsListDiv"></div>' + '</div>' +
+        '</div>');
+    $("#jobsPanelBody").append('<hr class="hr-soften">');
+    console.log(job);
+    /*applicantList.forEach(function (applicant) {
+
+        if(applicant!=null) {
+            console.log("applicant: "+applicant.id);
+            var userLink = getLinkWithStyle(applicant.id + "feedbackForm", "profilePageServlet", applicant.fname+" "+applicant.lname +"  ","col-md-offset-1", [["request_type", "loadUserProfile"], ["user_id", applicant.id]]);
+
+            $("#job" + job.jobId).find("#applicantsListDiv").append(userLink);
+        }
+    });*/
+}
+
 function printJob3(job) {
     $("#jobsPanelBody").append('<div id="job' + job.jobId + '"></div>');
     var div = $('#job' + job.jobId);
@@ -98,16 +165,20 @@ function printJob3(job) {
         '        <div class="row">\n' +
         '            <label for="title" class="col-sm-2 control-label">Title:</label>\n' +
         '            <div class="col-sm-10">\n' +
-        '                <input id="title" class="form-control" type="text" name="title"\n' +
-        '                       placeholder="Title" value="'+job.name+'" required/>\n' +
+        '                <select id="title" data-placeholder="'+ job.name +'" data-job-id="' + job.jobId + '" name="title"'+
+        '                       class="chosen-select chosen-ltr form-control" required>\n' +
+        '                     <option id="option0"></option>' +
+        '                 </select>' +
         '            </div>\n' +
         '        </div>\n' +
 
         '        <div class="row">\n' +
         '            <label for="jobLocation" class="col-sm-2 control-label">Location:</label>\n' +
         '            <div class="col-sm-10">\n' +
-        '                <input id="jobLocation" class="form-control" type="text" name="jobLocation"\n' +
-        '                       placeholder="Job Location" value="'+job.jobLocation+'" required/>\n' +
+        '                <select id="jobLocation" data-placeholder="'+job.jobLocation+'" data-job-id="' + job.jobId + '" name="jobLocation"\n' +
+        '                       class="chosen-select chosen-ltr form-control" required>\n' +
+        '                       <option id="optionL0"></option>' +
+        '                </select>' +
         '            </div>\n' +
         '        </div>\n' +
 
@@ -133,6 +204,22 @@ function printJob3(job) {
         '            </div>\n' +
         '        </div>\n' +
 
+        '        <div class="row">\n' +
+        '            <label for="jobSalary" class="col-sm-2 control-label">Salary:</label>\n' +
+        '            <div class="col-sm-10">\n' +
+        '                <input id="jobSalary" class="form-control" type="number" min="0" name="jobSalary"\n' +
+        '                       placeholder="Job Location" value="'+job.salary+'" required/>\n' +
+        '            </div>\n' +
+        '        </div>\n' +
+
+        '        <div class="row">\n' +
+        '            <label for="jobNumOfWorkers" class="col-sm-2 control-label">Workers:</label>\n' +
+        '            <div class="col-sm-10">\n' +
+        '                <input id="jobNumOfWorkers" class="form-control" type="text" name="jobNumOfWorkers"\n' +
+        '                       placeholder="Workers Needed" value="'+job.max_workers_num+'" required/>\n' +
+        '            </div>\n' +
+        '        </div>\n' +
+
         '        <div class="row ">\n' +
         '            <label for="details" class="col-sm-2 control-label">Job details:</label>\n' +
         '            <div class="col-sm-10">\n' +
@@ -151,20 +238,27 @@ function printJob3(job) {
         '</div>\n' +
         '<hr class="hr-soften">'
     );
+    renameTitleAndLocationId();
+    getJobsFilter(job.jobId);
+    getCities(job.jobId);
 }
 
 function cancelNewJobClick() {
     $("#job-newjob-").remove();
     $("#addJobBtn").attr("disabled", false);
     console.log("cancelNewJobClick");
-
 }
+
 function addJobOffer() {
-    $("#addJobBtn").attr("disabled", true);
+
+    window.location.replace(String.format("jobPage.html?job_id={0}&business_id={1}&business_name={2}",null,business_id,business_name));
+    /*$("#addJobBtn").attr("disabled", true);
     console.log("addJobOffer");
 
     $("#jobsPanelBody").prepend('<div id="job-newjob-"></div>');
     var div = $("#job-newjob-");
+
+    // language=HTML
     div.append(
 
         '<div >\n' +
@@ -183,17 +277,20 @@ function addJobOffer() {
         '        <div class="row">\n' +
         '            <label for="title" class="col-sm-2 control-label">Title:</label>\n' +
         '            <div class="col-sm-10">\n' +
-        '                <input id="title" class="form-control" type="text" name="title"\n' +
-        '                       placeholder="Title"  required/>\n' +
+        '                <select id="title" data-placeholder="Click To Select Your Skills" name="title"'+
+        '                      class="chosen-select chosen-ltr form-control" required>\n' +
+        '                   <option id="option0"></option>' +
+        '                 </select>' +
         '            </div>\n' +
         '        </div>\n' +
-
         '        <div class="row">\n' +
         '            <label for="jobLocation" class="col-sm-2 control-label">Location:</label>\n' +
         '            <div class="col-sm-10">\n' +
-        '                <input id="jobLocation" class="form-control" type="text" name="jobLocation"\n' +
-        '                       placeholder="Job Location"  required/>\n' +
-        '            </div>\n' +
+        '                <select id="jobLocation" data-placeholder="Click To Select Location" name="jobLocation"\n' +
+        '                       class="chosen-select chosen-ltr form-control" required>\n' +
+        '                   <option id="optionL0"></option>' +
+        '                </select>' +
+        '           </div>\n' +
         '        </div>\n' +
 
         '        <div class="row ">\n' +
@@ -218,6 +315,22 @@ function addJobOffer() {
         '            </div>\n' +
         '        </div>\n' +
 
+        '        <div class="row">\n' +
+        '            <label for="jobSalary" class="col-sm-2 control-label">Salary:</label>\n' +
+        '            <div class="col-sm-10">\n' +
+        '                <input id="jobSalary" class="form-control" type="number" min="0" name="jobSalary"\n' +
+        '                       placeholder="Job Salary"  required/>\n' +
+        '            </div>\n' +
+        '        </div>\n' +
+
+        '        <div class="row">\n' +
+        '            <label for="jobNumOfWorkers" class="col-sm-2 control-label">Workers:</label>\n' +
+        '            <div class="col-sm-10">\n' +
+        '                <input id="jobNumOfWorkers" class="form-control" type="text" name="jobNumOfWorkers"\n' +
+        '                       placeholder="Workers Needed"  required/>\n' +
+        '            </div>\n' +
+        '        </div>\n' +
+
         '        <div class="row ">\n' +
         '            <label for="details" class="col-sm-2 control-label">Job details:</label>\n' +
         '            <div class="col-sm-10">\n' +
@@ -235,6 +348,89 @@ function addJobOffer() {
         '    </form>\n' +
         '</div>\n' +
         '<hr class="hr-soften">');
-
+    getJobsFilter();
+    getCities();*/
+}
+function editJobOffer() {
+    var jobId = $("#jobsPanelBody").find(".selectedOfer").attr('id').substring(3);
+    window.location.replace(String.format("jobPage.html?job_id={0}&business_id={1}&business_name={2}", jobId, business_id, business_name));
 }
 
+function sendEmploymentRequests() {
+    var friendsNames;
+    var friendsIds = [];
+    var jobId = $("#jobsPanelBody").find(".selectedOfer").attr('id').substring(3);
+    if ($("#friendsSelect").chosen().val().length != 0) {
+        friendsNames = $("#friendsSelect").chosen().val();
+        friendsNames.forEach(function (f) {
+            friendsIds.push($("option:contains('" + f + "')").prop('id'));
+            console.log($("option:contains('" + f + "')").prop('id'));
+        })
+        allNull = false;
+    }
+
+    $.ajax({
+        url: "notificationsPageServlet",
+        type: 'POST',
+        data: {
+            request_type: "sendEmploymentRequests",
+            friends: friendsIds,
+            business_id:business_id,
+            job_id:jobId,
+            sender_id:currentUserLoggedIn.id
+        },
+        success: function () {
+            $('#myModal').modal('toggle');
+
+        }
+    });
+}
+function getJobsFilter(jobId) {
+    $.ajax({
+        url: "FeedServlet",
+        type: 'GET',
+        data: {
+            request_type: "getJobsTitleList"
+        },
+        success: function (listOfJobs) {
+            var newID = '#title';
+            if(jobId !=-1) {
+                newID=newID+jobId;
+            }
+            listOfJobs.forEach(insertJobsToDropDown);
+            $("#option0").remove();
+            $(newID).chosen();
+            $(newID).chosen({allow_single_deselect: true});
+        }
+    })
+}
+function getCities(jobId) {
+    var newID = '#jobLocation';
+    if(jobId !=-1) {
+        newID= newID+jobId;
+    }
+    //if($(this).attr("data-job-id")){newID=+ $(this).attr("data-job-id");}
+    cities.forEach(insertLocationToDropBox);
+    $("#optionL0").remove();
+    $(newID).chosen();
+    $(newID).chosen({allow_single_deselect: true});
+}
+
+function insertLocationToDropBox(city) {
+    $('<option>' + city.engName.toLowerCase() + '</option>').insertAfter("#optionL0");
+}
+function insertJobsToDropDown(jobName) {
+    $('<option>' + jobName + '</option>').insertAfter("#option0");
+}
+
+function renameTitleAndLocationId() {
+    $("#title").each(function () {
+        var newID = 'title' + $(this).attr("data-job-id");
+        $(this).attr('id', newID);
+    });
+
+    $("#jobLocation").each(function () {
+        var newID = 'jobLocation' + $(this).attr("data-job-id");
+        $(this).attr('id', newID);
+    });
+}

@@ -5,22 +5,15 @@ import Logic.UserManager;
 import Utils.ServletUtils;
 
 import javax.servlet.ServletContext;
-import javax.servlet.annotation.WebServlet;
-import java.io.IOException;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
-import java.net.URISyntaxException;
-
-
+import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-import static com.sun.org.apache.xml.internal.serialize.LineSeparator.Web;
 
 /**
  * Created by Ron on 25-Nov-16.

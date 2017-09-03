@@ -4,22 +4,21 @@
     <meta charset="UTF-8">
     <title>Profile Page</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" type="text/css" href="CSS/bootstrap-chosen.css"/>
     <link rel="stylesheet" type="text/css" href="CSS/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="CSS/style.css"/>
-    <link rel="stylesheet" type="text/css" href="CSS/bootstrap-chosen.css"/>
     <link rel="stylesheet" type="text/css" href="CSS/businessProfilePage.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
     <script src="Scripts/jquery-3.1.1.js"></script>
-    <script src="Scripts/profilePage.js"></script>
-    <script src="Scripts/utils.js"></script>
-    <script src="Scripts/notifier.js"></script>
-
-    <script src="Scripts/currentUser.js"></script>
     <script src="Scripts/bootstrap.min.js"></script>
+    <script src="Scripts/utils.js"></script>
+    <script src="Scripts/profilePage.js"></script>
+    <script src="Scripts/notifier.js"></script>
+    <script src="Scripts/currentUser.js"></script>
 
 </head>
 <body>
-<div class="profilePage row">
+<div class="profilePage row" style="width: 101%;">
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header navbar-default">
@@ -28,7 +27,7 @@
             <ul class="nav navbar-nav">
                 <li id="userSearch">
                     <div style="margin-top: 5px">
-                        <input type="text" style = "width:250px" id="searchText" list="searchResults" placeholder="Search">
+                        <input type="" class="navbar-search" style = "width:250px" id="searchText" list="searchResults" placeholder="Search">
                         <datalist id="searchResults"></datalist>
                     </div>
                 </li>
@@ -37,8 +36,10 @@
                             style="margin-left: 10px ;margin-top: 10px">Search
                     </button>
                 </li>
-                <li id="msgNotifier">
-                    <div class="container">
+            </ul>
+            <ul class="nav navbar-right" align="right">
+                <li id="msgNotifier" >
+                    <div class="container" style="width: auto;">
                         <button class="btn btn-default btn-lg btn-link" onclick="notifierClick()"
                                 style="font-size:26px;">
                             <i class="glyphicon glyphicon-comment custom"></i>
@@ -46,11 +47,19 @@
                         <span class="badge badge-notify"></span>
                     </div>
                 </li>
+                <li id="workSearch" >
+                    <div class="container" style="width: auto;">
+                        <button class="btn btn-default btn-lg btn-link" onclick="window.location.replace('searchAndFeed.html');"
+                                style="font-size:26px;">
+                            <i class="glyphicon glyphicon-search custom"></i>
+                        </button>
+                    </div>
+                </li>
                 <li class="dropdown" style="margin-right:10px; position: absolute;right:0;">
                     <a id="userButton" class="dropdown-toggle" aria-expanded="false" href="#" data-toggle="dropdown">
                         <img id="smallProfilePic"
                              src="http://res.cloudinary.com/ronerez/image/upload/v1502455157/empty_profile_it5elf.png"
-                             class="img-rounded" alt="Cinque Terre" style="margin-right: 3px" width="25" height="25">User
+                             class="img-rounded" alt="" width="20" height="20">User
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu dropdown-menu-right">
                         <li><a href="profilePage.html">Profile Page</a></li>
@@ -65,48 +74,67 @@
     </nav>
 </div>
 <div>
-
-    <div class="row">
-        <div class="col-lg-7 col-lg-offset-3">
-            <nav id="profile-nav" class="navbar navbar-default ">
-                <div class="container-fluid">
-                    <div class="navbar-header">
-                    </div>
-                    <ul class="nav navbar-nav">
-                        <li><a href="#"></a></li>
-                        <li class="active"><a href="#" id="aboutBtnn" onclick="aboutClick()">About</a></li>
-                        <li><a href="#" id="recommendationsBtn" onclick="recommendationsClick()">Recommendations</a>
-                        </li>
-                        <li><a href="#" id="jobHistoryBtn" onclick="jobHistoryClick()">Resume</a></li>
-                        <li><a href="#" id="futureJobsBtn" onclick="futureJobsClick()">Future Jobs</a></li>
-                        <li><a href="#" id="businessesBtn" onclick="businessesClick()">Businesses</a></li>
-                        <li><a href="#" id="CVbtnn" onclick="">CV</a></li>
-                        <li><a href="#" id="addFriendButton" onclick="addAsFriend()">Add As Friend</a></li>
-                    </ul>
-                </div>
-            </nav>
+    <div class="col-md-3">
+        <div align="center" class="">
+            <img id="profilePic" src="" class="img-rounded big_profile_pic"
+                 onerror="this.onerror=null; this.src='Resources/empty_profile.jpg';"
+                 style="max-width: 100%; height: auto">
         </div>
     </div>
 
-    <div class="row">
-        <div align="center" class="col-lg-3">
-            <img id="profilePic" src="" class="img-rounded big_profile_pic" onerror="this.onerror=null;this.src='Resources/empty_profile.jpg';">
-        </div>
-        <div class="col-lg-7">
+    <div class="col-md-6">
+        <nav id="profile-nav" class="navbar navbar-default ">
+            <div class="container-fluid">
+                <ul class="nav navbar-nav">
+                    <li><a href="#"></a></li>
+                    <li class="active"><a href="#" id="aboutBtnn" onclick="aboutClick()">About</a></li>
+                    <li><a href="#" id="recommendationsBtn" onclick="recommendationsClick()">Recommendations</a>
+                    </li>
+                    <li><a href="#" id="jobHistoryBtn" onclick="jobHistoryClick()">Resume</a></li>
+                    <li><a href="#" id="futureJobsBtn" onclick="futureJobsClick()">Future Jobs</a></li>
+                    <li><a href="#" id="businessesBtn" onclick="businessesClick()">Businesses</a></li>
+                    <li><a href="#" id="showFriendsBtn" onclick="friendsClick()">Friends</a></li>
+                    <span class="dropdown" style="margin-top: 10px">
+                            <button class="btn btn-default btn-md dropdown-toggle" type="button" id="dropdownMenu1"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"
+                                    style="margin-top: 1%">
+                                More
+                                <span class="caret"></span>
+                            </button>
+                            <ul id= "moreDropDown" class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+                                <li><a href="#" id="CVbtnn" onclick="">CV</a></li>
+                                <li id="friendshipBtn"><a href="#" id="addFriendButton" onclick="addAsFriend()">Add As Friend</a></li>
+                            </ul>
+                    </span>
+                </ul>
+            </div>
+        </nav>
+        <div style="margin-top: 5px">
             <div class="panel panel-default">
-                <div id="userInfoPanelHeader" class="panel-heading">About</div>
-                <div id="userInfoPanelBody" class="panel-body" style="min-height: 200px; max-height: 250px;overflow-y: scroll;"></div>
+                <div id="userInfoPanelHeader" class="panel-heading">
+                    <div class="row" style="padding-right: 10px;padding-left: 10px;">
+                        <div id="userInfoPanelHeaderTextDiv" class="linkForm">About</div>
+                        <div id="userInfoPanelHeaderButtonDiv" align="right">
+
+                        </div>
+                    </div>
+
+                </div>
+                <div id="userInfoPanelBody" class="panel-body"
+                     style="min-height: 500px; max-height: 500px;overflow-y: scroll;"></div>
             </div>
         </div>
     </div>
-    <div class="col-lg-8 col-lg-offset-10">
+
+    <div class="col-md-3">
         <div class="panel panel-default">
             <div id="friendsPanelHeader" class="panel-heading">
                 <div class="row">
-                    <div id="businessInfoPanelHeaderTextDiv" class="linkForm"><h4>Friends</h4></div>
+                    <div id="friendsTextHeader" class="linkForm"><h4>My Friends</h4></div>
                 </div>
             </div>
-            <div id="friendsPanelBody" class="panel-body" style="min-height: 200px; max-height: 250px;overflow-y: scroll;"></div>
+            <div id="friendsPanelBody" class="panel-body"
+                 style="min-height: 552px; max-height: 552px;overflow-y: scroll;"></div>
         </div>
     </div>
 </div>

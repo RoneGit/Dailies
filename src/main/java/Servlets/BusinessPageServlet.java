@@ -3,11 +3,12 @@ package Servlets;
 import Logic.*;
 import Utils.ServletUtils;
 
-import javax.servlet.annotation.WebServlet;
-import java.io.IOException;
+
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.sql.*;
 import java.sql.Date;
 import java.text.DateFormat;
@@ -99,7 +100,7 @@ public class BusinessPageServlet extends javax.servlet.http.HttpServlet {
             con = ServletUtils.getConnection();
             stmt = con.createStatement();
             String sql = "INSERT INTO business_feedbacks (business_id ,feedback, uploader_id, upload_date, upload_time, title) " +
-                    "VALUES('" + businessId + "' , '" + feedback + "' , '" + user.getId() + "' , '" + postDate.getTime() + "' ,'" + postTime + "','" +
+                    "VALUES('" + businessId + "' , '" + feedback + "' , '" + user.getId() + "' , '" + postDate + "' ,'" + postTime + "','" +
                     title + "')";
 
             stmt.executeUpdate(sql);

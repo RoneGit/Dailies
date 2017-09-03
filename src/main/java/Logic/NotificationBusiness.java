@@ -4,7 +4,6 @@ import Utils.ServletUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class NotificationBusiness {
     public enum Type {
@@ -27,6 +26,8 @@ public class NotificationBusiness {
     public String job_name;
     public Integer apply_id;
     public Integer isPending;
+    public Date notDate;
+    public String notTime;
 
     public NotificationBusiness(ResultSet rs) {
         try {
@@ -40,6 +41,9 @@ public class NotificationBusiness {
             job_id = rs.getInt("job_id");
             apply_id = rs.getInt("apply_id");
             isPending=rs.getInt("is_pending");
+            notDate = rs.getDate("not_date");
+            notTime = rs.getString("not_time");
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -48,10 +52,18 @@ public class NotificationBusiness {
         user = UserData.getUserInfoFromDbById(reciver_id.toString());
         reciver_name = user.fname + " " + user.lname;
         Bussiness business = Bussiness.getBusinessInfoById(business_id.toString());
-        business_name = business.name;
-        business_profile_pic = business.profilePicUrl;
-        JobOffer job = JobOffer.getJobOfferByIdFromDB(job_id);
-        job_name = job.name;
+
+        business_name = (business != null) ? business.name : "";
+
+        business_profile_pic = (business!=null) ? business.profilePicUrl : "";
+
+        if(job_id !=-1) {
+            JobOffer job = JobOffer.getJobOfferByIdFromDB(job_id);
+            job_name = job.name;
+        }
+        else{
+            job_name = "";
+        }
 
     }
 
@@ -66,7 +78,8 @@ public class NotificationBusiness {
 
             String SELECT = " SELECT *" +
                     " FROM notifications" +
-                    " WHERE reciver_id='" + userId + "' ";
+                    " WHERE reciver_id='" + userId + "' "+
+                    " ORDER BY not_date DESC, not_time DESC";
 
             rs = stmt.executeQuery(SELECT);
             ArrayList<NotificationBusiness> notificationsList = new ArrayList<>();

@@ -3,6 +3,9 @@
  */
 
 var currentUserShown;
+var AddFriendBtn = $('<a href="#" id="addFriendButton" onclick="addAsFriend()">Add As Friend</a>');
+var RemoveFriendBtn = $('<a href="#" id="removeFriendButton" onclick="removeFriend()">Remove Friend</a>');
+var PendingBtn = $('<a href="#" id="pendingButton" disabled="true">Pending</a>');
 
 $(function () {
     var userId;
@@ -13,8 +16,71 @@ $(function () {
     else {
         getUserFromUrlId(userId);
     }
-    //loadFriends();
+    loadLogedInUserFriends();
+    checkIfPendingFriendRequest(userId);
+    if($(this).find("AddFriendBtn")) {
+        checkIfFriends();
+    }
 });
+
+function insertAddFriendButton() {
+    $("#moreDropDown").append(
+        '<li><a href="#" id="addFriendButton" onclick="addAsFriend()">Add As Friend</a></li>');
+}
+function isOwnProfile(userId) {
+    $.ajax({
+        url: "profilePageServlet",
+        type: 'POST',
+        data: {
+            request_type: "checkIfMyProfile",
+            profile_id: userId
+        },
+        success: function (flag) {
+            if(falge == 1)
+                $("#AddFriendBtn").hide();
+        }
+    });
+}
+function checkIfFriends() {
+    $.ajax({
+        url: "profilePageServlet",
+        type: 'POST',
+        data: {request_type: "getFriends"},
+        success: function (friendListWithLogedInData) {
+            if(friendListWithLogedInData!= null)
+                friendListWithLogedInData.forEach(checkIfFriendHelper);
+        }
+    });
+}
+
+function checkIfFriendHelper(friend)
+{
+    var pair = friend;
+    var userData = pair.left;
+    var isLogedIn = pair.right;
+    if(userData.id == currentUserShown.id){
+        $("#addFriendButton").replaceWith(RemoveFriendBtn);
+        $("#friendshipBtn").removeClass("disabled");
+    }
+}
+
+function checkIfPendingFriendRequest(userID){
+    $.ajax({
+        url: "profilePageServlet",
+        type: 'POST',
+        data:
+        {
+            request_type: "checkIfPendingRequest",
+            user_Tocheck: userID
+        },
+        success: function (isPanding) {
+            if(isPanding == 1) {
+                $("#addFriendButton").replaceWith(PendingBtn);
+                $("#friendshipBtn").addClass("disabled");
+            }
+        }
+    });
+}
 
 function getUserFromUrlId(userId) {
     $.ajax({
@@ -34,6 +100,7 @@ function getUserFromUrlId(userId) {
 }
 
 function getUserFromSession() {
+    $("#addFriendButton").remove();
     $.ajax({
         url: "profilePageServlet",
         type: 'POST',
@@ -46,38 +113,45 @@ function getUserFromSession() {
     });
 }
 
-function loadFriends() {
-    $('#friendsPanelBody').empty();
+function friendsClick() {
+    setActive($("#showFriendsBtn"));
+    $("#userInfoPanelBody").empty();
+    var id = currentUserShown.id;
     $.ajax({
         url: "profilePageServlet",
         type: 'POST',
-        data: {request_type: "getFriends",
-            currentUserLogedInId: currentUserLoggedIn.id,
+        data: {request_type: "getCurrentUserShownFriends",
             currentUserShownId: currentUserShown.id},
-        success: function (friendListWithLogedInData) {
-            for (i = 0; i <= friendListWithLogedInData.length - 1; i++) {
-                var pair = friendListWithLogedInData[i];
-                var userData = pair.left;
-                var isLogedIn = pair.right;
-                var loggedInBall = "http://res.cloudinary.com/dailies/image/upload/v1504200406/Red_sphere.png";
-                if (isLogedIn == 1)
-                    loggedInBall = "http://res.cloudinary.com/dailies/image/upload/v1504200406/Green_sphere.png";
-                var linkToUser = getLinkWithStyle(i + "Form", "profilePageServlet", userData.fname , "float: left", [["request_type", "loadUserProfile"], ["user_id", userData.id]]);
-                var currText2 ="</span>" + linkToUser + "<span style ='float: left; margin-left: 10px'> Recommendation: " + currentRec.recommendation + "</span>";
-                $('#friendsPanelBody').append('<div><img id="loggedInBall" src="'+ loggedInBall +'" class="img-rounded" alt="Cinque Terre" style="margin-right: 3px" width="5" height="5"><p style ="float: left">' + currText2 + '</p></div><br>');
-                $('#friendsPanelBody').append('<hr class="hr-soften">');
-            }
+        success: function (friendList) {
+            if(friendList!= null)
+                friendList.forEach(printFriendList);
         }
     });
 }
 
+function printFriendList(friend) {
+    var name = friend.fname + " " + friend.lname;
+    var picUrl = "Resources/empty_profile.jpg";
+    if (friend.profilePic != null)
+        picUrl = friend.profilePic;
+    var img =
+        '<img id="smallProfilePic"' +
+        'src="'+ picUrl +'"' +
+        'class="img-rounded" alt="Cinque Terre" style="margin-right: 3px" width="25" height="25">'
+
+    var linkToUser = getLinkWithStyle(friend.id + "Form", "profilePageServlet", name, "float: left", [["request_type", "loadUserProfile"], ["user_id", friend.id]]);
+    var currText2 = img + linkToUser + "<span style ='float: left; margin-left: 10px'> Email: " + friend.email + "</span>";
+    $('#userInfoPanelBody').append('<div><p style ="float: left">' + currText2 + '</p></div><br>');
+    $('#userInfoPanelBody').append('<hr class="hr-soften">');
+}
+
 function printUser(userData) {
     /*document.getElementById('userName').innerHTML = userData.fname + " " + userData.lname;
-    document.getElementById('userEmail').innerHTML = userData.email;
-    if (userData.address != null && userData.address != "")
-        document.getElementById('userLocation').innerHTML = userData.address;
-    if (userData.skills != null && userData.skills != "")
-        document.getElementById('userSkills').innerHTML = userData.skills;*/
+     document.getElementById('userEmail').innerHTML = userData.email;
+     if (userData.address != null && userData.address != "")
+     document.getElementById('userLocation').innerHTML = userData.address;
+     if (userData.skills != null && userData.skills != "")
+     document.getElementById('userSkills').innerHTML = userData.skills;*/
     if (userData.profilePic != null && userData.profilePic != "")
         document.getElementById('profilePic').src = userData.profilePic;
     if (userData.CV != null && userData.CV != "") {
@@ -106,34 +180,6 @@ function printAbout()
         '<div class="row" style="margin-left: 3px"><label class="control-label"></label>' + currentUserShown.about + '</div>')
 }
 
-function recommendationsClick() {
-    setActive($("#recommendationsBtn"));
-    recommendationForm = "<div class='row'> <div class='col-md-5'> <label for='recommendationText'>Enter Recommendation:</label> </div> <textarea class='form-control' rows='2' id='recommendationText'></textarea> <button onclick='registerRecommendation()' class='btn btn-outline btn-primary btn-large'>Submit</button> </div><div id = 'recomendationsPlace'></div>"
-    printUserInfoPanelBody(recommendationForm);
-    $.ajax({
-        url: "profilePageServlet",
-        type: 'POST',
-        data: {
-            request_type: "getCurrentUserRecommendation",
-            currentUserShownId: currentUserShown.id,
-        },
-        success: function (recommendationList) {
-            printRecommendations(recommendationList);
-        }
-    });
-}
-
-function printRecommendations(recommendationList) {
-    $('#recomendationsPlace').empty();
-    for (i = 0; i <= recommendationList.length -1; i++) {
-        var currentRec = recommendationList[i];
-        var linkToUser = getLinkWithStyle(i + "Form", "profilePageServlet", currentRec.userInputedName , "float: left", [["request_type", "loadUserProfile"], ["user_id", currentRec.userInputedId]]);
-        var currText2 = "<span>Name:  </span>" + linkToUser + "<span style ='float: left; margin-left: 10px'> Recommendation: " + currentRec.recommendation + "</span>";
-        $('#recomendationsPlace').append('<div><p style ="float: left">' + currText2 + '</p></div><br>');
-        $('#recomendationsPlace').append('<hr class="hr-soften">');
-    }
-}
-
 function jobHistoryClick() {
     setActive($("#jobHistoryBtn"));
     $("#userInfoPanelBody").empty();
@@ -145,7 +191,8 @@ function jobHistoryClick() {
             currentUserIdSearch: currentUserShown.id
         },
         success: function (jobOffersPairs) {
-            printJobOffers(jobOffersPairs);
+            if(jobOffersPairs!= null)
+                jobOffersPairs.forEach(printJobOffer);
         }
     });
 }
@@ -162,28 +209,37 @@ function futureJobsClick()
             currentUserIdSearch: currentUserShown.id
         },
         success: function (jobOffersPairs) {
-            printJobOffers(jobOffersPairs);
+            if(jobOffersPairs!= null)
+                jobOffersPairs.forEach(printJobOffer);
         }
     });
 }
 
-function printJobOffers(jobOffersPairs)
-{
-    for (i = 0; i <= jobOffersPairs.length; i++) {
+function printJobOffer(jobOfferPair) {
+    var pair = jobOfferPair;
+    var business = pair.left;
+    var jobOffer = pair.right;
+    var picUrl = "Resources/empty_profile.jpg";
+    if (business.profilePicUrl != null)
+        picUrl = business.profilePicUrl;
+    var img =
+        '<img id="smallProfilePic"' +
+        'src="'+ picUrl +'"' +
+        'class="img-rounded" alt="Cinque Terre" style="margin-right: 3px" width="25" height="25">'
 
-        var pair = jobOffersPairs[i];
-        var business = pair.left;
-        var jobOffer = pair.right;
-        var linkToBusiness = getLinkWithStyle(i + "Form", "businessPage", business.name, "float: left", [["request_type", "loadBusinessPage"], ["business_id", business.id]]);
-        var currText = "<span>Business Name: </span>" + linkToBusiness + "<span style ='float: left; margin-left: 10px'> Job Title: " + jobOffer.name + "</span><span style ='float: left ; margin-left: 10px'> Job Details: " + jobOffer.details + "</span>";
-        $('#userInfoPanelBody').append('<div><p style ="float: left">' + currText + '</p></div><br>');
-        $('#userInfoPanelBody').append('<hr class="hr-soften">');
-    }
+    var linkToBusiness = getLinkWithStyle(business.id + "Form", "businessPage", business.name + ":", "float: left", [["request_type", "loadBusinessPage"], ["business_id", business.id]]);
+    var currText = img + linkToBusiness + "<span style ='float: left; margin-left: 10px'> Job Title: " + jobOffer.name + "</span><span style ='float: left ; margin-left: 10px'> Job Details: " + jobOffer.details + "</span>";
+    $('#userInfoPanelBody').append('<div><p style ="float: left">' + currText + '</p></div><br>');
+    $('#userInfoPanelBody').append('<hr class="hr-soften">');
 }
 
 function businessesClick() {
     setActive($("#businessesBtn"));
     $("#userInfoPanelBody").empty();
+    $("#userInfoPanelHeaderButtonDiv").append(
+        '<div align="right">\n' +
+        '     <button id="addFeedbackBtn" class="btn btn-default btn-md" onclick="addBusiness()">Add Business</button>\n' +
+        '</div>');
     var mapstr;
     var mydatas = new Map();
     $(function () {
@@ -193,15 +249,26 @@ function businessesClick() {
             data: {request_type: "getCurrentUserBusinesssesList",
                 currentUserShownId: currentUserShown.id,},
             success: function (businessesList) {
-                for (i = 0; i <= businessesList.length; i++) {
-                    var linkToBusiness = getLinkWithStyle(i + "Form", "businessPage", businessesList[i].name, "float: left", [["request_type", "loadBusinessPage"], ["business_id", businessesList[i].id]]);
-                    var currText = "<span>Business Name: </span>" + linkToBusiness + "<span style ='float: left; margin-left: 10px'> City: " + businessesList[i].city + "</span><span style ='float: left ; margin-left: 10px'> Number: " + businessesList[i].phone + "</span>";
-                    $('#userInfoPanelBody').append('<div><p style ="float: left">' + currText + '</p></div><br>');
-                    $('#userInfoPanelBody').append('<hr class="hr-soften">');
-                }
+                if(businessesList!= null)
+                    businessesList.forEach(printBusiness)
             }
         });
     });
+}
+
+function printBusiness(business) {
+    picUrl = 'Resources/empty_profile.jpg';
+    if (business.profilePicUrl != null)
+        picUrl = business.profilePicUrl;
+    var img =
+        '<img id="smallProfilePic"' +
+        'src="'+ picUrl +'"' +
+        'class="img-rounded" alt="Cinque Terre" style="margin-right: 3px" width="25" height="25">'
+
+    var linkToBusiness = getLinkWithStyle(business.id + "Form", "businessPage", business.name + ":", "float: left", [["request_type", "loadBusinessPage"], ["business_id", business.id]]);
+    var currText = img + linkToBusiness + "<span style ='float: left; margin-left: 10px'> City: " + business.city + "</span><span style ='float: left ; margin-left: 10px'> Number: " + business.phone + "</span>";
+    $('#userInfoPanelBody').append('<div><p style ="float: left">' + currText + '</p></div><br>');
+    $('#userInfoPanelBody').append('<hr class="hr-soften">');
 }
 
 function printUserInfoPanelBody(userInfoBodyText) {
@@ -210,14 +277,35 @@ function printUserInfoPanelBody(userInfoBodyText) {
         $('#userInfoPanelBody').append('<span>' + userInfoBodyText + '</span><br>');
 }
 
-function setActive(item) {
-
-    var v = $('#profile-nav').find("li");
-    v.each(function () {
-        $(this).removeClass("active");
+var recomendationIndex = 0;
+function recommendationsClick() {
+    setActive($("#recommendationsBtn"));
+    recommendationForm = "<div class='row'> <div class='col-md-5'> <label for='recommendationText'>Enter Recommendation:</label> </div> <textarea class='form-control' rows='2' id='recommendationText'></textarea> </div><div id = 'recomendationsPlace'></div>"
+    var header = $("#userInfoPanelHeaderButtonDiv");
+    header.append("<button onclick='registerRecommendation()' class='btn btn-outline btn-primary btn-large'>Submit</button>")
+    printUserInfoPanelBody(recommendationForm);
+    $.ajax({
+        url: "profilePageServlet",
+        type: 'POST',
+        data: {
+            request_type: "getCurrentUserRecommendation",
+            currentUserShownId: currentUserShown.id,
+        },
+        success: function (recommendationList) {
+            $('#recomendationsPlace').empty();
+            recomendationIndex = 0;
+            if(recommendationList!= null)
+                recommendationList.forEach(printRecommendation);
+        }
     });
-    $("#userInfoPanelHeader").html($(item).text());
-    $(item).parent().addClass("active");
+}
+
+function printRecommendation(recommendation) {
+    recomendationIndex = recomendationIndex +1;
+    var linkToUser = getLinkWithStyle(recomendationIndex + "Form", "profilePageServlet", recommendation.userInputedName + ":", "float: left", [["request_type", "loadUserProfile"], ["user_id", recommendation.userInputedId]]);
+    var currText2 = linkToUser + "<span style ='float: left; margin-left: 10px'> Recommended: " + recommendation.recommendation + "</span>";
+    $('#recomendationsPlace').append('<div><p style ="float: left">' + currText2 + '</p></div><br>');
+    $('#recomendationsPlace').append('<hr class="hr-soften">');
 }
 
 function registerRecommendation() {
@@ -234,7 +322,10 @@ function registerRecommendation() {
                 recommendation: rec
             },
             success: function (recommendationList) {
-                printRecommendations(recommendationList);
+                $('#recomendationsPlace').empty();
+                recomendationIndex = 0;
+                if(recommendationList!= null)
+                    recommendationList.forEach(printRecommendation);
             }
         });
     }
@@ -253,7 +344,48 @@ function addAsFriend()
             },
             success: function (flag) {
                 if (flag == 1) {
-                    alert("You are already friends");
+                    $("#addFriendButton").replaceWith(PendingBtn);
+                    $("#friendshipBtn").addClass("disabled");
+                    alert("Friend request Sent");
+                }
+            }
+        });
+    }
+}
+
+function setActive(item) {
+
+    var v = $('#profile-nav').find("li");
+    v.each(function () {
+        $(this).removeClass("active");
+    });
+    $("#userInfoPanelHeaderButtonDiv").empty();
+
+    $("#userInfoPanelHeaderTextDiv").html($(item).text());
+    $(item).parent().addClass("active");
+}
+
+function addBusiness() {
+    window.location.replace("/editBusinessProfilePage.html");
+}
+
+function removeFriend()
+{
+    if(currentUserLoggedIn.id != currentUserShown.id) {
+        $.ajax({
+            url: "profilePageServlet",
+            type: 'POST',
+            data: {
+                request_type: "removeFriend",
+                currentUserLogedInId: currentUserLoggedIn.id,
+                currentUserShownId: currentUserShown.id,
+            },
+            success: function (flag) {
+                if (flag == 1) {
+                    $("#removeFriendButton").replaceWith(AddFriendBtn);
+                    $("#friendshipBtn").removeClass("disabled");
+                    loadLogedInUserFriends();
+                    alert("friend removed");
                 }
             }
         });

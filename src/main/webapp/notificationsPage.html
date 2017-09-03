@@ -17,7 +17,7 @@
 </head>
 <body>
 
-<div class="profilePage row">
+<div class="profilePage row" style="width: 101%;">
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header navbar-default">
@@ -26,7 +26,7 @@
             <ul class="nav navbar-nav">
                 <li id="userSearch">
                     <div style="margin-top: 5px">
-                        <input type="text" style = "width:250px" id="searchText" list="searchResults" placeholder="Search">
+                        <input type="" class="navbar-search" style = "width:250px" id="searchText" list="searchResults" placeholder="Search">
                         <datalist id="searchResults"></datalist>
                     </div>
                 </li>
@@ -35,8 +35,10 @@
                             style="margin-left: 10px ;margin-top: 10px">Search
                     </button>
                 </li>
-                <li id="msgNotifier">
-                    <div class="container">
+            </ul>
+            <ul class="nav navbar-right" align="right">
+                <li id="msgNotifier" >
+                    <div class="container" style="width: auto;">
                         <button class="btn btn-default btn-lg btn-link" onclick="notifierClick()"
                                 style="font-size:26px;">
                             <i class="glyphicon glyphicon-comment custom"></i>
@@ -44,11 +46,19 @@
                         <span class="badge badge-notify"></span>
                     </div>
                 </li>
+                <li id="workSearch" >
+                    <div class="container" style="width: auto;">
+                        <button class="btn btn-default btn-lg btn-link" onclick="window.location.replace('searchAndFeed.html');"
+                                style="font-size:26px;">
+                            <i class="glyphicon glyphicon-search custom"></i>
+                        </button>
+                    </div>
+                </li>
                 <li class="dropdown" style="margin-right:10px; position: absolute;right:0;">
                     <a id="userButton" class="dropdown-toggle" aria-expanded="false" href="#" data-toggle="dropdown">
                         <img id="smallProfilePic"
                              src="http://res.cloudinary.com/ronerez/image/upload/v1502455157/empty_profile_it5elf.png"
-                             class="img-rounded" alt="Cinque Terre" width="20" height="20">User
+                             class="img-rounded" alt="" width="20" height="20">User
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu dropdown-menu-right">
                         <li><a href="profilePage.html">Profile Page</a></li>
@@ -63,30 +73,41 @@
     </nav>
 </div>
 
-<div class="col-lg-7 col-lg-offset-3">
+<div>
+    <div class="col-md-3">
+
+    </div>
+
     <!--<h2 id="editPageTitle">Edit Business Page</h2>-->
-    <div class="panel panel-default">
-        <div id="businessInfoPanelHeader" class="panel-heading">
-            <div class="row">
-                <div id="businessInfoPanelHeaderTextDiv" class="linkForm"><h4>My Notifications</h4></div>
-                <div align="right">
-                    <button class="btn btn-default btn-md" onclick="">Refresh</button>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div id="businessInfoPanelHeader" class="panel-heading">
+                <div class="row">
+                    <div id="businessInfoPanelHeaderTextDiv" class="linkForm"><h4>My Notifications</h4></div>
+                    <div align="right">
+                        <button class="btn btn-default btn-md" onclick="">Refresh</button>
+                    </div>
+                </div>
+            </div>
+            <div id="businessInfoPanelBody" class="panel-body">
+
+                <div id="notificationDiv">
+
                 </div>
             </div>
         </div>
-        <div id="businessInfoPanelBody" class="panel-body">
+    </div>
 
-            <div id="userNotificationsDiv">
+    <div class="col-md-3">
+        <div class="panel panel-default">
+            <div id="friendsPanelHeader" class="panel-heading">
+                <div class="row">
+                    <div id="friendsTextHeader" class="linkForm"><h4>My Friends</h4></div>
+                </div>
             </div>
-
-            <div id="businessNotificationsDiv">
-                <div id="pendingNotifications"></div>
-                <hr>
-                <div id="notPendingNotifications"></div>
-            </div>
-
+            <div id="friendsPanelBody" class="panel-body"
+                 style="min-height: 552px; max-height: 552px;overflow-y: scroll;"></div>
         </div>
-
     </div>
 </div>
 </body>

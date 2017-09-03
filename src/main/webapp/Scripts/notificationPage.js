@@ -5,9 +5,27 @@
 $(function () {
     getNotifications();
     $("#msgNotifier").find('span').html("");
-
-
+    loadLogedInUserFriends();
 });
+
+function printFriendResponse(not) {
+    if (not.isApproved) {
+        printUserFriendNotification(not, "Accepted");
+    }
+    else {
+        printUserFriendNotification(not, "Did Not Accepted");
+    }
+}
+
+
+function printResponse(not) {
+    if (not.isApproved) {
+        printUserNotification(not, "Agree");
+    }
+    else {
+        printUserNotification(not, "Did Not Agree");
+    }
+}
 
 function getNotifications() {
     $.ajax({
@@ -26,7 +44,7 @@ function getNotifications() {
 }
 
 function printPendingBusinessNotification(not) {
-    $("#businessNotificationsDiv").find("#pendingNotifications").append(
+    $("#notificationDiv").append(
         '<div id="not' + not.id + '" class="row">' +
         '   <img src="' + not.business_profile_pic + '"  class="col-lg-1 small_profile_pic"/>' +
         '   <span>' +
@@ -40,17 +58,18 @@ function printPendingBusinessNotification(not) {
         '         <span id="jobName">' + not.job_name + '</span>' +
         '   </span>' +
         '   <div id="hireRejectBtns" style="float:right">' +
-        '       <button class="btn btn-sm btn-primary" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" onclick="HireOrRejectClick(this)">Hire</button>' +
-        '       <button class="btn btn-sm btn-danger" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" onclick="HireOrRejectClick(this)">Reject</button>' +
-        '   </div>' +
+        '       <button class="btn btn-sm btn-primary" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" data-job-id="' + not.job_id + '" onclick="HireOrRejectClick(this)">Hire</button>' +
+        '       <button class="btn btn-sm btn-danger" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" data-job-id="' + not.job_id + '" onclick="HireOrRejectClick(this)">Reject</button>' +
+        '   </div><span style="float: right; padding-right: 10px"><small>' + not.notDate + ' ' + not.notTime + '</small></span>' +
         '</div>');
 }
 
 function HireOrRejectClick(btn) {
-    var hiredOrRejectText = $(btn).text() + " ";
-    var reqType = "handle" + $(btn).text() + "Request";
+    var hiredOrRejectText = $(btn).text();
+    var type =  $(btn).attr("data-type");
     var notId = $(btn).attr("data-not-id");
     var applyId = $(btn).attr("data-apply-id");
+    var jobId = $(btn).attr("data-job-id");
     $.ajax({
         url: "notificationsPageServlet",
         type: 'POST',
@@ -58,100 +77,144 @@ function HireOrRejectClick(btn) {
             request_type: "handleHireRejectRequest",
             not_id: notId,
             apply_id: applyId,
+            job_id: jobId,
+            type:type,
             is_hire: $(btn).text() == "Hire"
         },
         success: function (flag) {
             var senderLinkSpan = $("#not" + notId).find("#senderLinkSpan");
             console.log((senderLinkSpan));
             var jobName = $("#not" + notId).find("#jobName");
-            $("#not" + notId).find("#notMsg").empty();
-            $("#not" + notId).find("#notMsg").append(' You ');
-            $("#not" + notId).find("#notMsg").append(hiredOrRejectText);
-            $("#not" + notId).find("#notMsg").append(senderLinkSpan);
-            $("#not" + notId).find("#notMsg").append(' For ');
-            $("#not" + notId).find("#notMsg").append(jobName);
-            $("#not" + notId).find("#hireRejectBtns").remove();
+            if(type==0) {
+                $("#not" + notId).find("#notMsg").empty();
+                $("#not" + notId).find("#notMsg").append(' You ');
+                $("#not" + notId).find("#notMsg").append(hiredOrRejectText+" ");
+                $("#not" + notId).find("#notMsg").append(senderLinkSpan);
+                $("#not" + notId).find("#notMsg").append(' For ');
+                $("#not" + notId).find("#notMsg").append(jobName);
+                $("#not" + notId).find("#hireRejectBtns").remove();
+            }else if(type==4){
+                $("#not" + notId).find("#notMsg").empty();
+                $("#not" + notId).find("#notMsg").append(' You ');
+                $("#not" + notId).find("#notMsg").append(hiredOrRejectText+"ed");
+                $("#not" + notId).find("#notMsg").append(' Job: ');
+                $("#not" + notId).find("#notMsg").append(jobName);
+                $("#not" + notId).find("#hireRejectBtns").remove();
+            }
         }
     });
 }
 
-/*function rejectClick(btn) {
-    var notId=$(btn).attr("data-not-id");
-    var applyId=$(btn).attr("data-apply-id");
-    $.ajax({
-        url: "notificationsPageServlet",
-        type: 'POST',
-        data: {
-            request_type: "handleRejectRequest",
-            not_id:notId,
-            apply_id:applyId
-        },
-        success: function (flag) {
-            var senderLinkSpan=$("#not"+notId).find("#senderLinkSpan");
-            console.log((senderLinkSpan));
-            var jobName=$("#not"+notId).find("#jobName");
-            $("#not"+notId).find("#notMsg").empty();
-            $("#not"+notId).find("#notMsg").append(' You Reject ');
-            $("#not"+notId).find("#notMsg").append(senderLinkSpan);
-            $("#not"+notId).find("#notMsg").append(' For ');
-            $("#not"+notId).find("#notMsg").append(jobName);
-        }
-    });
+function printUserNotification(not, message) {
+    var msg2=not.type==0?' To Hire You For ':' For Job: ';
+    $('\
+        <div class="row" id="notify" >\
+            <span>\
+                <button data-id="' + not.business_id + '" class="btn btn-link" onclick="showUserProfile(this)"><b>' + not.business_name + ":  " + '</b></button>\
+            </span>\
+            <span>\
+                <button data-id="' + not.sender_id + '" class="btn btn-link" onclick="showUserProfile(this)">' + not.sender_name + '</button>\
+            </span>\
+            <span>' + message + msg2 + not.job_name + '</span>\
+            <span style="float: right ; padding-right: 10px"><small>' + not.notDate + ' ' + not.notTime + '</small></span>\
+        </div>').insertAfter("#notificationDiv");
 }
-function hireClick(btn) {
-    var notId=$(btn).attr("data-not-id");
-    var applyId=$(btn).attr("data-apply-id");
-    $.ajax({
-        url: "notificationsPageServlet",
-        type: 'POST',
-        data: {
-            request_type: "handleHireRequest",
-            not_id:notId,
-            apply_id:applyId
-        },
-        success: function (flag) {
-            var senderLinkSpan=$("#not"+notId).find("#senderLinkSpan");
-            console.log((senderLinkSpan));
-            var jobName=$("#not"+notId).find("#jobName");
-            $("#not"+notId).find("#notMsg").empty();
-            $("#not"+notId).find("#notMsg").append(' You Hired ');
-            $("#not"+notId).find("#notMsg").append(senderLinkSpan);
-            $("#not"+notId).find("#notMsg").append(' For ');
-            $("#not"+notId).find("#notMsg").append(jobName);
-        }
-    });
-}*/
-////// rewrite this ////
-function printUserNotification(not) {
 
-    $("#userNotificationsDiv").append(
-        '<div id="not' + not.id + '" class="row">' +
-        '   <span>' +
-        '       <button data-id="' + not.business_id + '" class="btn btn-link" onclick="showUserProfile(this)"><b>' + not.business_name + ":  " + '</b></button>' +
-        '   </span>' +
-        '   <span>' +
-        '       <button data-id="' + not.sender_id + '" class="btn btn-link" onclick="showUserProfile(this)">' + not.sender_name + '</button>' +
-        '   </span>' +
-        not.isHired ? " Agree To Hire You " : +" Did Not Agree To Hire You " +
-            '</div>');
+function printUserFriendNotification(not, message) {
+    $('\
+        <div class="row" id="notify" >\
+            <span>\
+                <button data-id="' + not.sender_id + '" class="btn btn-link" onclick="showUserProfile(this)">' + not.sender_name + '</button>\
+            </span>\
+            <span>' + message + ' your friend request</span>\
+            <span style="float: right; padding-right: 10px"><small>' + not.notDate + ' ' + not.notTime + '</small></span>\
+        </div>').insertAfter("#notificationDiv");
 }
 
 function printNotPendingBusinessNotification(not) {
     var hireOrRejectText = not.isApproved == true ? " Hired " : " Rejected ";
-    $("#businessNotificationsDiv").find("#notPendingNotifications").append(
+    $("#notificationDiv").append(
         '<div id="not' + not.id + '" class="row">' +
         '   <img src="' + not.business_profile_pic + '"  class="col-lg-1 small_profile_pic"/>' +
         '   <span>' +
         '       <button data-id="' + not.business_id + '" class="btn btn-link" onclick="showUserProfile(this)"><b>' + not.business_name + ":  " + '</b></button>' +
         '   </span>' +
         '   <span id="notMsg">' +
-        ' You ' + hireOrRejectText+
+        ' You ' + hireOrRejectText +
         '         <span id="senderLinkSpan">' +
         '             <button  data-id="' + not.sender_id + '" class="btn btn-link" onclick="showUserProfile(this)">' + not.sender_name + '</button>' +
         '         </span>' +
-        ' For '+
+        ' For ' +
+        '         <span id="jobName">' + not.job_name + '</span>' +
+        '   </span><span style="float: right; padding-right: 10px"><small>' + not.notDate + ' ' + not.notTime + '</small></span>' +
+        '</div>');
+}
+
+function printFriendRequest(not) {
+    $('\
+        <div class="row" id="notify" >\
+            <span>\
+                <button data-id="' + not.sender_id + '" class="btn btn-link" onclick="showUserProfile(this)">' + not.sender_name + '</button>\
+            </span>\
+            <span> sent you a friend request </span>\
+            <div id="hireRejectBtns" style="float:right">\
+              <button id="acceptBtn" class="btn btn-sm btn-primary" data-reciver-id="' + not.reciver_id + '" data-sender-id="' + not.sender_id + '" data-not-id="' + not.id + '" onclick="AcceptOrRejectFriendClick(this)">Accept</button>\
+              <button id="rejectBtn"  class="btn btn-sm btn-danger" data-reciver-id="' + not.reciver_id + '" data-sender-id="' + not.sender_id + '" data-not-id="' + not.id + '" onclick="AcceptOrRejectFriendClick(this)">Reject</button>\
+            </div>\
+            <span style="float: right; padding-right: 10px"><small>' + not.notDate + ' ' + not.notTime + '</small></span>\
+        </div>').insertAfter("#notificationDiv");
+    renameBtnId();
+    if (not.isPending == 0) {
+        var acceptBtnId = '#acceptBtn' + not.id;
+        var rejectBtnId = '#rejectBtn' + not.id;
+        var acceptMessage = "Accepted ", rejectMessage = "Rejected ";
+        var div = $('<div id="replacedMessage" class="text-muted" style="float:right"></div>')
+        $(acceptBtnId).replaceWith(div);
+        $(rejectBtnId).remove();
+        if (not.isApproved) {
+            $("#replacedMessage").html(acceptMessage);
+        }
+        else {
+            $("#replacedMessage").html(rejectMessage);
+        }
+    }
+}
+
+function printPendingJobSuggestion(not) {
+    $("#notificationDiv").append(
+        '<div id="not' + not.id + '" class="row">' +
+        '   <img src="' + not.business_profile_pic + '"  class="col-lg-1 small_profile_pic"/>' +
+        '   <span>' +
+        '       <button data-id="' + not.business_id + '" class="btn btn-link" onclick="showUserProfile(this)"><b>' + not.business_name + ":  " + '</b></button>' +
+        '   </span>' +
+        '   <span id="notMsg">' +
+        '         <span id="senderLinkSpan">' +
+        '             <button  data-id="' + not.sender_id + '" class="btn btn-link" onclick="showUserProfile(this)">' + not.sender_name + '</button>' +
+        '         </span>' +
+        "       Suggest You For " +
         '         <span id="jobName">' + not.job_name + '</span>' +
         '   </span>' +
+        '   <span style="float: right"><small>' + not.notDate + ' ' + not.notTime + '</small></span>' +
+        '   <div id="hireRejectBtns" style="float:right">' +
+        '       <button class="btn btn-sm btn-primary"data-type="'+not.type+'" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" data-job-id="' + not.job_id + '" onclick="HireOrRejectClick(this)">Accept</button>' +
+        '       <button class="btn btn-sm btn-danger"data-type="'+not.type+'" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" data-job-id="' + not.job_id + '" onclick="HireOrRejectClick(this)">Reject</button>' +
+        '   </div><span style="float: right"><small>' + not.notDate + ' ' + not.notTime + '</small></span>' +
+        '</div>');
+}
+
+function printNotPendingJobSuggestion(not) {
+    var hireOrRejectText = not.isApproved == true ? " Accepted " : " Rejected ";
+    $("#notificationDiv").append(
+        '<div id="not' + not.id + '" class="row">' +
+        '   <img src="' + not.business_profile_pic + '"  class="col-lg-1 small_profile_pic"/>' +
+        '   <span>' +
+        '       <button data-id="' + not.business_id + '" class="btn btn-link" onclick="showUserProfile(this)"><b>' + not.business_name + ":  " + '</b></button>' +
+        '   </span>' +
+        '   <span id="notMsg">' +
+        ' You ' + hireOrRejectText +
+        ' Job ' +
+        '         <span id="jobName">' + not.job_name + '</span>' +
+        '   </span><span style="float: right"><small>' + not.notDate + ' ' + not.notTime + '</small></span>' +
         '</div>');
 }
 
@@ -167,12 +230,62 @@ function printNotifications(notifications) {
                 }
                 break;
             case 1:
-                printUserNotification(not);
+                printResponse(not);
+                break;
+            case 2:
+                printFriendRequest(not);
+                break;
+            case 3:
+                printFriendResponse(not);
+                break;
+            case 4:
+                if (not.isPending) {
+                    printPendingJobSuggestion(not);
+                } else {
+                    printNotPendingJobSuggestion(not);
+                }
+                break;
+            case 5:
+                printResponse(not);
+                break;
         }
     });
 
 }
 
+function AcceptOrRejectFriendClick(btn) {
+    var reciverId = $(btn).attr("data-reciver-id");
+    var notId = $(btn).attr("data-not-id");
+    var senderId = $(btn).attr("data-sender-id");
+    var jobId = $(btn).attr("data-job-id");
+    var isAccepted = $(btn).text() == "Accept";
+    $.ajax({
+        url: "notificationsPageServlet",
+        type: 'POST',
+        data: {
+            request_type: "handleAcceptdOrRejectFriendRequest",
+            not_id: notId,
+            reciver_id: reciverId,
+            sender_id: senderId,
+            job_id: jobId,
+            is_accepted: $(btn).text() == "Accept"
+        },
+        success: function (flag) {
+            var acceptBtnId = '#acceptBtn' + notId;
+            var rejectBtnId = '#rejectBtn' + notId;
+            var acceptMessage = "Accepted ", rejectMessage = "Rejected ";
+            var div = $('<div id="replacedMessage" class="text-muted" style="float:right"></div>')
+            $(acceptBtnId).replaceWith(div);
+            $(rejectBtnId).remove();
+            if (isAccepted) {
+                $("#replacedMessage").html(acceptMessage);
+            }
+            else {
+                $("#replacedMessage").html(rejectMessage);
+            }
+        }
+    });
+}
 
 function getUserInfo(userId, div) {
     $.ajax({
@@ -202,4 +315,16 @@ function getBusinessInfo(id, div) {
             $(div).find("#businessImg").attr("src", businessInfo.profilePicUrl);
         }
     });
+}
+
+function renameBtnId() {
+    $("#acceptBtn").each(function () {
+        var newAcceptID = 'acceptBtn' + $(this).attr("data-not-id");
+        $(this).attr('id', newAcceptID);
+    });
+    $("#rejectBtn").each(function () {
+        var newRejectID = 'rejectBtn' + $(this).attr("data-not-id");
+        $(this).attr('id', newRejectID);
+    });
+
 }

@@ -79,38 +79,50 @@ function logOut() {
 
 function searchUsers() {
     var searchText = $("#searchText").val();
-    //var searchText = document.getElementById('searchText');
-    $.ajax({
-        url: "searchServlet",
-        type: 'POST',
-        data: {request_type: "searchUsersAndBusinesses",
-                searchText:searchText },
-        success: function (usersAndBusinesses) {
-            /*var searchResults = document.getElementById('searchResults');
-            while (searchResults.firstChild) {
-                searchResults.removeChild(searchResults.firstChild);
-            }
-            if (usersAndBusinesses != null) {
-                for (i = 0; i <= usersAndBusinesses.length - 1; i++) {
-                    var option = document.createElement('option');
-                    option.setAttribute("id",usersAndBusinesses[i].id);
-                    option.setAttribute("onclick",goToPage(option));
-                    if(usersAndBusinesses[i].fname != null) {
-                        option.setAttribute("type","0");
-                        option.value = usersAndBusinesses[i].fname;
-                    }
-                    else{
-                        option.setAttribute("type","1");
-                        option.value = usersAndBusinesses[i].name;
-                    }
-                    searchResults.appendChild(option);
-                }
-                searchResults.setAttribute("open");
-            }*/
-            currentSearch = usersAndBusinesses;
-            window.location.replace("searchResultsPage.html");
+    window.location.replace("/searchResultsPage.html?search_for=" + searchText)
+}
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    var expires = "expires=" + d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    console.log("cookie created id:"+cvalue);
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
         }
-    });
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+function loginByCookie() {
+    var id = getCookie("id");
+    if (id != "") {
+        $.ajax({
+            url: "login",
+            type: 'POST',
+            data: {
+                request_type: "loginByCookie",
+                user_id: id
+            },
+            success: function (validUser) {
+                if (validUser == true) {
+                    window.location.replace("searchAndFeed.html");
+                }
+            }
+        });
+    }
 }
 
 

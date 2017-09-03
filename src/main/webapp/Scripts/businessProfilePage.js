@@ -17,8 +17,25 @@ $(function () {
             showProfilePic(_businessInfo.profilePicUrl);
         }
     });
+    loadLogedInUserFriends()
+    doesUserOwnBusinesses(showOwnersFeatures)
 });
 
+function showOwnersFeatures() {
+    $("#businessNavBarMore").append(
+        '<div style="float:right;" class="dropdown">\n' +
+        '  <button class="btn btn-default navbar-btn dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">\n' +
+        '    More\n' +
+        '    <span class="caret"></span>\n' +
+        '  </button>\n' +
+        '  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">\n' +
+        '    <li><a href="#" onclick="editJobsClick(businessObj.id,businessObj.name)">Edit Job Offers</a></li>\n' +
+        '    <li><a href="#" onclick="editBusinessClick(businessObj.id)">Edit Business Profile</a></li>\n' +
+        '    <li role="separator" class="divider"></li>\n' +
+        '    <li><a href="#" onclick="deleteBusinessClick(businessObj.id,businessObj.name)">Delete Business</a></li>\n' +
+        '  </ul>\n' +
+        '</div>');
+}
 
 //get user info by id
 function getUserInfo(id) {//move to utils
@@ -197,7 +214,6 @@ function printJobOffer(job) {
             job_id: job.jobId
         },
         success: function (applicantList) {
-            console.log("been heeeeeeeereeeeee!!!!");
             $("#businessInfoPanelBody").append('<div id="job' + job.jobId + '"></div>');
             var div = $("#job" + job.jobId);
 
@@ -209,11 +225,13 @@ function printJobOffer(job) {
                 '<div class="row"><label class="control-label col-sm-2">Location: </label>' + job.jobLocation + '</div>' +
                 '<div class="row"><label class="control-label col-sm-2">From: </label>' + job.startDate + '  ' + job.startTime + '</div>' +
                 '<div class="row"><label class="control-label col-sm-2">To: </label>' + job.endDate + ' ' + job.endTime + '</div>' +
+                '<div class="row"><label class="control-label col-sm-2">Salary: </label>' + job.salary + '</div>' +
+                '<div class="row"><label class="control-label col-sm-2">Workers: </label>' + job.workers_num +'/'+job.max_workers_num+ '</div>' +
                 '<div class="row"><label class="control-label col-sm-2">Details: </label>' + job.details + '</div>' +
                 '<div class="row"><label class="control-label col-sm-2">Requirements: </label>' + job.requirements + '</div>' +
                 '<div class="row"><label class="control-label col-sm-2">Applicants: </label>' + '<div id="applicantsListDiv"></div>' + '</div>' +
                 '</div>');
-            div.append('<hr class="hr-soften">');
+            $("#businessInfoPanelBody").append('<hr class="hr-soften">');
             console.log(job);
             applicantList.forEach(function (applicant) {
 
@@ -262,3 +280,52 @@ function getBusinessInfo(str) {
 $(function () {
     $("#businessInfoPanelHeaderTextDiv").html('<b>' + $("#about").text() + '</b>');
 })
+
+
+function deleteBusinessClick(id, name) {
+    if (confirm("Are You Sure You Want To Delete " + name + " ?") == true) {
+        console.log("You pressed OK!");
+        console.log(id, name);
+        deleteBusinessById(id);
+    } else {
+        console.log("You pressed Cancel!");
+    }
+}
+
+function deleteBusinessById(id) {
+    $.ajax({
+        url: "editBusinessServlet",
+        type: 'POST',
+        data: {
+            request_type: "deleteBusinessById",
+            business_id:id
+        },
+        success: function (flag) {
+            if(flag==0){
+                console.log("fail");
+            }else {
+                console.log("success");
+                $("#business"+id+"Div").remove();
+                window.location.replace("/profilePage.html");
+
+            }
+        }
+    });
+}
+function editBusinessClick(id) {
+    $.ajax({
+        url: "editBusinessServlet",
+        type: 'POST',
+        data: {
+            request_type: "redirectToEditBusinessById",
+            business_id:id
+        },
+        success: function (flag) {
+            if(flag==0){
+                window.location.replace("/ErrorPage.html");
+            }else {
+                window.location.replace("/editBusinessProfilePage.html?business_id="+id);
+            }
+        }
+    });
+}

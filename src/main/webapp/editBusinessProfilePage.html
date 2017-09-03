@@ -8,13 +8,9 @@
     <link rel="stylesheet" type="text/css" href="CSS/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="CSS/editProfileStyle.css"/>
     <link rel="stylesheet" type="text/css" href="CSS/businessProfilePage.css"/>
-
-
+    <link rel="stylesheet" type="text/css" href="CSS/style.css"/>
 
     <script src="Scripts/jquery-3.1.1.js"></script>
-    <!--
-        <script src="Scripts/editJobsPage.js"></script>
-    -->
     <script src="Scripts/editBusinessProfilePage.js"></script>
     <script src="Scripts/utils.js"></script>
     <script src="Scripts/currentUser.js"></script>
@@ -23,7 +19,7 @@
 
 </head>
 <body>
-<div class="profilePage row">
+<div class="profilePage row" style="width: 101%;">
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header navbar-default">
@@ -32,7 +28,7 @@
             <ul class="nav navbar-nav">
                 <li id="userSearch">
                     <div style="margin-top: 5px">
-                        <input type="text" style = "width:250px" id="searchText" list="searchResults" placeholder="Search">
+                        <input type="" class="navbar-search" style = "width:250px" id="searchText" list="searchResults" placeholder="Search">
                         <datalist id="searchResults"></datalist>
                     </div>
                 </li>
@@ -41,8 +37,10 @@
                             style="margin-left: 10px ;margin-top: 10px">Search
                     </button>
                 </li>
-                <li id="msgNotifier">
-                    <div class="container">
+            </ul>
+            <ul class="nav navbar-right" align="right">
+                <li id="msgNotifier" >
+                    <div class="container" style="width: auto;">
                         <button class="btn btn-default btn-lg btn-link" onclick="notifierClick()"
                                 style="font-size:26px;">
                             <i class="glyphicon glyphicon-comment custom"></i>
@@ -50,11 +48,19 @@
                         <span class="badge badge-notify"></span>
                     </div>
                 </li>
+                <li id="workSearch" >
+                    <div class="container" style="width: auto;">
+                        <button class="btn btn-default btn-lg btn-link" onclick="window.location.replace('searchAndFeed.html');"
+                                style="font-size:26px;">
+                            <i class="glyphicon glyphicon-search custom"></i>
+                        </button>
+                    </div>
+                </li>
                 <li class="dropdown" style="margin-right:10px; position: absolute;right:0;">
                     <a id="userButton" class="dropdown-toggle" aria-expanded="false" href="#" data-toggle="dropdown">
                         <img id="smallProfilePic"
                              src="http://res.cloudinary.com/ronerez/image/upload/v1502455157/empty_profile_it5elf.png"
-                             class="img-rounded" alt="Cinque Terre" width="20" height="20">User
+                             class="img-rounded" alt="" width="20" height="20">User
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu dropdown-menu-right">
                         <li><a href="profilePage.html">Profile Page</a></li>
@@ -104,7 +110,7 @@
                         <label for="name" class="texts">Business Name:</label>
                     </div>
                     <div class="col-md-7">
-                        <input id="name" type="text" name="name" placeholder="Business Name" required/>
+                        <input id="name" type="text" class="textInput" name="name" placeholder="Business Name" required/>
                     </div>
 
                 </div>
@@ -114,7 +120,7 @@
                         <label for="city" class="texts">City:</label>
                     </div>
                     <div class="col-md-7">
-                        <input id="city" type="text" name="city" placeholder="City"/>
+                        <input id="city" type="text" class="textInput" name="city" placeholder="City"/>
                     </div>
                 </div>
 
@@ -123,7 +129,7 @@
                         <label for="street" class="texts">Street:</label>
                     </div>
                     <div class="col-md-7">
-                        <input id="street" type="text" name="street" placeholder="Street"/>
+                        <input id="street" type="text" class="textInput" name="street" placeholder="Street"/>
                     </div>
                 </div>
 
@@ -132,7 +138,7 @@
                         <label for="number" class="texts">Number:</label>
                     </div>
                     <div class="col-md-7">
-                        <input id="number" type="text" name="number" placeholder="Number"/>
+                        <input id="number" type="text" class="textInput" name="number" placeholder="Number"/>
                     </div>
                 </div>
 
@@ -141,7 +147,7 @@
                         <label for="email" class="texts">Email:</label>
                     </div>
                     <div class="col-md-7">
-                        <input id="email" type="email" name="email" placeholder="Email" required/>
+                        <input id="email" type="email" class="textInput" name="email" placeholder="Email" required/>
                     </div>
                 </div>
 
@@ -150,7 +156,7 @@
                         <label for="phone" class="texts">Phone:</label>
                     </div>
                     <div class="col-md-7">
-                        <input id="phone" type="text" name="phone" placeholder="Phone"/>
+                        <input id="phone" type="text" class="textInput" name="phone" placeholder="Phone"/>
                     </div>
                 </div>
 
@@ -163,7 +169,7 @@
                 </div>
 
 
-                <button id="submitBtn" onclick="registerBusinessUpdates()" class="btn btn-primary btn-block btn-large">
+                <button id="submitBtn" onclick="registerBusinessUpdates()" style="margin-top: 10px" class="btn btn-primary btn-block btn-large">
                     Submit
                 </button>
             </div>

@@ -51,7 +51,7 @@ function addNewBusiness() {
         contentType: false,
         success: function (response) {
             console.log("first ajax success ");
-            window.location.replace("/manageBusinessesPage.html");
+            window.location.replace("/profilePage.html");
         },
         error: function () {
             console.log("first ajax error ");

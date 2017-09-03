@@ -50,9 +50,17 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
                 case "addJobOffer":
                     addJobOffer(request, response);
                     break;
+                case "getJobOfferByID":
+                    getJobOfferByID(request,response);
+                    break;
             }
 
         }
+    }
+
+    private void getJobOfferByID(HttpServletRequest request, HttpServletResponse response) {
+        String id=request.getParameter("job_id");
+        returnJson(request,response,JobOffer.getJobOfferByIdFromDB(Integer.parseInt(id)));
     }
 
     /*private void addNewBusiness(HttpServletRequest request, HttpServletResponse response) {
@@ -122,39 +130,31 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
         Integer busId = Integer.parseInt(businessId);
         String name = request.getParameter("title");
         String location = request.getParameter("jobLocation");
-        Long startDate = Date.valueOf(request.getParameter("startDate")).getTime();
+        Date startDate = Date.valueOf(request.getParameter("startDate"));
         String startTime = request.getParameter("startTime");
         String time = request.getParameter("endDate");
-        Date endDate = time.equals("") ? null : Date.valueOf(request.getParameter("endDate"));
+        Date endDate = time.equals("") ? startDate : Date.valueOf(request.getParameter("endDate"));
         String endTime = request.getParameter("endTime");
+        int salary = Integer.parseInt(request.getParameter("jobSalary"));
         String details = request.getParameter("details");
         String requirements = request.getParameter("requirements");
+        String numOfWorkers = request.getParameter("jobNumOfWorkers").equals("")?"1":request.getParameter("jobNumOfWorkers");
 
         Date postDate = new Date(Calendar.getInstance().getTimeInMillis());
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
         String postTime = dateFormat.format(postDate);
 
         Connection con = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
+        Statement stmt = null;
         try {
             // create a connection to the database
             con = ServletUtils.getConnection();
+            stmt = con.createStatement();
+            String sql = "INSERT INTO job_offers(business_id ,name,location, start_date,start_time,end_date,end_time,details,requirements,post_date,post_time, salary, workers_num, max_workers_num) " +
+                    "VALUES('" + busId + "','" + name + "' , '" + location + "' ,'" + startDate + "' ,'" + startTime + "' ,'" + endDate + "' ,'" + endTime + "' ,'" + details + "' ,'" + requirements +
+                    "' ,'" + postDate + "' ,'" + postTime + "' ,'" + salary + "' ,'" + 0 +  "' ,'" + numOfWorkers + "')";
 
-            String sql = "INSERT INTO job_offers(business_id ,name,location, start_date,start_time,/*end_date,*/end_time,details,requirements,post_date,post_time) " +
-                    "VALUES('" + busId + "','" + name + "' , '" + location + "' ,'" + startDate + "' ,'" + startTime + "' ,'" + /*endDate + "' ,'" + */endTime + "' ,'" + details + "' ,'" + requirements +
-                    "' ,'" + postDate.getTime() + "' ,'" + postTime + "')";
-
-
-            pstmt = con.prepareStatement(sql);
-            pstmt.executeUpdate();
-
-            if (!time.equals("")){
-                sql = "INSERT INTO job_offers(end_date) " +
-                        "VALUES('" + endDate.getTime() + "')";
-                pstmt = con.prepareStatement(sql);
-                pstmt.executeUpdate();
-            }
+            stmt.executeUpdate(sql);
 
             try {
                 response.sendRedirect("/editJobs.html?business_id=" + busId + "&business_name=" + businessName);
@@ -164,13 +164,9 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
+
             try {
-                rs.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            try {
-                pstmt.close();
+                stmt.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -230,23 +226,26 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
             }
         }
 
-        DateFormat format = new SimpleDateFormat("YYYY-MM-DD");
+
         Integer id = Integer.parseInt(request.getParameter("jobId"));
         Integer busId = Integer.parseInt(businessId);
         String name = request.getParameter("title");
         String location = request.getParameter("jobLocation");
         Date startDate = Date.valueOf(request.getParameter("startDate"));
         String startTime = request.getParameter("startTime");
-        Date endDate = Date.valueOf(request.getParameter("endDate"));
+        String ed=request.getParameter("endDate");
+        Date endDate = ed.equals("")?startDate:Date.valueOf(request.getParameter("endDate"));
         String endTime = request.getParameter("endTime");
         String details = request.getParameter("details");
         String requirements = request.getParameter("requirements");
+        int salary =  Integer.parseInt(request.getParameter("jobSalary"));
+        String numOfWorkers = request.getParameter("jobNumOfWorkers");
 
         Date postDate = new Date(Calendar.getInstance().getTimeInMillis());
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
         String postTime = dateFormat.format(postDate);
 
-        JobOffer job = new JobOffer(id, busId, name, details, startDate, startTime, endDate, endTime, location, requirements, postDate, postTime);
+        JobOffer job = new JobOffer(id, busId, name, details, startDate, startTime, endDate, endTime, location, requirements, postDate, postTime,salary , 0 ,Integer.parseInt(numOfWorkers));
         JobOffer.updateJobOffer(job);
 
         try {
@@ -262,13 +261,12 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
         try {
 
             Part profilePic = request.getPart("profilePic");
-            ArrayList<Part> parts= new ArrayList<>();
+            ArrayList<Part> parts = new ArrayList<>();
             parts.add(profilePic);
-            Map<String, String> urls =ServletUtils.uploadUserFiles(parts);
-            String enc =urls.get("profilePic");
+            Map<String, String> urls = ServletUtils.uploadUserFiles(parts);
+            String enc = urls.get("profilePic");
             request.setCharacterEncoding("UTF-8");
-            registerBusinessTexts(request,response,urls.get("profilePic"));
-
+            registerBusinessTexts(request, response, urls.get("profilePic"));
 
 
         } catch (ServletException e) {
@@ -293,12 +291,12 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
             String email = request.getParameter("email");
             String phone = request.getParameter("phone");
             String about = request.getParameter("about");
-            String requestType=request.getParameter("request_type");
+            String requestType = request.getParameter("request_type");
             stmt = con.createStatement();
             String sql;
-            if(requestType.equals("registerAllUpdates")) {
+            if (requestType.equals("registerAllUpdates")) {
                 String id = request.getParameter("id");
-                 sql = "UPDATE businesses " +
+                sql = "UPDATE businesses " +
                         "SET " +
                         "name='" + name + "', " +
                         "city='" + city + "', " +
@@ -311,13 +309,12 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
                         "WHERE id='" + id + "' ";
 
 
-            }
-            else {
+            } else {
                 UserManager userManager = ServletUtils.getUserManager(getServletContext());
                 String userEmail = userManager.getUserEmailFromSession(ServletUtils.getSessionId(request));
-                UserData user =UserData.getUserDataByEmail(userEmail);
+                UserData user = UserData.getUserDataByEmail(userEmail);
                 sql = "INSERT INTO businesses (owner_id ,name, city, street, number, email, phone, aout, profilePic) " +
-                        "VALUES('" + user.getId() + "' , '"+ name + "' , '" + city + "' , '" + street + "' ,'" + number + "','" + email + "','" + phone + "','" + about + "','"  + profilePicUrl + "')";
+                        "VALUES('" + user.getId() + "' , '" + name + "' , '" + city + "' , '" + street + "' ,'" + number + "','" + email + "','" + phone + "','" + about + "','" + profilePicUrl + "')";
 
             }
             stmt.executeUpdate(sql);
