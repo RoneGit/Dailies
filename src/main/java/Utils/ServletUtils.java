@@ -73,7 +73,7 @@ public class ServletUtils {
         return DbPath;
     }
 
-    public static Connection getConnectionLocal()
+    public static Connection getConnection()
     {
         String url = "jdbc:mysql://us-cdbr-iron-east-05.cleardb.net:3306/heroku_59a97387cdeff44";
         String user = "b69801b3aa126a";
@@ -92,7 +92,7 @@ public class ServletUtils {
         }
         return con;
     }
-    public static Connection getConnection()
+    public static Connection getConnectionServer()
     {
         String url = "jdbc:mysql://us-cdbr-iron-east-05.cleardb.net:3306/heroku_59a97387cdeff44";
         String user = "b69801b3aa126a";
