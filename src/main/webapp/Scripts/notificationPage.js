@@ -58,8 +58,8 @@ function printPendingBusinessNotification(not) {
         '         <span id="jobName">' + not.job_name + '</span>' +
         '   </span>' +
         '   <div id="hireRejectBtns" style="float:right">' +
-        '       <button class="btn btn-sm btn-primary" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" data-job-id="' + not.job_id + '" onclick="HireOrRejectClick(this)">Hire</button>' +
-        '       <button class="btn btn-sm btn-danger" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" data-job-id="' + not.job_id + '" onclick="HireOrRejectClick(this)">Reject</button>' +
+        '       <button class="btn btn-sm btn-primary" data-type="'+not.type+'" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" data-job-id="' + not.job_id + '" onclick="HireOrRejectClick(this)">Hire</button>' +
+        '       <button class="btn btn-sm btn-danger" data-type="'+not.type+'" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" data-job-id="' + not.job_id + '" onclick="HireOrRejectClick(this)">Reject</button>' +
         '   </div><span style="float: right; padding-right: 10px"><small>' + not.notDate + ' ' + not.notTime + '</small></span>' +
         '</div>');
 }
