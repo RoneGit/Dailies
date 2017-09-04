@@ -194,10 +194,10 @@ function printPendingJobSuggestion(not) {
         "       Suggest You For " +
         '         <span id="jobName">' + not.job_name + '</span>' +
         '   </span>' +
-        '   <span style="float: right"><small>' + not.notDate + ' ' + not.notTime + '</small></span>' +
+//Ofer :04-Sep-17
         '   <div id="hireRejectBtns" style="float:right">' +
-        '       <button class="btn btn-sm btn-primary"data-type="'+not.type+'" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" data-job-id="' + not.job_id + '" onclick="HireOrRejectClick(this)">Accept</button>' +
-        '       <button class="btn btn-sm btn-danger"data-type="'+not.type+'" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" data-job-id="' + not.job_id + '" onclick="HireOrRejectClick(this)">Reject</button>' +
+        '       <button class="btn btn-sm btn-primary" data-type="'+not.type+'" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" data-job-id="' + not.job_id + '" onclick="HireOrRejectClick(this)">Accept</button>' +
+        '       <button class="btn btn-sm btn-danger" data-type="'+not.type+'" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" data-job-id="' + not.job_id + '" onclick="HireOrRejectClick(this)">Reject</button>' +
         '   </div><span style="float: right"><small>' + not.notDate + ' ' + not.notTime + '</small></span>' +
         '</div>');
 }

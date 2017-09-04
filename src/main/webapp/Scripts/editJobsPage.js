@@ -251,7 +251,7 @@ function cancelNewJobClick() {
 
 function addJobOffer() {
 
-    window.location.replace(String.format("jobPage.html?job_id={0}&business_id={1}&business_name={2}",null,business_id,business_name));
+    window.location.replace(String.format("jobPage.html?job_id={0}&business_id={1}&business_name={2}&business_pic={3}",null,business_id,business_name));
     /*$("#addJobBtn").attr("disabled", true);
     console.log("addJobOffer");
 

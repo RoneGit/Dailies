@@ -21,7 +21,8 @@
                value="ofer@gmail.com"/>
         <input id="password" style=".inputFields" type="password" placeholder="Password" required="required"
                name="password" value="2"/>
-        <button type="button" class="btn btn-primary btn-block btn-large form-control" onclick="login()">Let me in</button>
+        <button type="button" class="btn btn-primary btn-block btn-large form-control" onclick="login()">Let me in
+        </button>
         <span id="errorField"></span>
         <!--</form>-->
     </div>

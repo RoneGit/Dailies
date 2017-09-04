@@ -5,7 +5,7 @@ $(function () {
     var jobId=getUrlParameter("job_id")
     business_id = getUrlParameter("business_id");
     business_name = getUrlParameter("business_name");
-    console.log(jobId);
+    loadProfilePic(business_id);
     if(jobId!='null') {
         $.ajax({
             url: "editBusinessServlet",
@@ -17,6 +17,7 @@ $(function () {
             success: function (job) {
                 jobOBJ = job;
                 printJob3(job);
+
             }
         });
     }else{
@@ -24,6 +25,21 @@ $(function () {
         console.log("NewJob");
     }
 })
+function loadProfilePic(business_id) {
+
+    $.ajax({
+        url: "businessPage",
+        type: 'POST',
+        data: {
+            request_type: "getBusinessInfo",
+            business_id: business_id
+        },
+        success: function (_businessInfo) {
+            showProfilePic(_businessInfo.profilePicUrl);
+        }
+    });
+
+}
 function printNewJob(){
     $("#jobInfoPanelHeaderTextDiv").text("New Job");
     $("#jobInfoPanelBody").append('<div id="jobNew"></div>');
