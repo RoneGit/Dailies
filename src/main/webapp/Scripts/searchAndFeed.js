@@ -235,8 +235,8 @@ function printJobOffer(pair) {
             <div class="panel-heading">\
             <div class="row" >\
                 <div align="center" style="font-size:25px;">\
-                   <b style="margin-right: 40%; margin-left: 40%;  text-decoration: underline">' + job.name + '</b>\
-                   <button align="right" class="btn btn-default btn-md" id="applybtn" data-business-id="'+job.business_id+'" data-job-id="'+job.jobId+'" onclick="applyJobClick(this)" '+ disableApplyButton +'>apply</button>\
+                   <b text-decoration: underline">' + job.name + '</b>\
+                   <button align="right" class="btn btn-default btn-md pull-right" id="applybtn" data-business-id="'+job.business_id+'" data-job-id="'+job.jobId+'" onclick="applyJobClick(this)" '+ disableApplyButton +'>apply</button>\
                 </div>\
             </div>\
             </div>\
