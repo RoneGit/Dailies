@@ -208,7 +208,7 @@ function printJob3(job) {
         '            <label for="jobSalary" class="col-sm-2 control-label">Salary:</label>\n' +
         '            <div class="col-sm-10">\n' +
         '                <input id="jobSalary" class="form-control" type="number" min="0" name="jobSalary"\n' +
-        '                       placeholder="Job Location" value="'+job.salary+'" required/>\n' +
+        '                       placeholder="Salary" value="'+job.salary+'" required/>\n' +
         '            </div>\n' +
         '        </div>\n' +
 
