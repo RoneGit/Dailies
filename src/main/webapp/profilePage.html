@@ -68,8 +68,8 @@
     </nav>
 </div>
 <div>
-    <div class="col-md-3">
-        <div align="center" class="">
+    <div class="col-md-3 container">
+        <div align="center" >
             <img id="profilePic" src="" class="img-rounded big_profile_pic"
                  onerror="this.onerror=null; this.src='Resources/empty_profile.jpg';"
                  style="max-width: 100%; height: auto">
@@ -87,13 +87,11 @@
                     <li><a href="#" id="jobHistoryBtn" onclick="jobHistoryClick()">Resume</a></li>
                     <li><a href="#" id="futureJobsBtn" onclick="futureJobsClick()">Future Jobs</a></li>
                     <li><a href="#" id="showFriendsBtn" onclick="friendsClick()">Friends</a></li>
-                    <span class="dropdown" style="margin-top: 10px">
-                            <button class="btn btn-default btn-md dropdown-toggle" type="button" id="dropdownMenu1"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"
-                                    style="margin-top: 1%">
-                                More
-                                <span class="caret"></span>
-                            </button>
+                    <span style="float:right;" class="dropdown">
+                        <button class="btn btn-default navbar-btn dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            More
+                            <span class="caret"></span>
+                        </button>
                             <ul id="moreDropDown" class="dropdown-menu dropdown-menu-right"
                                 aria-labelledby="dropdownMenu1">
                                 <li><a href="#" id="businessesBtn" onclick="businessesClick()">Businesses</a></li>
