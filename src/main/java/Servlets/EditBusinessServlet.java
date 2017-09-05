@@ -269,8 +269,9 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
                 UserManager userManager = ServletUtils.getUserManager(getServletContext());
                 String userEmail = userManager.getUserEmailFromSession(ServletUtils.getSessionId(request));
                 UserData user = UserData.getUserDataByEmail(userEmail);
+                String profilePic=profilePicUrl==""?"":"','" + profilePicUrl;
                 sql = "INSERT INTO businesses (owner_id ,name, city, street, number, email, phone, aout, profilePic) " +
-                        "VALUES('" + user.getId() + "' , '" + name + "' , '" + city + "' , '" + street + "' ,'" + number + "','" + email + "','" + phone + "','" + about + "','" + profilePicUrl + "')";
+                        "VALUES('" + user.getId() + "' , '" + name + "' , '" + city + "' , '" + street + "' ,'" + number + "','" + email + "','" + phone + "','" + about + profilePic + "')";
 
             }
             stmt.executeUpdate(sql);

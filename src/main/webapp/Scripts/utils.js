@@ -154,6 +154,17 @@ function printLogedInFriends(friend) {
     //$('#friendsPanelBody').append('<hr class="hr-soften">');
 }
 
+function showSessionUserProfilePic() {
+
+    $.ajax({
+        url: "profilePageServlet",
+        type: 'POST',
+        data: {request_type: "showSessionUserProfilePic"},
+        success: function (pic ) {
+           showProfilePic(pic);
+        }
+    });
+}
 String.format = function () {
     var s = arguments[0];
     for (var i = 0; i < arguments.length - 1; i++) {
@@ -162,6 +173,7 @@ String.format = function () {
     }
     return s;
 }
+
 
 var cities = [
     {

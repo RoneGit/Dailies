@@ -103,11 +103,13 @@ $(document).on('click', '#buttonFilter', function () {
 
     if (startDate != 0 && startDate < currentDateYYYYMMDD()) {
         alert("Can't work in the past");
+        return;
     }
     if (endDate != 0 && endDate < startDate) {
         alert("Can't work to the past");
+        return;
     }
-
+    console.log("im tired!!!");
     //saving params for loadMore
     savedParams.titlesToFilter = titlesToFilter;
     savedParams.startDate = startDate;
@@ -230,7 +232,7 @@ function printJobOffer(pair) {
     var availablePositions = job.max_workers_num - job.workers_num;
     var feed =
         "<div class='row'><label class='col-md-3'>Location: </label>" + job.jobLocation + "</div>" +
-        "<div class='row'><label class='col-md-3'>Date: </label>" + job.startDate + " to: " + job.endDate + "</div>" +
+        "<div class='row'><label class='col-md-3'>Date: </label>" + job.startDate + " <b>To:</b> " + job.endDate + "</div>" +
         "<div class='row'><label class='col-md-3'>Salery per houer:</label>" + job.salary + "</div>" +
         "<div class='row'><label class='col-md-3'>Positions available:</label>" + availablePositions + "/" + job.max_workers_num + "</div>" +
         "<div class='row'><label class='col-md-3'>Requirements: </label>" + job.requirements + "</div>" +

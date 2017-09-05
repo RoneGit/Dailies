@@ -36,7 +36,7 @@ public class FeedBack {
 
             stmt = con.createStatement();
             String SELECT = " SELECT *"
-                    + " FROM businesse_feedbacks"
+                    + " FROM business_feedbacks"
                     + " WHERE business_id='" + businessId + "'";
             rs = stmt.executeQuery(SELECT);
 

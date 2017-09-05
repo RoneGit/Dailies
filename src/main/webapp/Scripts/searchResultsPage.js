@@ -22,7 +22,7 @@ $(function () {
             }
         });
     }
-    showProfilePic(currentUserLoggedIn.profilePic);
+    showSessionUserProfilePic();
     loadLogedInUserFriends();
 });
 

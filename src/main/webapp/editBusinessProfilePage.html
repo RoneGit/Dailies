@@ -58,7 +58,7 @@
                     <span class="caret"></span></a>
                     <ul class="dropdown-menu dropdown-menu-right">
                         <li><a href="profilePage.html">Profile Page</a></li>
-                        <li><a onclick="logOut()">Logout</a></li>
+                        <li role="separator" class="divider"></li><li><a onclick="logOut()">Logout</a></li>
                     </ul>
                 </li>
             </ul>
@@ -74,7 +74,7 @@
             <button id="profilePicBtn" class="btn btn-primary" name="profilePicBtn" onclick="profilePic.click()">Choose
                 Picture
             </button>
-            <img id="profilePicImg" src="" class="img-rounded big_profile_pic"
+            <img id="profilePicDisplay" src="" class="img-rounded big_profile_pic"
                  onerror="this.onerror=null;this.src='Resources/empty_profile.jpg';"
                  style="max-width: 100%; height: auto">
         </div>
@@ -166,7 +166,7 @@
                     </div>
                 </div>
                 <div id="friendsPanelBody" class="panel-body"
-                     style="height: 85vh;overflow-y: scroll;"></div>
+                     style="height: 75vh;overflow-y: scroll;"></div>
             </div>
         </div>
 

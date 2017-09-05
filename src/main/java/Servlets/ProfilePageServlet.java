@@ -81,6 +81,9 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
                         case "checkIfMyProfile":
                             checkIfMyProfile(request,response);
                             break;
+                        case "showSessionUserProfilePic":
+                            showSessionUserProfilePic(request,response);
+                            break;
                     }
                 }
 
@@ -90,6 +93,13 @@ public class ProfilePageServlet extends javax.servlet.http.HttpServlet {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void showSessionUserProfilePic(HttpServletRequest request, HttpServletResponse response) {
+        UserManager userManager = ServletUtils.getUserManager(getServletContext());
+        String userEmail = userManager.getUserEmailFromSession(ServletUtils.getSessionId(request));
+        UserData userDate = UserData.getUserDataByEmail(userEmail);
+        ServletUtils.returnJson(request,response, userDate.profilePic);
     }
 
     private void checkIfMyProfile(HttpServletRequest request, HttpServletResponse response) {

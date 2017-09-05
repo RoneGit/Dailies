@@ -68,7 +68,7 @@
                     <span class="caret"></span></a>
                     <ul class="dropdown-menu dropdown-menu-right">
                         <li><a href="profilePage.html">Profile Page</a></li>
-                        <li><a onclick="logOut()">Logout</a></li>
+                        <li role="separator" class="divider"></li><li><a onclick="logOut()">Logout</a></li>
                     </ul>
                 </li>
             </ul>
@@ -76,10 +76,10 @@
     </nav>
 </div>
 
-<div class="row">
+<div >
 
 
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div align="center" class="">
             <img id="profilePicImg" src="" class="img-rounded big_profile_pic"
                  onerror="this.onerror=null;this.src='Resources/empty_profile.jpg';"
@@ -87,7 +87,7 @@
         </div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-8">
         <div class="panel panel-default">
             <div id="jobsPanelHeader" class="panel-heading">
                 <div id="editJobPanelHeaderTitle" class="linkForm"></div>
@@ -117,13 +117,13 @@
                     </div>
                 </div>
             </div>
-            <div id="jobsPanelBody" class="panel-body">
+            <div id="jobsPanelBody" class="panel-body" style=" height: 75vh; overflow-x: hidden;overflow-y: scroll;">
 
             </div>
         </div>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="panel panel-default">
             <div id="friendsPanelHeader" class="panel-heading">
                 <div class="row">
@@ -131,7 +131,7 @@
                 </div>
             </div>
             <div id="friendsPanelBody" class="panel-body"
-                 style="min-height: 552px; max-height: 552px;overflow-y: scroll;"></div>
+                 style=" height: 75vh; overflow-x: hidden;overflow-y: scroll;"></div>
         </div>
     </div>
 
