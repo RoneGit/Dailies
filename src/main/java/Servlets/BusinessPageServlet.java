@@ -109,7 +109,7 @@ public class BusinessPageServlet extends javax.servlet.http.HttpServlet {
             // create a connection to the database
             con = ServletUtils.getConnection();
             stmt = con.createStatement();
-            String sql = "INSERT INTO business_feedbacks (business_id ,feedback, uploader_id, upload_date, upload_time, title) " +
+            String sql = "INSERT INTO businesse_feedbacks (business_id ,feedback, uploader_id, upload_date, upload_time, title) " +
                     "VALUES('" + businessId + "' , '" + feedback + "' , '" + user.getId() + "' , '" + postDate + "' ,'" + postTime + "','" +
                     title + "')";
 
