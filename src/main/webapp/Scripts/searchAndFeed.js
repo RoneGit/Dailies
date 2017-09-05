@@ -12,6 +12,7 @@ $(function () {
     $('#startDate')[0].value = today;
     $('#endDate')[0].value = today;
     $('#LoadMore').attr("disabled", true);
+    loadLogedInUserFriends();
     loadLatestJobs();
 
 });
