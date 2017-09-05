@@ -11,7 +11,7 @@ $(function () {
     var today = currentDateYYYYMMDD();
     $('#startDate')[0].value = today;
     $('#endDate')[0].value = today;
-
+    $('#LoadMore').attr("disabled", true);
     loadLatestJobs();
 
 });
@@ -100,12 +100,12 @@ $(document).on('click', '#buttonFilter', function () {
         allNull = false;
     }
 
-    /*if (startDate != 0 && startDate < currentDateYYYYMMDD()) {
+    if (startDate != 0 && startDate < currentDateYYYYMMDD()) {
         alert("Can't work in the past");
-    }*/
- /*   if (endDate != 0 && endDate < startDate) {
+    }
+    if (endDate != 0 && endDate < startDate) {
         alert("Can't work to the past");
-    }*/
+    }
 
     //saving params for loadMore
     savedParams.titlesToFilter = titlesToFilter;
@@ -131,9 +131,13 @@ $(document).on('click', '#buttonFilter', function () {
             flagContinue: false
         },
         success: function (listOfJobs) {
-            console.log(listOfJobs);
-            listOfJobs.forEach(printJobOffer);
-            lastJob = listOfJobs[listOfJobs.length - 1];
+            if (listOfJobs.length != 0) {
+                listOfJobs.forEach(printJobOffer);
+                lastJob = listOfJobs[listOfJobs.length - 1];
+                $('#LoadMore').attr("disabled", false);
+            }
+            else
+                alert("No jobs fits those filters");
         }
     });
 });
@@ -167,8 +171,12 @@ $(document).on('click', '#LoadMore', function () {
             lastPostTime: lastJob.left.postTime
         },
         success: function (listOfJobs) {
-            listOfJobs.forEach(printJobOffer);
-            lastJob = listOfJobs[listOfJobs.length - 1];
+            if (listOfJobs.length != 0) {
+                listOfJobs.forEach(printJobOffer);
+                lastJob = listOfJobs[listOfJobs.length - 1];
+            }
+            else
+                alert("No more results");
         }
     });
 });
@@ -217,14 +225,15 @@ function printJobOffer(pair) {
     var business = pair.right;
     var job = pair.left;
     var business = pair.right;
-    var linkToBusiness = getLinkWithStyle(business.id + "Form", "businessPage", business.name , "float: left", [["request_type", "loadBusinessPage"], ["business_id", business.id]]);
+    var linkToBusiness = getLinkWithStyle(business.id + "Form", "businessPage", business.name, "float: left", [["request_type", "loadBusinessPage"], ["business_id", business.id]]);
     var availablePositions = job.max_workers_num - job.workers_num;
-    var feed = "Location: " + job.jobLocation + "</br>" +
-        "Date: " + job.startDate + " to: " + job.endDate + "</br>" +
-        "Salery per houer:" + job.salary + "</br>" +
-        "Positions available:" + availablePositions + "/" + job.max_workers_num + "</br>" +
-        "Requirements: " + job.requirements + "</br>" +
-        "Details:" + job.details+ "</br>";
+    var feed =
+        "<div class='row'><label class='col-md-3'>Location: </label>" + job.jobLocation + "</div>" +
+        "<div class='row'><label class='col-md-3'>Date: </label>" + job.startDate + " to: " + job.endDate + "</div>" +
+        "<div class='row'><label class='col-md-3'>Salery per houer:</label>" + job.salary + "</div>" +
+        "<div class='row'><label class='col-md-3'>Positions available:</label>" + availablePositions + "/" + job.max_workers_num + "</div>" +
+        "<div class='row'><label class='col-md-3'>Requirements: </label>" + job.requirements + "</div>" +
+        "<div class='row'><label class='col-md-3'>Details:</label>" + job.details + "</div>";
     var disableApplyButton = "";
     if (availablePositions === 0)
         disableApplyButton = "disabled"
@@ -234,20 +243,20 @@ function printJobOffer(pair) {
             <div style="margin-left: 10px ; max-width: 97%" class="panel panel-default">\
             <div class="panel-heading">\
             <div class="row" >\
-                <div align="center" style="font-size:25px;">\
+                <div align="center" style="font-size:20px;">\
                    <b text-decoration: underline">' + job.name + '</b>\
-                   <button align="right" class="btn btn-default btn-md pull-right" id="applybtn" data-business-id="'+job.business_id+'" data-job-id="'+job.jobId+'" onclick="applyJobClick(this)" '+ disableApplyButton +'>apply</button>\
+                   <button align="right" class="btn btn-default btn-md pull-right" id="applybtn" data-business-id="' + job.business_id + '" data-job-id="' + job.jobId + '" onclick="applyJobClick(this)" ' + disableApplyButton + '>Apply</button>\
                 </div>\
             </div>\
             </div>\
             <div class="panel-body">\
                     <div class="col-md-2">\
+                     <div>' + linkToBusiness + '</div>\
                         <img style="width:100%; height:100%" id="businessImg" src="">\
-                        <div>'+ linkToBusiness +'</div>\
                     </div>\
                     <div class="col-md-10" style="text-align: left;">\
                         <div class="pull-right text-muted" id="delete" style=";font-size: 15px">Hide</div>\
-                        <div style=" font-size:20px"> ' + feed + '</div>\
+                        <div style=" font-size:15px"> ' + feed + '</div>\
 	                    <div class="text-muted" > <small>posted on </small><small>' + job.postDate + '</small></div>\
 	                </div>\
 	        </div>\
@@ -281,13 +290,23 @@ function applyJobClick(btn) {
         url: 'FeedServlet',
         type: 'POST',
         data: {
-            request_type:"applyToJob",
-            applicant_id:currentUserLoggedIn.id,
-            job_id:$(btn).attr("data-job-id"),
-            business_id:$(btn).attr("data-business-id")
+            request_type: "applyToJob",
+            applicant_id: currentUserLoggedIn.id,
+            job_id: $(btn).attr("data-job-id"),
+            business_id: $(btn).attr("data-business-id")
         },
-        success: function (data) {
-            alert("You applyed to the job");
+        success: function (message) {
+            switch (message) {
+                case "Apply":
+                    alert("Applyed for job");
+                    break;
+                case "ownJob":
+                    alert("Can't apply to your own job");
+                    break;
+                case "alreadyApplied":
+                    alert("You already applyed to the job");
+                    break;
+            }
         }
     });
 }

@@ -48,7 +48,7 @@ function printPendingBusinessNotification(not) {
         '<div id="not' + not.id + '" class="row">' +
         '   <img src="' + not.business_profile_pic + '"  class="col-lg-1 small_profile_pic"/>' +
         '   <span>' +
-        '       <button data-id="' + not.business_id + '" class="btn btn-link" onclick="showUserProfile(this)"><b>' + not.business_name + ":  " + '</b></button>' +
+        '       <button data-id="' + not.business_id + '" class="btn btn-link" onclick="showBusinessProfile(this)"><b>' + not.business_name + ":  " + '</b></button>' +
         '   </span>' +
         '   <span id="notMsg">' +
         '         <span id="senderLinkSpan">' +
@@ -58,15 +58,15 @@ function printPendingBusinessNotification(not) {
         '         <span id="jobName">' + not.job_name + '</span>' +
         '   </span>' +
         '   <div id="hireRejectBtns" style="float:right">' +
-        '       <button class="btn btn-sm btn-primary" data-type="'+not.type+'" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" data-job-id="' + not.job_id + '" onclick="HireOrRejectClick(this)">Hire</button>' +
-        '       <button class="btn btn-sm btn-danger" data-type="'+not.type+'" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" data-job-id="' + not.job_id + '" onclick="HireOrRejectClick(this)">Reject</button>' +
+        '       <button class="btn btn-sm btn-primary" data-type="' + not.type + '" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" data-job-id="' + not.job_id + '" onclick="HireOrRejectClick(this)">Hire</button>' +
+        '       <button class="btn btn-sm btn-danger" data-type="' + not.type + '" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" data-job-id="' + not.job_id + '" onclick="HireOrRejectClick(this)">Reject</button>' +
         '   </div><span style="float: right; padding-right: 10px"><small>' + not.notDate + ' ' + not.notTime + '</small></span>' +
         '</div>');
 }
 
 function HireOrRejectClick(btn) {
     var hiredOrRejectText = $(btn).text();
-    var type =  $(btn).attr("data-type");
+    var type = $(btn).attr("data-type");
     var notId = $(btn).attr("data-not-id");
     var applyId = $(btn).attr("data-apply-id");
     var jobId = $(btn).attr("data-job-id");
@@ -78,25 +78,26 @@ function HireOrRejectClick(btn) {
             not_id: notId,
             apply_id: applyId,
             job_id: jobId,
-            type:type,
-            is_hire: $(btn).text() == "Hire"
+            type: type,
+            /* Ofer: 05-Sep-17 */
+            is_hire: $(btn).text() == "Hire" || $(btn).text() == "Accept"
         },
         success: function (flag) {
             var senderLinkSpan = $("#not" + notId).find("#senderLinkSpan");
             console.log((senderLinkSpan));
             var jobName = $("#not" + notId).find("#jobName");
-            if(type==0) {
+            if (type == 0) {
                 $("#not" + notId).find("#notMsg").empty();
                 $("#not" + notId).find("#notMsg").append(' You ');
-                $("#not" + notId).find("#notMsg").append(hiredOrRejectText+" ");
+                $("#not" + notId).find("#notMsg").append(hiredOrRejectText + " ");
                 $("#not" + notId).find("#notMsg").append(senderLinkSpan);
                 $("#not" + notId).find("#notMsg").append(' For ');
                 $("#not" + notId).find("#notMsg").append(jobName);
                 $("#not" + notId).find("#hireRejectBtns").remove();
-            }else if(type==4){
+            } else if (type == 4) {
                 $("#not" + notId).find("#notMsg").empty();
                 $("#not" + notId).find("#notMsg").append(' You ');
-                $("#not" + notId).find("#notMsg").append(hiredOrRejectText+"ed");
+                $("#not" + notId).find("#notMsg").append(hiredOrRejectText + "ed");
                 $("#not" + notId).find("#notMsg").append(' Job: ');
                 $("#not" + notId).find("#notMsg").append(jobName);
                 $("#not" + notId).find("#hireRejectBtns").remove();
@@ -106,9 +107,11 @@ function HireOrRejectClick(btn) {
 }
 
 function printUserNotification(not, message) {
-    var msg2=not.type==0?' To Hire You For ':' For Job: ';
-    $('\
+    /* Ofer: 05-Sep-17 */
+    var msg2 = not.type == 1 ? ' To Hire You For ' : ' For Job: ';
+    $("#notificationDiv").append('\
         <div class="row" id="notify" >\
+        <img src="' + not.sender_profile_pic + '"  class="col-lg-1 small_profile_pic"/>\
             <span>\
                 <button data-id="' + not.business_id + '" class="btn btn-link" onclick="showUserProfile(this)"><b>' + not.business_name + ":  " + '</b></button>\
             </span>\
@@ -117,18 +120,19 @@ function printUserNotification(not, message) {
             </span>\
             <span>' + message + msg2 + not.job_name + '</span>\
             <span style="float: right ; padding-right: 10px"><small>' + not.notDate + ' ' + not.notTime + '</small></span>\
-        </div>').insertAfter("#notificationDiv");
+        </div>');
 }
 
 function printUserFriendNotification(not, message) {
-    $('\
+    $("#notificationDiv").append('\
         <div class="row" id="notify" >\
+        <img src="' + not.sender_profile_pic + '"  class="col-lg-1 small_profile_pic"/>\
             <span>\
                 <button data-id="' + not.sender_id + '" class="btn btn-link" onclick="showUserProfile(this)">' + not.sender_name + '</button>\
             </span>\
             <span>' + message + ' your friend request</span>\
             <span style="float: right; padding-right: 10px"><small>' + not.notDate + ' ' + not.notTime + '</small></span>\
-        </div>').insertAfter("#notificationDiv");
+        </div>');
 }
 
 function printNotPendingBusinessNotification(not) {
@@ -137,7 +141,7 @@ function printNotPendingBusinessNotification(not) {
         '<div id="not' + not.id + '" class="row">' +
         '   <img src="' + not.business_profile_pic + '"  class="col-lg-1 small_profile_pic"/>' +
         '   <span>' +
-        '       <button data-id="' + not.business_id + '" class="btn btn-link" onclick="showUserProfile(this)"><b>' + not.business_name + ":  " + '</b></button>' +
+        '       <button data-id="' + not.business_id + '" class="btn btn-link" onclick="showBusinessProfile(this)"><b>' + not.business_name + ":  " + '</b></button>' +
         '   </span>' +
         '   <span id="notMsg">' +
         ' You ' + hireOrRejectText +
@@ -151,8 +155,10 @@ function printNotPendingBusinessNotification(not) {
 }
 
 function printFriendRequest(not) {
-    $('\
-        <div class="row" id="notify" >\
+    /* Ofer: 05-Sep-17 */
+    $("#notificationDiv").append('\
+    <div class="row" id="notify" >\
+            <img src="' + not.sender_profile_pic + '"  class="col-lg-1 small_profile_pic"/>\
             <span>\
                 <button data-id="' + not.sender_id + '" class="btn btn-link" onclick="showUserProfile(this)">' + not.sender_name + '</button>\
             </span>\
@@ -162,7 +168,7 @@ function printFriendRequest(not) {
               <button id="rejectBtn"  class="btn btn-sm btn-danger" data-reciver-id="' + not.reciver_id + '" data-sender-id="' + not.sender_id + '" data-not-id="' + not.id + '" onclick="AcceptOrRejectFriendClick(this)">Reject</button>\
             </div>\
             <span style="float: right; padding-right: 10px"><small>' + not.notDate + ' ' + not.notTime + '</small></span>\
-        </div>').insertAfter("#notificationDiv");
+        </div>');
     renameBtnId();
     if (not.isPending == 0) {
         var acceptBtnId = '#acceptBtn' + not.id;
@@ -185,7 +191,7 @@ function printPendingJobSuggestion(not) {
         '<div id="not' + not.id + '" class="row">' +
         '   <img src="' + not.business_profile_pic + '"  class="col-lg-1 small_profile_pic"/>' +
         '   <span>' +
-        '       <button data-id="' + not.business_id + '" class="btn btn-link" onclick="showUserProfile(this)"><b>' + not.business_name + ":  " + '</b></button>' +
+        '       <button data-id="' + not.business_id + '" class="btn btn-link" onclick="showBusinessProfile(this)"><b>' + not.business_name + ":  " + '</b></button>' +
         '   </span>' +
         '   <span id="notMsg">' +
         '         <span id="senderLinkSpan">' +
@@ -194,10 +200,10 @@ function printPendingJobSuggestion(not) {
         "       Suggest You For " +
         '         <span id="jobName">' + not.job_name + '</span>' +
         '   </span>' +
-//Ofer :04-Sep-17
+        //Ofer :04-Sep-17
         '   <div id="hireRejectBtns" style="float:right">' +
-        '       <button class="btn btn-sm btn-primary" data-type="'+not.type+'" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" data-job-id="' + not.job_id + '" onclick="HireOrRejectClick(this)">Accept</button>' +
-        '       <button class="btn btn-sm btn-danger" data-type="'+not.type+'" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" data-job-id="' + not.job_id + '" onclick="HireOrRejectClick(this)">Reject</button>' +
+        '       <button class="btn btn-sm btn-primary" data-type="' + not.type + '" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" data-job-id="' + not.job_id + '" onclick="HireOrRejectClick(this)">Accept</button>' +
+        '       <button class="btn btn-sm btn-danger" data-type="' + not.type + '" data-apply-id="' + not.apply_id + '" data-not-id="' + not.id + '" data-job-id="' + not.job_id + '" onclick="HireOrRejectClick(this)">Reject</button>' +
         '   </div><span style="float: right"><small>' + not.notDate + ' ' + not.notTime + '</small></span>' +
         '</div>');
 }
@@ -208,7 +214,7 @@ function printNotPendingJobSuggestion(not) {
         '<div id="not' + not.id + '" class="row">' +
         '   <img src="' + not.business_profile_pic + '"  class="col-lg-1 small_profile_pic"/>' +
         '   <span>' +
-        '       <button data-id="' + not.business_id + '" class="btn btn-link" onclick="showUserProfile(this)"><b>' + not.business_name + ":  " + '</b></button>' +
+        '       <button data-id="' + not.business_id + '" class="btn btn-link" onclick="showBusinessProfile(this)"><b>' + not.business_name + ":  " + '</b></button>' +
         '   </span>' +
         '   <span id="notMsg">' +
         ' You ' + hireOrRejectText +
@@ -249,6 +255,8 @@ function printNotifications(notifications) {
                 printResponse(not);
                 break;
         }
+        /* Ofer: 05-Sep-17 */
+        $("#notificationDiv").append('<hr>');
     });
 
 }

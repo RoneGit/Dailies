@@ -6,13 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search and wall</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
     <link rel="stylesheet" type="text/css" href="CSS/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="CSS/bootstrap-chosen.css"/>
     <link rel="stylesheet" type="text/css" href="CSS/style.css"/>
     <link rel="stylesheet" type="text/css" href="CSS/search.css"/>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
     <script src="Scripts/jquery-3.1.1.js"></script>
     <script src="Scripts/bootstrap.min.js"></script>
     <script src="Scripts/chosen.jquery.js"></script>
@@ -74,9 +72,6 @@
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu dropdown-menu-right">
                         <li><a href="profilePage.html">Profile Page</a></li>
-                        <li><a href="searchAndFeed.html">Work Search</a></li>
-                        <li><a href="editProfilePage.html">Edit Profile</a></li>
-                        <li id="manageBusinesses"><a href="manageBusinessesPage.html">My Businesses</a></li>
                         <li><a onclick="logOut()">Logout</a></li>
                     </ul>
                 </li>
@@ -86,69 +81,93 @@
 </div>
 
 <div class="row">
-    <div class="col-md-3" style="">
-        <div class="panel panel-default" style="margin-left: 15px">
-            <div id="filterJobPanelHead" class="panel-heading">Filter Jobs</div>
+    <div class="col-md-3">
+        <div class="panel panel-default" style="height: 85vh;margin-left: 15px">
+            <div id="filterJobPanelHead" class="panel-heading" style="font-size:20px;"><b>Filter Jobs</b></div>
             <div id="filterJobPanelBody" class="panel-body">
                 <div class="row ">
-                    <label class="col-sm-2 control-label" for="startDate">From:</label>
-                    <input class="col-md-5" name="startDate" id="startDate" required="" type="date"
+                    <label class="col-sm-12 control-label" >By Dates
+                        :</label>
+                </div>
+                <div class="row form-inline">
+                    <label class="col-sm-3" for="startDate">From:</label>
+                    <input class="col-md-3 form-control" name="startDate" id="startDate" required="" type="date"
                            style="background-color: white;color: black">
                 </div>
-                <div class="row ">
-                    <label class="col-sm-2 control-label" for="endDate">To:</label>
-                    <input class="col-md-5" name="endDate" id="endDate" required="" type="date"
+                <div class="row form-inline">
+                    <label class="col-sm-3" for="endDate">To:</label>
+                    <input class="col-md-3 form-control" name="endDate" id="endDate" required="" type="date"
                            style="background-color: white; color: black">
                 </div>
-                <div class="row ">
-                    <label class="col-sm-5 control-label" for="salaryFrom" style="">Salary per hour:</label>
-                </div>
-                <div class="row ">
-                    <label class="col-sm-2 control-label" for="salaryFrom">From:</label>
-                    <input class="col-sm-3" name="salaryFrom" id="salaryFrom" required="" type="number" min="0"
-                           style="background-color: white; color: black">
-                    <label class="col-sm-2 control-label" for="salaryTo">To:</label>
-                    <input class="col-sm-3" name="salaryTo" id="salaryTo" required="" type="number" min="0"
-                           style="background-color: white; color: black">
+                <hr class="searchHr">
 
+                <div class="row ">
+                    <label class="col-sm-12 control-label" for="salaryFrom" style="">By Salary: (Per Hour)</label>
                 </div>
+                <div class="row form-inline">
+                    <label class="col-sm-3 " for="salaryFrom">From:</label>
+                    <input class="col-md-1 form-control" name="salaryFrom" id="salaryFrom" required="" type="number" min="0"
+                           style="background-color: white; color: black;width: 20% !important;">
+                    <label class="col-sm-2 " for="salaryTo">To:</label>
+                    <input class="col-md-1 form-control" name="salaryTo" id="salaryTo" required="" type="number" min="0"
+                           style="background-color: white; color: black;width: 20% !important;">
+                </div>
+                <hr class="searchHr">
                 <div class="row">
                     <div class="row1">
                         <div>
-                            <label class="col-sm-3 control-label" for="locationSelect">location:</label>
+                            <label class="col-md-12 control-label" for="locationSelect">By Location:</label>
                             <select id="locationSelect" data-placeholder="Click To Select Location" multiple
                                     class="chosen-select chosen-ltr" style="width: 100%">
                                 <option id="optionL0"></option>
                             </select>
                         </div>
                     </div>
-
                 </div>
+                <hr class="searchHr">
                 <div class="row">
                     <div class="row1">
                         <div>
-                            <label class="col-sm-4 control-label" for="jobsSelect" style="padding-top: 5px">Type of
-                                job:</label>
+                            <label class="col-sm-12 control-label" for="jobsSelect" style="padding-top: 5px">By Type Of
+                                Job:</label>
                             <select id="jobsSelect" data-placeholder="Click To Select Your Skills" multiple
-                                    class="chosen-select chosen-ltr" style="margin-left:5%; width: 85%">
+                                    class="chosen-select chosen-ltr" style="width: 100%">
                                 <option id="option0"></option>
                             </select>
                         </div>
                     </div>
                 </div>
+                <hr class="searchHr">
                 <button type="button" id="buttonFilter" class="btn btn-default"
                         style="margin-top:5px; width: auto;float: right">Get
                     Jobs
                 </button>
                 <button type="button" id="LoadMore" class="btn btn-default"
-                        style="margin-top:5px; width: auto;float: right">Lode more
+                        style="margin-top:5px; width: auto;float: right">Load more
                 </button>
             </div>
         </div>
     </div>
-    <div class="col-md-9" style="margin-left: 0px; height: 90vh; float: left;overflow-y: scroll; overflow-x: hidden;">
+
+    <div class="col-md-7" >
+        <div class="row" style="height: 85vh; overflow-y: scroll; overflow-x: hidden;">
         <div id="insert"></div>
+        </div>
     </div>
+
+    <div class="col-md-2">
+        <div class="panel panel-default">
+            <div id="friendsPanelHeader" class="panel-heading">
+                <div class="row">
+                    <div id="friendsTextHeader" class="linkForm"><h4>My Friends</h4></div>
+                </div>
+            </div>
+            <div id="friendsPanelBody" class="panel-body"
+                 style="height: 75vh;overflow-y: scroll;"></div>
+        </div>
+    </div>
+
+
 </div>
 </body>
 </html>

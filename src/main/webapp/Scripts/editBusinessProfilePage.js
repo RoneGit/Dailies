@@ -19,10 +19,11 @@ $(function () {
         });
     }
     else {
+// Ofer 4/7
         console.log("addNewBusiness");
         $(document).prop('title', 'Add New Business');
         $("#editPageTitle").text('Add New Business');
-        $("#submitBtn").click(addNewBusiness);
+        $("#submitBtn").replaceWith('<button id="submitBtn" onclick="addNewBusiness()" style="margin-top: 10px" class="btn btn-primary btn-block btn-large">Submit</button>');
         $("#profilePicDisplay").attr("src", "Resources/empty_profile.jpg");
     }
 })

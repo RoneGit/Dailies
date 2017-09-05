@@ -21,7 +21,7 @@ $(function () {
                 var text =
                     '<img id="smallProfilePic"' +
                     'src="'+ picUrl +'"' +
-                    'class="img-rounded" alt="Cinque Terre" style="margin-right: 3px" width="25" height="25">'+ capitalizeFirstLetter(user.fname) +'';
+                    'class="img-rounded" alt="" style="margin-right: 3px" width="25" height="25">'+ capitalizeFirstLetter(user.fname) +'';
                 document.getElementById('userButton').innerHTML = text //capitalizeFirstLetter(user.fname);
             }
         }
@@ -29,31 +29,20 @@ $(function () {
 
 });
 
-//added
-function showOrHideMyBusinessesInMainNavBar() {
-    doesUserOwnBusinesses(function (isOwner) {
-        if (isOwner) {
-            $("#manageBusinesses").show();
-            $("#manageBusinesses").children().attr("href", "manageBusinessesPage.html");
-        } else {
-            $("#manageBusinesses").hide();
-            $("#manageBusinesses").children().attr("href", "#");
-        }
-    });
-}
 
-
-//added
-function doesUserOwnBusinesses(handleResult) {
+function doesUserOwnBusiness(handleResult,businessId) {
     var isOwner;
     $.ajax({
-        url: "profilePageServlet",
+        url: "businessPage",
         type: 'POST',
         data: {
-            request_type: "doesUserOwnBusinesses",
+            request_type: "doesUserOwnBusiness",
+            business_id:businessId
         },
         success: function (res) {
-            handleResult(res);
+            if(res) {
+                handleResult();
+            }
         }
     });
 

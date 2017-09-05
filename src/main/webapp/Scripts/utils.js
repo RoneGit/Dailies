@@ -87,6 +87,7 @@ function readUrlWithOurHiddenPicture(input) {
 function editJobsClick(id, name) {
     window.location.replace("/editJobs.html?business_id=" + id + "&business_name=" + name);
 }
+
 function formatDateToYYYY_MM_DD(date) {
     var d = new Date(date),
         month = '' + (d.getMonth() + 1),
@@ -145,11 +146,11 @@ function printLogedInFriends(friend) {
         picUrl = userData.profilePic;
     var img =
         '<img id="smallProfilePic"' +
-        'src="'+ picUrl +'"' +
-        'class="img-rounded" alt="Cinque Terre" style="margin-right: 3px" width="25" height="25">'
+        'src="' + picUrl + '"' +
+        'class="img-rounded" alt="" style="margin-right: 3px" width="25" height="25">'
     var linkToUser = getLinkWithStyle(userData.id + "Form", "profilePageServlet", userName, "float: left", [["request_type", "loadUserProfile"], ["user_id", userData.id]]);
     var currText2 = img + "</span>" + linkToUser + "<span style ='float: right; margin-left: 10px'></span>";
-    $('#friendsPanelBody').append('<div align="right"><img id="loggedInBall" src="' + loggedInBall + '" class="img-rounded" alt="Cinque Terre" style="margin-right: 3px" width="5" height="5"><p style ="float: left">' + currText2 + '</p></div><br>');
+    $('#friendsPanelBody').append('<div align="right"><img id="loggedInBall" src="' + loggedInBall + '" class="img-rounded" alt="" style="margin-right: 3px" width="5" height="5"><p style ="float: left">' + currText2 + '</p></div><br>');
     //$('#friendsPanelBody').append('<hr class="hr-soften">');
 }
 

@@ -33,7 +33,7 @@ function printUsersAndBusinesses(toPrint) {
     var img =
         '<img id="smallProfilePic"' +
         'src="'+ picUrl +'"' +
-        'class="img-rounded" alt="Cinque Terre" style="margin-right: 3px" width="25" height="25">'
+        'class="img-rounded" alt="" style="margin-right: 3px" width="25" height="25">'
     if (toPrint.fname != null) {
         var name = toPrint.fname + " " + toPrint.lname;
         var linkToUser = getLinkWithStyle(printIndex + "Form", "profilePageServlet", name , "float: left", [["request_type", "loadUserProfile"], ["user_id", toPrint.id]]);

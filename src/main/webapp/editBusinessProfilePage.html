@@ -58,9 +58,6 @@
                     <span class="caret"></span></a>
                     <ul class="dropdown-menu dropdown-menu-right">
                         <li><a href="profilePage.html">Profile Page</a></li>
-                        <li><a href="searchAndFeed.html">Work Search</a></li>
-                        <li><a href="editProfilePage.html">Edit Profile</a></li>
-                        <li id="manageBusinesses"><a href="manageBusinessesPage.html">My Businesses</a></li>
                         <li><a onclick="logOut()">Logout</a></li>
                     </ul>
                 </li>
@@ -85,7 +82,7 @@
 
         </div>
         <div class="editProfile col-lg-7">
-            <h2>Edit Business Page</h2>
+            <h2 id="editPageTitle">Edit Business Page</h2>
 
             <div>
                 <input type="hidden" name="request_type" value="updateUserFiles">
@@ -165,8 +162,7 @@
 
 
                 <button id="submitBtn" onclick="registerBusinessUpdates()" style="margin-top: 10px"
-                        class="btn btn-primary btn-block btn-large">
-                    Submit
+                        class="btn btn-primary btn-block btn-large">Submit
                 </button>
             </div>
 

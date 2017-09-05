@@ -17,8 +17,8 @@ $(function () {
             showProfilePic(_businessInfo.profilePicUrl);
         }
     });
-    loadLogedInUserFriends()
-    doesUserOwnBusinesses(showOwnersFeatures)
+    loadLogedInUserFriends();
+    doesUserOwnBusiness(showOwnersFeatures, businessId);
 });
 
 function showOwnersFeatures() {
@@ -108,6 +108,7 @@ function cancelNewFeedback() {
     $("#newFeedback").remove();
     $("#addFeedbackBtn").attr("disabled", false);
 }
+
 function addFeedback() {
     $("#addFeedbackBtn").attr("disabled", true);
     $("#businessInfoPanelBody").prepend('<div id="newFeedback"></div>');
@@ -124,24 +125,24 @@ function addFeedback() {
         '            <div class="col-md-3"></div>\n' +
         '            <div class="col-md-3 "><input type="submit" value="Save" class="btn btn-primary btn-outline btn-xs"/></div>\n' +
         '            <div class="col-md-3"><input type="button" value="Cancel" class="btn btn-danger btn-outline btn-xs" onclick="cancelNewFeedback()"/></div>\n' +
-        '        </div>'+
+        '        </div>' +
         '        <div class="row">' +
         '            <label for="title" class="col-sm-2 control-label">Title:</label>' +
         '            <div class="col-sm-10">' +
         '                <input id="title" class="form-control" type="text" name="title"' +
         '                       placeholder="Title"  required/>' +
-        '            </div>'+
-        '        </div>'+
+        '            </div>' +
+        '        </div>' +
         '        <div class="row">' +
         '            <label for="feedback" class="col-sm-2 control-label">Feedback:</label>' +
         '            <div class="col-sm-10">' +
 
         '                <textarea class="form-control" rows="5" id="feedback" type="feedback" name="feedback" placeholder="Feedback"value="Feedback"></textarea>' +
-        '            </div>'+
-        '        </div>'+
+        '            </div>' +
+        '        </div>' +
 
-        '    </form>'+
-        '</div>'+
+        '    </form>' +
+        '</div>' +
         '<hr class="hr-soften">'
     );
 
@@ -226,7 +227,7 @@ function printJobOffer(job) {
                 '<div class="row"><label class="control-label col-sm-2">From: </label>' + job.startDate + '  ' + job.startTime + '</div>' +
                 '<div class="row"><label class="control-label col-sm-2">To: </label>' + job.endDate + ' ' + job.endTime + '</div>' +
                 '<div class="row"><label class="control-label col-sm-2">Salary: </label>' + job.salary + '</div>' +
-                '<div class="row"><label class="control-label col-sm-2">Workers: </label>' + job.workers_num +'/'+job.max_workers_num+ '</div>' +
+                '<div class="row"><label class="control-label col-sm-2">Workers: </label>' + job.workers_num + '/' + job.max_workers_num + '</div>' +
                 '<div class="row"><label class="control-label col-sm-2">Details: </label>' + job.details + '</div>' +
                 '<div class="row"><label class="control-label col-sm-2">Requirements: </label>' + job.requirements + '</div>' +
                 '<div class="row"><label class="control-label col-sm-2">Applicants: </label>' + '<div id="applicantsListDiv"></div>' + '</div>' +
@@ -235,9 +236,9 @@ function printJobOffer(job) {
             console.log(job);
             applicantList.forEach(function (applicant) {
 
-                if(applicant!=null) {
-                    console.log("applicant: "+applicant.id);
-                    var userLink = getLinkWithStyle(applicant.id + "feedbackForm", "profilePageServlet", applicant.fname+" "+applicant.lname +"  ","col-md-offset-1", [["request_type", "loadUserProfile"], ["user_id", applicant.id]]);
+                if (applicant != null) {
+                    console.log("applicant: " + applicant.id);
+                    var userLink = getLinkWithStyle(applicant.id + "feedbackForm", "profilePageServlet", applicant.fname + " " + applicant.lname + "  ", "col-md-offset-1", [["request_type", "loadUserProfile"], ["user_id", applicant.id]]);
 
                     $("#job" + job.jobId).find("#applicantsListDiv").append(userLink);
                 }
@@ -298,33 +299,34 @@ function deleteBusinessById(id) {
         type: 'POST',
         data: {
             request_type: "deleteBusinessById",
-            business_id:id
+            business_id: id
         },
         success: function (flag) {
-            if(flag==0){
+            if (flag == 0) {
                 console.log("fail");
-            }else {
+            } else {
                 console.log("success");
-                $("#business"+id+"Div").remove();
+                $("#business" + id + "Div").remove();
                 window.location.replace("/profilePage.html");
 
             }
         }
     });
 }
+
 function editBusinessClick(id) {
     $.ajax({
         url: "editBusinessServlet",
         type: 'POST',
         data: {
             request_type: "redirectToEditBusinessById",
-            business_id:id
+            business_id: id
         },
         success: function (flag) {
-            if(flag==0){
+            if (flag == 0) {
                 window.location.replace("/ErrorPage.html");
-            }else {
-                window.location.replace("/editBusinessProfilePage.html?business_id="+id);
+            } else {
+                window.location.replace("/editBusinessProfilePage.html?business_id=" + id);
             }
         }
     });
