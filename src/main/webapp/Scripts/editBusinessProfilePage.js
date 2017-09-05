@@ -2,6 +2,8 @@ var businessObj;
 
 
 $(function () {
+    loadLogedInUserFriends();
+
     var businessId = getUrlParameter('business_id');
     if (businessId != null) {
         $.ajax({

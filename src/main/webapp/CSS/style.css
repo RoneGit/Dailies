@@ -49,7 +49,8 @@ body {
 
 input {
     width: 100%;
-    margin-bottom: 10px;
+    /* Ofer: 05-Sep-17 */
+    margin-bottom: 2px;
     background: rgba(0,0,0,0.3);
     border: none;
     outline: none;
@@ -209,11 +210,19 @@ hr.hr-soften {
 }
 
 .big_profile_pic{
-    width: 304px;
-    height: auto;
+    /*width: 304px;
+    height: auto;*/
 }
 
 .small_profile_pic{
     height: 35px;
     width: auto;
+}
+.panel-default .long{
+    height: 85vh !important;
+    overflow-y: scroll !important;
+}
+.panel-body .short{
+    height: 75vh !important;
+    overflow-y: scroll !important;
 }

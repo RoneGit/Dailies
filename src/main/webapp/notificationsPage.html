@@ -65,7 +65,11 @@
 
 <div>
     <div class="col-md-2">
-
+        <div align="center" >
+            <img id="profilePicImg" src="" class="img-rounded big_profile_pic"
+                 onerror="this.onerror=null;this.src='Resources/empty_profile.jpg';"
+                 style="max-width: 100%; height: auto">
+        </div>
     </div>
 
     <!--<h2 id="editPageTitle">Edit Business Page</h2>-->
@@ -79,7 +83,7 @@
                     </div>
                 </div>
             </div>
-            <div id="businessInfoPanelBody" class="panel-body">
+            <div id="businessInfoPanelBody" class="panel-body"  style="height: 75vh;overflow-y: scroll;">
 
                 <div id="notificationDiv">
 
@@ -96,7 +100,7 @@
                 </div>
             </div>
             <div id="friendsPanelBody" class="panel-body"
-                 style="min-height: 552px; max-height: 552px;overflow-y: scroll;"></div>
+                 style="height: 75vh;overflow-y: scroll;"></div>
         </div>
     </div>
 </div>

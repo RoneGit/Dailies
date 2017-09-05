@@ -24,11 +24,11 @@
     height: 35px;
     width: auto;
 }
-
+/*
 .panel-body{
     overflow-y: scroll;
     max-height: 430px;
-}
+}*/
 /*
 h2 { color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3); letter-spacing:1px; text-align:center;}*/
 input[type=button],input[type=submit]{

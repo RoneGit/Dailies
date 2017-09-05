@@ -65,21 +65,38 @@
     </nav>
 </div>
 
-<div class="row">
-    <div align="center" class="col-lg-3">
-        <div>
-            <label class="texts">Profile Picture:</label>
-            <input id='profilePic' type='file' style="display: none; width: 200px" name="profilePic" class="texts"
-                   onchange="readUrlWithOurHiddenPicture(this);"/>
+<div >
+    <div class="col-md-2">
+
+        <div  align="center" >
+            <label for="profilePicBtn" class="texts ">Profile Picture:</label>
+            <input id='profilePic' style="display: none;" type='file' name="profilePic" onchange="readURL(this);"/>
+
             <button id="profilePicBtn" class="btn btn-primary" name="profilePicBtn" onclick="profilePic.click()">Choose
                 Picture
             </button>
-            <img id="profilePicDisplay" class="img-rounded big_profile_pic"
-                 src="http://res.cloudinary.com/ronerez/image/upload/v1502455157/empty_profile_it5elf.png"
-                 alt="your image"/>
+            <img id="profilePicImg" src="" class="img-rounded big_profile_pic"
+                 onerror="this.onerror=null;this.src='Resources/empty_profile.jpg';"
+                 style="max-width: 100%; height: auto">
+
         </div>
+
+            <div class="row">
+               <br><br>
+                <div >
+
+                    <label for="cv" class="texts col-md-5">CV:</label>
+                    <input id="cv" type="file" style="display: none" name="cv" class="texts">
+                    <button id="cvBtn" class="btn btn-primary" name="cvBtn" onclick="cv.click()">Choose
+                        CV
+                    </button>
+                </div>
+
+            </div>
+
     </div>
-    <div class="editProfile col-lg-7 height:120px;width:120px;border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;">
+
+    <div class="editProfile col-lg-4 col-md-offset-2">
         <h2>Edit Profile Page</h2>
         <div>
             <input type="hidden" name="request_type" value="updateUserFiles">
@@ -149,7 +166,7 @@
             </div>
 
 
-            <div class="row">
+            <!--<div class="row">
                 <div class="col-md-5">
                     <label for="cv" class="texts">CV:</label>
                     <input id="cv" type="file" style="display: none" name="cv" class="texts"><br>
@@ -158,10 +175,21 @@
                     </button>
                 </div>
 
-            </div>
+            </div>-->
             <button onclick="registerUpdates()" style="margin-top: 10px" class="btn btn-primary btn-block btn-large">Submit</button>
             <div id="res"></div>
 
+        </div>
+    </div>
+    <div class="col-md-2" style="float: right;">
+        <div class="panel panel-default long">
+            <div id="friendsPanelHeader" class="panel-heading">
+                <div class="row">
+                    <div id="friendsTextHeader" class="linkForm"><h4>My Friends</h4></div>
+                </div>
+            </div>
+            <div id="friendsPanelBody" class="panel-body"
+                 style="height: 75vh;overflow-y: scroll;"></div>
         </div>
     </div>
 </div>

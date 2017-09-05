@@ -65,11 +65,15 @@
 </div>
 
 <div>
-    <div class="col-md-3">
-
+    <div class="col-md-2">
+        <div align="center" >
+            <img id="profilePicImg" src="" class="img-rounded big_profile_pic"
+                 onerror="this.onerror=null;this.src='Resources/empty_profile.jpg';"
+                 style="max-width: 100%; height: auto">
+        </div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-8">
         <div class="panel panel-default">
             <div id="resultsPanelHeader" class="panel-heading">
                 <div class="row">
@@ -77,11 +81,11 @@
                 </div>
             </div>
             <div id="resultsPanelBody" class="panel-body"
-                 style="min-height: 300px; max-height: 300px;overflow-y: scroll;"></div>
+                 style=" height: 75vh; overflow-x: hidden;overflow-y: scroll;"></div>
         </div>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="panel panel-default">
             <div id="friendsPanelHeader" class="panel-heading">
                 <div class="row">
@@ -89,7 +93,7 @@
                 </div>
             </div>
             <div id="friendsPanelBody" class="panel-body"
-                 style="min-height: 552px; max-height: 552px;overflow-y: scroll;"></div>
+                 style="height: 75vh;overflow-y: scroll;"></div>
         </div>
     </div>
 </div>

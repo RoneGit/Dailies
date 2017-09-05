@@ -6,6 +6,7 @@ $(function () {
     getNotifications();
     $("#msgNotifier").find('span').html("");
     loadLogedInUserFriends();
+    showProfilePic(currentUserLoggedIn.profilePic);
 });
 
 function printFriendResponse(not) {

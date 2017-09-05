@@ -67,34 +67,25 @@
 </div>
 
 <div>
-
-    <div class="row">
-        <div align="center" class="col-lg-3">
-
+    <div class="col-md-2">
+        <div align="center" >
             <input id='profilePic' style="display: none;" type='file' name="profilePic" onchange="readURL(this);"/>
             <label for="profilePicBtn" class="texts">Profile Picture:</label>
             <button id="profilePicBtn" class="btn btn-primary" name="profilePicBtn" onclick="profilePic.click()">Choose
                 Picture
             </button>
-
-            <img id="profilePicDisplay" src="" class="img-rounded big_profile_pic"
-                 onerror="this.onerror=null;this.src='Resources/empty_profile.jpg';">
-
+            <img id="profilePicImg" src="" class="img-rounded big_profile_pic"
+                 onerror="this.onerror=null;this.src='Resources/empty_profile.jpg';"
+                 style="max-width: 100%; height: auto">
         </div>
-        <div class="editProfile col-lg-7">
+    </div>
+
+
+        <div class="editProfile col-lg-4 col-md-offset-2">
             <h2 id="editPageTitle">Edit Business Page</h2>
 
             <div>
                 <input type="hidden" name="request_type" value="updateUserFiles">
-
-                <div class="row">
-
-                    <!--<div class="col-md-5">
-                        <label class="texts">Profile Picture:</label>
-                        <input id='profilePic' type='file' name="profilePic" onchange="readURL(this);"/>
-                    </div>-->
-
-                </div>
 
                 <div class="row">
                     <div class="col-md-5">
@@ -167,7 +158,19 @@
             </div>
 
         </div>
-    </div>
+        <div class="col-md-2" style="float: right;">
+            <div class="panel panel-default long">
+                <div id="friendsPanelHeader" class="panel-heading">
+                    <div class="row">
+                        <div id="friendsTextHeader" class="linkForm"><h4>My Friends</h4></div>
+                    </div>
+                </div>
+                <div id="friendsPanelBody" class="panel-body"
+                     style="height: 85vh;overflow-y: scroll;"></div>
+            </div>
+        </div>
+
+
 </div>
 </body>
 </html>

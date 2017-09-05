@@ -22,6 +22,7 @@ $(function () {
             }
         });
     }
+    showProfilePic(currentUserLoggedIn.profilePic);
     loadLogedInUserFriends();
 });
 

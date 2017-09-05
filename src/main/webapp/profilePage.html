@@ -65,15 +65,16 @@
     </nav>
 </div>
 <div>
-    <div class="col-md-3 container">
-        <div align="center" >
+    <div class="col-md-2">
+        <div align="center">
             <img id="profilePic" src="" class="img-rounded big_profile_pic"
-                 onerror="this.onerror=null; this.src='Resources/empty_profile.jpg';"
+                 onerror="this.onerror=null;this.src='Resources/empty_profile.jpg';"
                  style="max-width: 100%; height: auto">
         </div>
     </div>
 
-    <div class="col-md-6">
+
+    <div class="col-md-8">
         <nav id="profile-nav" class="navbar navbar-default ">
             <div class="container-fluid">
                 <ul class="nav navbar-nav">
@@ -84,8 +85,11 @@
                     <li><a href="#" id="jobHistoryBtn" onclick="jobHistoryClick()">Resume</a></li>
                     <li><a href="#" id="futureJobsBtn" onclick="futureJobsClick()">Future Jobs</a></li>
                     <li><a href="#" id="showFriendsBtn" onclick="friendsClick()">Friends</a></li>
+                </ul>
+                <ul>
                     <span style="float:right;" class="dropdown">
-                        <button class="btn btn-default navbar-btn dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <button class="btn btn-default navbar-btn dropdown-toggle pull-right" type="button"
+                                id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             More
                             <span class="caret"></span>
                         </button>
@@ -101,8 +105,8 @@
             </div>
         </nav>
         <div style="margin-top: 5px">
-            <div class="panel panel-default">
-                <div id="userInfoPanelHeader" class="panel-heading">
+            <div class="panel panel-default" >
+                <div id="userInfoPanelHeader" class="panel-heading" >
                     <div class="row" style="padding-right: 10px;padding-left: 10px;">
                         <div id="userInfoPanelHeaderTextDiv" class="linkForm">About</div>
                         <div id="userInfoPanelHeaderButtonDiv" align="right">
@@ -112,12 +116,12 @@
 
                 </div>
                 <div id="userInfoPanelBody" class="panel-body"
-                     style="min-height: 500px; max-height: 500px;overflow-y: scroll;"></div>
+                     style=" height: 67vh; overflow-x: hidden;overflow-y: scroll;"></div>
             </div>
         </div>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="panel panel-default">
             <div id="friendsPanelHeader" class="panel-heading">
                 <div class="row">
@@ -125,7 +129,7 @@
                 </div>
             </div>
             <div id="friendsPanelBody" class="panel-body"
-                 style="min-height: 552px; max-height: 552px;overflow-y: scroll;"></div>
+                 style="height: 75vh;overflow-y: scroll;"></div>
         </div>
     </div>
 </div>
