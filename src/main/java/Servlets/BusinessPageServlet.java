@@ -69,10 +69,20 @@ public class BusinessPageServlet extends javax.servlet.http.HttpServlet {
             case "getAllJobApplicantsByJobID":
                 getAllJobApplicantsByJobID(request, response);
                 break;
-
-
+                /* Ofer: 05-Sep-17 */
+            case "doesUserOwnBusiness":
+                doesUserOwnBusiness(request,response);
+                break;
         }
 
+    }
+/* Ofer: 05-Sep-17 */
+    private void doesUserOwnBusiness(HttpServletRequest request, HttpServletResponse response) {
+        UserManager userManager = ServletUtils.getUserManager(getServletContext());
+        String userEmail = userManager.getUserEmailFromSession(ServletUtils.getSessionId(request));
+        UserData user = UserData.getUserDataByEmail(userEmail);
+        String bId=request.getParameter("business_id");
+        returnJson(request,response, Bussiness.doesUserOwnBusiness(user.id.toString(),bId));
     }
 
     private void getAllJobApplicantsByJobID(HttpServletRequest request, HttpServletResponse response) {

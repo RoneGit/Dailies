@@ -73,7 +73,7 @@ public class ServletUtils {
         return DbPath;
     }
 
-    public static Connection getConnectionLocal()
+    public static Connection getConnection()
     {
         String url = "jdbc:mysql://us-cdbr-iron-east-05.cleardb.net:3306/heroku_59a97387cdeff44";
         String user = "b69801b3aa126a";
@@ -92,7 +92,7 @@ public class ServletUtils {
         }
         return con;
     }
-    public static Connection getConnection()
+    public static Connection getConnection2()
     {
         String url = "jdbc:mysql://us-cdbr-iron-east-05.cleardb.net:3306/heroku_59a97387cdeff44";
         String user = "b69801b3aa126a";
@@ -232,5 +232,20 @@ public class ServletUtils {
         DateFormat dateFormat = new SimpleDateFormat("HH:mm");
         String postTime = dateFormat.format(postDate);
         return postTime;
+    }
+
+    /* Ofer: 05-Sep-17 */
+    static public Boolean deleteFromDb(String dBname, String byParamName, String byParamVal, Statement stmt) {
+        int flag = 0;
+        try {
+            String DELETE = " DELETE "
+                    + " FROM " + dBname
+                    +" WHERE " + byParamName + "='" + byParamVal + "' ";
+            flag = stmt.executeUpdate(DELETE);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return flag == 0 ? false : true;
     }
 }

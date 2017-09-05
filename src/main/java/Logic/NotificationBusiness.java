@@ -14,6 +14,8 @@ public class NotificationBusiness {
     public Integer id;
     public Integer sender_id;
     public String sender_name;
+    /* Ofer: 05-Sep-17 */
+    public String sender_profile_pic;
     public Integer reciver_id;
     public String reciver_name;
     public Integer type;
@@ -49,6 +51,8 @@ public class NotificationBusiness {
         }
         UserData user = UserData.getUserInfoFromDbById(sender_id.toString());
         sender_name = user.fname + " " + user.lname;
+        /* Ofer: 05-Sep-17 */
+        sender_profile_pic =user.profilePic;
         user = UserData.getUserInfoFromDbById(reciver_id.toString());
         reciver_name = user.fname + " " + user.lname;
         Bussiness business = Bussiness.getBusinessInfoById(business_id.toString());

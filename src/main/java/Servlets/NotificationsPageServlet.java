@@ -265,6 +265,9 @@ public class NotificationsPageServlet extends javax.servlet.http.HttpServlet {
                 String INSERT = "INSERT INTO notifications (type, business_id,is_read, is_approved, job_id, apply_id, is_pending, reciver_id, sender_id, not_date, not_time) " +
                         "VALUES('" + type + "','" + n.business_id + "' , '" + 0 + "' ,'" + isApproved + "' ,'" + n.job_id + "' ,'" + n.apply_id + "' ,'" + 1 +"' ,'" + n.sender_id + "' ,'"  +n.reciver_id + "' ,'" +ServletUtils.GetCurentDate() + "' ,'" + ServletUtils.GetCurrentTime() +  "')";
                 stmt.executeUpdate(INSERT);
+                /* Ofer: 05-Sep-17 */
+                //delete the trigger notification
+                ServletUtils.deleteFromDb("notifications","id",notId,stmt);
             }
 
         } catch (SQLException e) {

@@ -48,6 +48,7 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
     private void applyToJob(HttpServletRequest request, HttpServletResponse response) {
         Connection con = null;
         PreparedStatement pstmt = null;
+        Statement s = null;
         ResultSet rs = null;
         UserManager userManager = ServletUtils.getUserManager(getServletContext());
         String userEmail = userManager.getUserEmailFromSession(ServletUtils.getSessionId(request));
@@ -55,38 +56,60 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
         try {
             // create a connection to the database
             con = ServletUtils.getConnection();
-
+            s = con.createStatement();
+            String ownerMessage = "ownJob";
+            String alreadyAppliedMessage = "alreadyApplied";
+            String appliedMessage = "Apply";
             String applicantId = user.id.toString();
             String jobId = request.getParameter("job_id");
             String businessId = request.getParameter("business_id");
             String ownerId = Bussiness.getBusinessInfoById(businessId).owner_id.toString();
             Date appDate = Date.valueOf(ServletUtils.GetCurentDate());
             String appTime = ServletUtils.GetCurrentTime();
-            boolean flag = true;
+            String message = alreadyAppliedMessage;
+            int applyId = -1;
 
-            String sql = "INSERT INTO apply (applicant_id, job_id, app_date, app_time, is_hired, business_id, isPending, is_finished) " +
-                    "VALUES('" + applicantId + "','" + jobId + "' , '" + appDate + "' ,'" + appTime + "' ,'" + 0 + "' ,'" + businessId + "' ,'" + 0 + "' ,'"  + 0 + "')";
+            if (Integer.parseInt(ownerId) != Integer.parseInt(applicantId)) {
+                String isApplied = "SELECT id " +
+                        " FROM apply" +
+                        " WHERE applicant_id=" + applicantId +
+                        " AND  job_id=" + jobId;
+                rs = s.executeQuery(isApplied);
 
-            pstmt = con.prepareStatement(sql);
-            pstmt.executeUpdate();
-            //-------getting the apply id of the apply you just insert
-            //-------to send to UpdateNotifications
-            sql = "SELECT id " +
-                    " FROM apply" +
-                    " WHERE applicant_id=" + applicantId +
-                    " AND job_id=" + jobId +
-                    " AND app_date='" + appDate +"'"+
-                    " AND app_time='" + appTime +"'"+
-                    " AND business_id=" + businessId;
 
-            Statement s = con.createStatement();
-            rs = s.executeQuery(sql);
-            while(rs.next()) {
-                int applyId = rs.getInt("id");
-                //------------------------------------------------
-                UpdateNotifications(con, applicantId, ownerId, jobId, businessId, 0, 0, Integer.toString(applyId), Constants.NOTIFICATION_TYPE_APPLY, appDate, appTime);
+                if (rs.next()) {
+                    applyId = rs.getInt("id");
+                }
+
+                if (applyId == -1) {
+
+                    String sql = "INSERT INTO apply (applicant_id, job_id, app_date, app_time, is_hired, business_id, isPending, is_finished) " +
+                            "VALUES('" + applicantId + "','" + jobId + "' , '" + appDate + "' ,'" + appTime + "' ,'" + 0 + "' ,'" + businessId + "' ,'" + 0 + "' ,'" + 0 + "')";
+
+                    pstmt = con.prepareStatement(sql);
+                    pstmt.executeUpdate();
+                    //-------getting the apply id of the apply you just insert
+                    //-------to send to UpdateNotifications
+                    sql = "SELECT id " +
+                            " FROM apply" +
+                            " WHERE applicant_id=" + applicantId +
+                            " AND job_id=" + jobId +
+                            " AND app_date='" + appDate + "'" +
+                            " AND app_time='" + appTime + "'" +
+                            " AND business_id=" + businessId;
+
+                    rs = s.executeQuery(sql);
+                    while (rs.next()) {
+                        applyId = rs.getInt("id");
+                        //------------------------------------------------
+                        UpdateNotifications(con, applicantId, ownerId, jobId, businessId, 0, 0, Integer.toString(applyId), Constants.NOTIFICATION_TYPE_APPLY, appDate, appTime);
+                        message = appliedMessage;
+                    }
+                }
+            } else {
+                message = ownerMessage;
             }
-            ServletUtils.returnJson(request, response, flag);
+            ServletUtils.returnJson(request, response, message);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -97,6 +120,11 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
             }
             try {
                 pstmt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                s.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -112,12 +140,11 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
         PreparedStatement pstmt = null;
 
         String sql = "INSERT INTO notifications (type, business_id,is_read, is_approved, job_id, sender_id, reciver_id, apply_id,is_pending,not_date,not_time) " +
-                "VALUES('" + type + "','" + businessId + "' , '" + isRead + "' ,'" + isApproved + "' ,'" + jobId + "' ,'" + senderID + "' ,'" + reciverID + "' ,'" + applyId + "' ,'" + 1  + "' ,'" + appDate + "' ,'" + appTime +"')";
+                "VALUES('" + type + "','" + businessId + "' , '" + isRead + "' ,'" + isApproved + "' ,'" + jobId + "' ,'" + senderID + "' ,'" + reciverID + "' ,'" + applyId + "' ,'" + 1 + "' ,'" + appDate + "' ,'" + appTime + "')";
 
         pstmt = con.prepareStatement(sql);
         pstmt.executeUpdate();
     }
-
 
 
     private void getJobsByFilter(HttpServletRequest request, HttpServletResponse response) {
@@ -150,7 +177,7 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
                         " WHERE id='" + lastPostID + "'";
                 lastIdStm = con.createStatement();
                 ResultSet lastIdRs = lastIdStm.executeQuery(lastDateQuary);
-                if(lastIdRs.next()) {
+                if (lastIdRs.next()) {
                     lastPostDate = lastIdRs.getDate("post_date");
                     lastPostTime = request.getParameter("lastPostTime");
                 }
@@ -180,37 +207,39 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
             ArrayList<Pair<JobOffer, Bussiness>> jobOffers = new ArrayList<>();
             int counter = 0;
             while (rs.next()) {
-                jobOffers.add(Pair.of(
-                        new JobOffer(
-                                rs.getInt("offer_id"),
-                                rs.getInt("business_id"),
-                                rs.getString("name"),
-                                rs.getString("details"),
-                                rs.getDate("start_date"),
-                                rs.getString("start_time"),
-                                rs.getDate("end_date"),
-                                rs.getString("end_time"),
-                                rs.getString("location"),
-                                rs.getString("requirements"),
-                                rs.getDate("post_date"),
-                                rs.getString("post_time"),
-                                rs.getInt("salary"),
-                                rs.getInt("workers_num"),
-                                rs.getInt("max_workers_num")),
-                        new Bussiness(
-                                rs.getInt("business_id"),
-                                rs.getString("business_name"),
-                                rs.getString("city"),
-                                rs.getString("street"),
-                                rs.getInt("number"),
-                                rs.getString("email"),
-                                rs.getString("phone"),
-                                rs.getString("aout"),
-                                rs.getInt("owner_id"),
-                                rs.getString("profilePic")
-                        )));
-                if (++counter == 5)
-                    break;
+                if (rs.getInt("workers_num") < rs.getInt("max_workers_num")) {
+                    jobOffers.add(Pair.of(
+                            new JobOffer(
+                                    rs.getInt("offer_id"),
+                                    rs.getInt("business_id"),
+                                    rs.getString("name"),
+                                    rs.getString("details"),
+                                    rs.getDate("start_date"),
+                                    rs.getString("start_time"),
+                                    rs.getDate("end_date"),
+                                    rs.getString("end_time"),
+                                    rs.getString("location"),
+                                    rs.getString("requirements"),
+                                    rs.getDate("post_date"),
+                                    rs.getString("post_time"),
+                                    rs.getInt("salary"),
+                                    rs.getInt("workers_num"),
+                                    rs.getInt("max_workers_num")),
+                            new Bussiness(
+                                    rs.getInt("business_id"),
+                                    rs.getString("business_name"),
+                                    rs.getString("city"),
+                                    rs.getString("street"),
+                                    rs.getInt("number"),
+                                    rs.getString("email"),
+                                    rs.getString("phone"),
+                                    rs.getString("aout"),
+                                    rs.getInt("owner_id"),
+                                    rs.getString("profilePic")
+                            )));
+                    if (++counter == 5)
+                        break;
+                }
             }
             ServletUtils.returnJson(request, response, jobOffers);
         } catch (
@@ -378,11 +407,22 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
             ServletUtils.returnJson(request, response, jobsTypes);
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-        finally {
-            try { rs.close(); } catch (Exception e) {  e.printStackTrace(); }
-            try { stmt.close(); } catch (Exception e) {  e.printStackTrace(); }
-            try { con.close(); } catch (Exception e) {  e.printStackTrace(); }
+        } finally {
+            try {
+                rs.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                stmt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -397,7 +437,7 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
             String quary = " SELECT *, job_offers.id AS offer_id, businesses.name AS business_name"
                     + " FROM job_offers" +
                     " JOIN businesses" +
-                    " ON job_offers.business_id = businesses.id"+
+                    " ON job_offers.business_id = businesses.id" +
                     " ORDER BY post_date DESC, post_time DESC";
 
             rs = stmt.executeQuery(quary);
@@ -405,46 +445,59 @@ public class FeedServlet extends javax.servlet.http.HttpServlet {
             ArrayList<Pair<JobOffer, Bussiness>> jobOffers = new ArrayList<>();
             int counter = 0;
             while (rs.next()) {
-                jobOffers.add(Pair.of(
-                        new JobOffer(
-                                rs.getInt("offer_id"),
-                                rs.getInt("business_id"),
-                                rs.getString("name"),
-                                rs.getString("details"),
-                                rs.getDate("start_date"),
-                                rs.getString("start_time"),
-                                rs.getDate("end_date"),
-                                rs.getString("end_time"),
-                                rs.getString("location"),
-                                rs.getString("requirements"),
-                                rs.getDate("post_date"),
-                                rs.getString("post_time"),
-                                rs.getInt("salary"),
-                                rs.getInt("workers_num"),
-                                rs.getInt("max_workers_num")),
-                        new Bussiness(
-                                rs.getInt("business_id"),
-                                rs.getString("business_name"),
-                                rs.getString("city"),
-                                rs.getString("street"),
-                                rs.getInt("number"),
-                                rs.getString("email"),
-                                rs.getString("phone"),
-                                rs.getString("aout"),
-                                rs.getInt("owner_id"),
-                                rs.getString("profilePic")
-                        )));
-                if (++counter == 5)
-                    break;
+                if (rs.getInt("workers_num") < rs.getInt("max_workers_num")) {
+                    jobOffers.add(Pair.of(
+                            new JobOffer(
+                                    rs.getInt("offer_id"),
+                                    rs.getInt("business_id"),
+                                    rs.getString("name"),
+                                    rs.getString("details"),
+                                    rs.getDate("start_date"),
+                                    rs.getString("start_time"),
+                                    rs.getDate("end_date"),
+                                    rs.getString("end_time"),
+                                    rs.getString("location"),
+                                    rs.getString("requirements"),
+                                    rs.getDate("post_date"),
+                                    rs.getString("post_time"),
+                                    rs.getInt("salary"),
+                                    rs.getInt("workers_num"),
+                                    rs.getInt("max_workers_num")),
+                            new Bussiness(
+                                    rs.getInt("business_id"),
+                                    rs.getString("business_name"),
+                                    rs.getString("city"),
+                                    rs.getString("street"),
+                                    rs.getInt("number"),
+                                    rs.getString("email"),
+                                    rs.getString("phone"),
+                                    rs.getString("aout"),
+                                    rs.getInt("owner_id"),
+                                    rs.getString("profilePic")
+                            )));
+                    if (++counter == 5)
+                        break;
+                }
             }
             ServletUtils.returnJson(request, response, jobOffers);
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-        finally {
-            try { rs.close(); } catch (Exception e) {  e.printStackTrace(); }
-            try { stmt.close(); } catch (Exception e) {  e.printStackTrace(); }
-            try { con.close(); } catch (Exception e) {  e.printStackTrace(); }
+        } finally {
+            try {
+                rs.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                stmt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }

@@ -138,7 +138,8 @@ public class JobOffer {
             stmt = con.createStatement();
             String SELECT = " SELECT *"
                     + " FROM job_offers"
-                    + " WHERE id='" + jobId + "'";
+                    + " WHERE id='" + jobId + "'" +
+                    " ORDER BY post_date DESC, post_time DESC";
             rs = stmt.executeQuery(SELECT);
             int index = 0;
             while (rs.next()) {

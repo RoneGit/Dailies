@@ -28,6 +28,7 @@ public class SignInServlet extends javax.servlet.http.HttpServlet {
             String lname = request.getParameter("lname");
             String email = request.getParameter("email");
             String password = request.getParameter("password");
+
             stmt = con.createStatement();
             String SELECT = "SELECT *"
                     + " FROM UserData"
@@ -36,6 +37,7 @@ public class SignInServlet extends javax.servlet.http.HttpServlet {
             while (rs.next()) {
                 //user exists
                 ServletUtils.returnJson(request, response, null);
+                return;
             }
 
             String sql = "INSERT INTO UserData(fname,lname,email, password ) " +

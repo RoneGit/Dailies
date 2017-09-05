@@ -51,7 +51,7 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
                     addJobOffer(request, response);
                     break;
                 case "getJobOfferByID":
-                    getJobOfferByID(request,response);
+                    getJobOfferByID(request, response);
                     break;
             }
 
@@ -59,56 +59,9 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
     }
 
     private void getJobOfferByID(HttpServletRequest request, HttpServletResponse response) {
-        String id=request.getParameter("job_id");
-        returnJson(request,response,JobOffer.getJobOfferByIdFromDB(Integer.parseInt(id)));
+        String id = request.getParameter("job_id");
+        returnJson(request, response, JobOffer.getJobOfferByIdFromDB(Integer.parseInt(id)));
     }
-
-    /*private void addNewBusiness(HttpServletRequest request, HttpServletResponse response) {
-        Connection con = null;
-        PreparedStatement stmt = null;
-        try {
-            Class.forName("org.sqlite.JDBC");
-
-            UserManager userManager = ServletUtils.getUserManager(getServletContext());
-            String userEmail = userManager.getUserEmailFromSession(ServletUtils.getSessionId(request));
-            UserData user =UserData.getUserDataByEmail(userEmail);
-
-            String url = ServletUtils.getDbPath();
-            con = DriverManager.getConnection(url);
-            String name = request.getParameter("name");
-            String city = request.getParameter("city");
-            String street = request.getParameter("street");
-            String number = request.getParameter("number");
-            String email = request.getParameter("email");
-            String phone = request.getParameter("phone");
-            String about = request.getParameter("about");
-            String profileUrl = "";
-
-
-            String sql = "INSERT INTO businesses (owner_id ,name, city, street, number, email, phone, aout, profilePic) " +
-                    "VALUES('" + user.getId() + "' , '"+ name + "' , '" + city + "' , '" + street + "' ,'" + number + "','" + email + "','" + phone + "','" + about + "','"  + profileUrl + "')";
-
-
-            stmt = con.prepareStatement(sql);
-            stmt.executeUpdate();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-
-            try {
-                stmt.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            try {
-                con.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }*/
 
 
     private void addJobOffer(HttpServletRequest request, HttpServletResponse response) {
@@ -135,10 +88,11 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
         String time = request.getParameter("endDate");
         Date endDate = time.equals("") ? startDate : Date.valueOf(request.getParameter("endDate"));
         String endTime = request.getParameter("endTime");
-        int salary = Integer.parseInt(request.getParameter("jobSalary"));
+        String sal = request.getParameter("jobSalary");
+        int salary = Integer.parseInt(sal);
         String details = request.getParameter("details");
         String requirements = request.getParameter("requirements");
-        String numOfWorkers = request.getParameter("jobNumOfWorkers").equals("")?"1":request.getParameter("jobNumOfWorkers");
+        String numOfWorkers = request.getParameter("jobNumOfWorkers").equals("") ? "1" : request.getParameter("jobNumOfWorkers");
 
         Date postDate = new Date(Calendar.getInstance().getTimeInMillis());
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
@@ -152,7 +106,7 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
             stmt = con.createStatement();
             String sql = "INSERT INTO job_offers(business_id ,name,location, start_date,start_time,end_date,end_time,details,requirements,post_date,post_time, salary, workers_num, max_workers_num) " +
                     "VALUES('" + busId + "','" + name + "' , '" + location + "' ,'" + startDate + "' ,'" + startTime + "' ,'" + endDate + "' ,'" + endTime + "' ,'" + details + "' ,'" + requirements +
-                    "' ,'" + postDate + "' ,'" + postTime + "' ,'" + salary + "' ,'" + 0 +  "' ,'" + numOfWorkers + "')";
+                    "' ,'" + postDate + "' ,'" + postTime + "' ,'" + salary + "' ,'" + 0 + "' ,'" + numOfWorkers + "')";
 
             stmt.executeUpdate(sql);
 
@@ -188,13 +142,13 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
             // create a connection to the database
             con = ServletUtils.getConnection();
             stmt = con.createStatement();
+/* Ofer: 05-Sep-17 */
+            Boolean flag = ServletUtils.deleteFromDb("job_offers", "id", id, stmt);
+            Boolean flag1 = ServletUtils.deleteFromDb("apply", "job_id", id, stmt);
+            Boolean flag2 = ServletUtils.deleteFromDb("notifications", "job_id", id, stmt);
 
-            String DELETE = " DELETE "
-                    + " FROM job_offers"
-                    + " WHERE id='" + id + "' ";
-
-            int flag = stmt.executeUpdate(DELETE);
-            returnJson(request, response, flag);
+            returnJson(request, response, flag && flag1 && flag2);
+/* Ofer: 05-Sep-17 */
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -233,19 +187,19 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
         String location = request.getParameter("jobLocation");
         Date startDate = Date.valueOf(request.getParameter("startDate"));
         String startTime = request.getParameter("startTime");
-        String ed=request.getParameter("endDate");
-        Date endDate = ed.equals("")?startDate:Date.valueOf(request.getParameter("endDate"));
+        String ed = request.getParameter("endDate");
+        Date endDate = ed.equals("") ? startDate : Date.valueOf(request.getParameter("endDate"));
         String endTime = request.getParameter("endTime");
         String details = request.getParameter("details");
         String requirements = request.getParameter("requirements");
-        int salary =  Integer.parseInt(request.getParameter("jobSalary"));
+        int salary = Integer.parseInt(request.getParameter("jobSalary"));
         String numOfWorkers = request.getParameter("jobNumOfWorkers");
 
         Date postDate = new Date(Calendar.getInstance().getTimeInMillis());
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
         String postTime = dateFormat.format(postDate);
 
-        JobOffer job = new JobOffer(id, busId, name, details, startDate, startTime, endDate, endTime, location, requirements, postDate, postTime,salary , 0 ,Integer.parseInt(numOfWorkers));
+        JobOffer job = new JobOffer(id, busId, name, details, startDate, startTime, endDate, endTime, location, requirements, postDate, postTime, salary, 0, Integer.parseInt(numOfWorkers));
         JobOffer.updateJobOffer(job);
 
         try {
@@ -292,6 +246,8 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
             String phone = request.getParameter("phone");
             String about = request.getParameter("about");
             String requestType = request.getParameter("request_type");
+            /* Ofer: 05-Sep-17 */
+            String profilePicQuery = profilePicUrl == null ? "" : "profilePic='" + profilePicUrl + "' ";
             stmt = con.createStatement();
             String sql;
             if (requestType.equals("registerAllUpdates")) {
@@ -305,7 +261,7 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
                         "email='" + email + "', " +
                         "phone='" + phone + "', " +
                         "aout='" + about + "', " +
-                        "profilePic='" + profilePicUrl + "' " +
+                        profilePicQuery +
                         "WHERE id='" + id + "' ";
 
 
@@ -359,13 +315,16 @@ public class EditBusinessServlet extends javax.servlet.http.HttpServlet {
             con = ServletUtils.getConnection();
             stmt = con.createStatement();
 
-            String DELETE = " DELETE "
-                    + " FROM businesses"
-                    + " WHERE id='" + id + "' ";
+/* Ofer: 05-Sep-17 */
 
-            int flag = stmt.executeUpdate(DELETE);
-            //con.close();//close
-            returnJson(request, response, flag);
+            Boolean flag1 = ServletUtils.deleteFromDb("businesses", "id", id, stmt);
+            Boolean flag2 = ServletUtils.deleteFromDb("apply", "business_id", id, stmt);
+            Boolean flag3 = ServletUtils.deleteFromDb("businesse_feedbacks", "business_id", id, stmt);
+            Boolean flag4 = ServletUtils.deleteFromDb("job_offers", "business_id", id, stmt);
+            Boolean flag5 = ServletUtils.deleteFromDb("notifications", "business_id", id, stmt);
+
+            returnJson(request, response, flag1 && flag2 && flag3 && flag4 && flag5);
+/* Ofer: 05-Sep-17 */
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
