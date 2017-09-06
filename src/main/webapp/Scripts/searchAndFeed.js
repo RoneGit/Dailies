@@ -231,12 +231,12 @@ function printJobOffer(pair) {
     var linkToBusiness = getLinkWithStyle(business.id + "Form", "businessPage", business.name, "float: left", [["request_type", "loadBusinessPage"], ["business_id", business.id]]);
     var availablePositions = job.max_workers_num - job.workers_num;
     var feed =
-        "<div class='row'><label class='col-md-3'>Location: </label>" + job.jobLocation + "</div>" +
-        "<div class='row'><label class='col-md-3'>Date: </label>" + job.startDate + " <b>To:</b> " + job.endDate + "</div>" +
-        "<div class='row'><label class='col-md-3'>Salery per houer:</label>" + job.salary + "</div>" +
-        "<div class='row'><label class='col-md-3'>Positions available:</label>" + availablePositions + "/" + job.max_workers_num + "</div>" +
-        "<div class='row'><label class='col-md-3'>Requirements: </label>" + job.requirements + "</div>" +
-        "<div class='row'><label class='col-md-3'>Details:</label>" + job.details + "</div>";
+        "<div class='row'><label class='col-sm-3 col-md-3'>Location: </label>" + job.jobLocation + "</div>" +
+        "<div class='row'><label class='col-sm-3 col-md-3'>Date: </label>" + job.startDate + " <b>To:</b> " + job.endDate + "</div>" +
+        "<div class='row'><label class='col-sm-3 col-md-3'>Salery per houer:</label>" + job.salary + "</div>" +
+        "<div class='row'><label class='col-sm-3 col-md-3'>Positions available:</label>" + availablePositions + "/" + job.max_workers_num + "</div>" +
+        "<div class='row'><label class='col-sm-3 col-md-3'>Requirements: </label>" + job.requirements + "</div>" +
+        "<div class='row'><label class='col-sm-3 col-md-3'>Details:</label>" + job.details + "</div>";
     var disableApplyButton = "";
     if (availablePositions === 0)
         disableApplyButton = "disabled"
@@ -253,11 +253,11 @@ function printJobOffer(pair) {
             </div>\
             </div>\
             <div class="panel-body">\
-                    <div class="col-md-2">\
+                    <div class="col-sm-2 col-md-2">\
                      <div>' + linkToBusiness + '</div>\
                         <img style="width:100%; height:100%" id="businessImg" src="">\
                     </div>\
-                    <div class="col-md-10" style="text-align: left;">\
+                    <div class="col-sm-10 col-md-10" style="text-align: left;">\
                         <div class="pull-right text-muted" id="delete" style=";font-size: 15px">Hide</div>\
                         <div style=" font-size:15px"> ' + feed + '</div>\
 	                    <div class="text-muted" > <small>posted on </small><small>' + job.postDate + '</small></div>\
